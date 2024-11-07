@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Biometrics</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body class="body-bg-color">
+    <div class="container">
+        <h1>Phihope Biometrics</h1>
+        <button onclick="getUsers()">Get Users</button>
+        <button onclick="getTransactions()">Get Transactions</button>
+        <div id="result">Click the button to load data.</div>
+    </div>
+
+    <script>
+        // Fetch data from the Node server and display it on the page
+        async function getUsers() {
+            try {
+                const response = await fetch('/api/users'); // Send request to the server
+                const data = await response.json();        // Parse JSON response
+
+                // Display the data
+                document.getElementById('result').textContent = data.result;
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error loading data';
+                console.error('Error:', error);
+            }
+        }
+
+        async function getTransactions() {
+            try {
+                const response = await fetch('/api/transactions'); 
+                const data = await response.json();        // Parse JSON response
+
+                // Display the data
+                document.getElementById('result').textContent = data.result;
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error loading data';
+                console.error('Error:', error);
+            }
+        }
+    </script>
+    
+    <script src="../bio.js"></script>
+</body>
+
+</html>

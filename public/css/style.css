@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root{
+  --main-color: #2B4777;
+  --text-color: #f0f0f0;
+  --accent-color: #3074B2;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: white;
+    box-shadow: 3px 3px 5px #0000001a;
+    min-height: 100px;
+    align-content: center;
+    justify-content: space-evenly;
+    display: flex;
+    width: 100%;
+}
+
+nav ul {
+    list-style:  none;
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+nav li {
+    height: 100%;
+}
+
+nav a {
+    height: 100%;
+    padding: 0 30px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: var(--accent-color);
+    gap: 8px; /* space between text and icon */
+}
+
+nav a:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+nav .right {
+    margin-right: auto;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    z-index: 999; 
+    background-color: #ffffff7b;
+    backdrop-filter: blur(20px);
+    box-shadow: 10px 0 10px #0000001a;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.sidebar li {
+    width: 100%;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2px;
+}
+
+.social-icons a {
+    color: var(--accent-color);
+    font-size: 18px;
+    text-decoration: none;
+    padding: 0 15px;
+}
+
+.logo {
+    display: inline-flex;
+    width: auto;
+    height: 100px;
+}
+
+.footer-desc {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: var(--accent-color);
+    padding: 2.5rem;
+}
+
+.footer-desc ul {
+    list-style: none;
+}
+
+.footer-desc li {
+    padding: 0.3rem;
+}
+
+.footer-desc a {
+    text-decoration: none;
+    color: white;
+}
+
+.footer-desc .logo {
+    height: 150px;
+}
+
+.copyright {
+    display: block;
+    background-color: var(--main-color);
+    color: white;
+    text-align: center;
+    padding: 2.5rem;
+}
+
+.body-bg-color {
+    background-image: linear-gradient(to bottom, #bae7ff, #87c9ff); 
+}
+
+.container {
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+button {
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: var(--main-color);
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 100%;
+  height: 44px;
+  line-height: 1.15;
+  margin: 12px 0 0;
+  outline: none;
+  overflow: hidden;
+  padding: 0 25px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+button:hover {
+    background-color: #17305e;
+}
+
+button:active {
+    background-color: #081732;
+}
+
+/* when nav items collapse */
+@media(max-width: 990px) {
+    nav {
+        justify-content: flex-start;
+    }
+    nav ul .hideOnMobile {
+        display: none;
+    }
+    nav ul {
+        justify-content: flex-start;
+    }
+    nav li {
+        height: 70px;
+    }
+}
+
+@media(min-width: 990px) {
+    nav .hideOnWide {
+        display: none !important;
+    }
+    .hideOnWide {
+        display: none;
+    }
+}
+
+/* narrow view, sidebar fills screen */
+@media(max-width: 400px) {
+    .sidebar {
+        width: 100%;
+    }
+}
+
+/* hide social icons when below 1250px */
+@media(max-width: 1250px) {
+    .hideSocial {
+        display: none;
+    }
+}
+
+/* footer becomes grid when screen is smaller */
+@media(max-width: 710px) {
+    .footer-desc {
+        display: grid;
+    }
+
+    .footer-desc ul {
+        margin: 0.75rem;
+    }
+
+    .footer-desc li {
+        display: flex;
+        justify-content: center;
+    }
+}
+
