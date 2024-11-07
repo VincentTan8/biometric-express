@@ -27,9 +27,14 @@
         <h1>Phihope Biometrics</h1>
         <button onclick="getUsers()">Get Users</button>
         <button onclick="getTransactions()">Get Transactions</button>
-        <div id="result">Click the button to load data.</div>
+        <div id="status">Idling...</div>
+        <div id="result">Click the button to load data.</div>    
     </div>
 
+
+    <!-- Include Socket.IO client-side script -->
+    <script src="/socket.io/socket.io.js"></script>
+    
     <script>
         // Fetch data from the Node server and display it on the page
         async function getUsers() {
@@ -57,9 +62,14 @@
                 console.error('Error:', error);
             }
         }
+
+        const socket = io();  // Connect to the Socket.IO server
+        // Listen for 'status-update' event from the server
+        socket.on('status-update', (data) => {
+            document.getElementById('status').innerHTML = `Status: ${data.status}`;
+        })
+        // fetch('/start-task').then(response => response.text()).then(console.log);
     </script>
-    
-    <script src="../bio.js"></script>
 </body>
 
 </html>
