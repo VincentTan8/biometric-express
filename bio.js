@@ -1,6 +1,5 @@
 const fs = require('fs')
 const ZKLib = require('./node-zklib/zklib')
-const result = document.getElementById('result')
 
 class Bio {
     constructor(ip, port, timeout, inport) {
@@ -10,17 +9,16 @@ class Bio {
 
     async connect() {
         console.log("Initializing...")
-        result.textContent = "Initializing";
         try {
             // Create socket to machine 
             console.log("Connecting...")
-            result.textContent = "Connecting";
             await this.zkInstance.createSocket()
 
             // Get general info like logCapacity, user counts, logs count
             // It's really useful to check the status of device 
             this.info = await this.zkInstance.getInfo()
             console.log(this.info)
+            return this.info
         } catch (e) {
             console.log(e)
             if (e.code === 'EADDRINUSE') {
