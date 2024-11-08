@@ -12,6 +12,7 @@ const Bio = require('./bio')
 const XLSX = require('xlsx')
 const fs = require('fs')
 
+// User defined 
 const biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
 const logsFileName = 'phihopeLogs.json'
 const usersFileName = 'phihopeUsers.json'
@@ -19,6 +20,16 @@ const usersFileName = 'phihopeUsers.json'
 // Route to get the result of the Node code
 app.get('/api/readUsers', (req, res) => {
     fs.readFile(usersFileName, 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).send('Error reading file')
+        } else {
+            res.json({ result: data })
+        }
+    })
+})
+
+app.get('/api/readTransactions', (req, res) => {
+    fs.readFile(logsFileName, 'utf8', (err, data) => {
         if (err) {
             res.status(500).send('Error reading file')
         } else {
@@ -35,11 +46,10 @@ app.get('/api/users', async (req, res) => {
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
 
         const users = await biometric.getUsers().catch(err => {
-            console.error('Unhandled error in getUsers:', err)
+            io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
         })
 
         await biometric.disconnect()
-        io.emit('status-update', { status: 'Disconnected!' });
 
         biometric.toJSON(users.data, usersFileName)
         const jsonData = JSON.stringify(users.data, null, 2)
@@ -61,17 +71,37 @@ app.get('/api/transactions', async (req, res) => {
 
         const logs = await biometric.getTransactions().catch(err => {
             // Handle any uncaught errors from the test function
-            console.error('Unhandled error in getTransactions:', err)
+            io.emit('status-update', { status:'Unhandled error in getTransactions: ' + err})
         })
 
         await biometric.disconnect()
-        io.emit('status-update', { status: 'Disconnected!' });
 
         biometric.toJSON(logs.data, logsFileName)
         const jsonData = JSON.stringify(logs.data, null, 2)
 
         res.setHeader('Content-Type', 'application/json');
         res.json({ result: jsonData })
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Failed to fetch data' });
+    }
+})
+
+app.get('/api/addUser', async (req, res) => {
+    try {
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        io.emit('status-update', { status: 'Connected!' })
+        io.emit('status-update', { status: 'User Count: ' + info.userCounts})
+
+        //Employee ID, Name, Card Num
+        await biometric.addUser('9999', "IT Test", 1234567890)
+
+        await biometric.disconnect()
+        io.emit('status-update', { status: 'Disconnected!' });
+
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ result: "User Added!" })
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Failed to fetch data' });
