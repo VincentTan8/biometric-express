@@ -38,7 +38,57 @@ async function getTransactions() {
     }
 }
 
+async function addUser() {
+    // Get input values
+    const id = document.getElementById('id').value;
+    const name = document.getElementById('name').value;
+    const card = document.getElementById('card').value;
 
+    // Prepare data to send
+    const data = { id, name, card }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/addUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Handle the response
+        const result = await response.json();
+        document.getElementById('status').textContent = result.message;
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Failed to send data.';
+    }
+}
+
+async function deleteUser() {
+    // Get input values
+    const deviceID = document.getElementById('deviceID').value;
+
+    // Prepare data to send
+    const data = { deviceID }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/deleteUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Handle the response
+        const result = await response.json();
+        document.getElementById('status').textContent = result.message;
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Failed to send data.';
+    }
+}
 
 const socket = io();  // Connect to the Socket.IO server
 // Listen for 'status-update' event from the server
