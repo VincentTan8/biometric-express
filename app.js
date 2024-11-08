@@ -17,6 +17,13 @@ const biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
 const logsFileName = 'phihopeLogs.json'
 const usersFileName = 'phihopeUsers.json'
 
+//Middleware
+app.use(express.json())
+app.use(express.urlencoded())
+
+// Serve static files (the HTML file) from the "public" directory
+app.use('/', express.static(path.join(__dirname + '/public')))
+
 // Route to get the result of the Node code
 app.get('/api/readUsers', (req, res) => {
     fs.readFile(usersFileName, 'utf8', (err, data) => {
@@ -87,7 +94,7 @@ app.get('/api/transactions', async (req, res) => {
     }
 })
 
-app.get('/api/addUser', async (req, res) => {
+app.post('/api/addUser', async (req, res) => {
     try {
         io.emit('status-update', { status: 'Connecting...' })
         const info = await biometric.connect()
@@ -95,13 +102,38 @@ app.get('/api/addUser', async (req, res) => {
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
 
         //Employee ID, Name, Card Num
-        await biometric.addUser('9999', "IT Test", 1234567890)
+        const { id, name, card } = req.body
+        io.emit('status-update', { status: "Adding user..." });
+        await biometric.addUser(id, name, card)
 
         await biometric.disconnect()
         io.emit('status-update', { status: 'Disconnected!' });
 
         res.setHeader('Content-Type', 'application/json');
         res.json({ result: "User Added!" })
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Failed to fetch data' });
+    }
+})
+
+app.post('/api/deleteUser', async (req, res) => {
+    try {
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        io.emit('status-update', { status: 'Connected!' })
+        io.emit('status-update', { status: 'User Count: ' + info.userCounts})
+
+        //Device ID
+        const { deviceID } = req.body
+        io.emit('status-update', { status: "Deleting user..." });
+        await biometric.deleteUser(deviceID)
+
+        await biometric.disconnect()
+        io.emit('status-update', { status: 'Disconnected!' });
+
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ result: "User Deleted!" })
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Failed to fetch data' });
@@ -124,9 +156,6 @@ app.get('/api/addUser', async (req, res) => {
 //         }
 //     }, 1000);  // Simulating a long task with a 1-second delay between updates
 // });
-
-// Serve static files (the HTML file) from the "public" directory
-app.use('/', express.static(path.join(__dirname + '/public')))
 
 // Start the server
 server.listen(PORT, () => {
