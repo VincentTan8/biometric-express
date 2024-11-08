@@ -28,24 +28,31 @@
         <button onclick="getUsers()">Get Users</button>
         <button onclick="getTransactions()">Get Transactions</button>
         <div id="status" class="text">Idling...</div>
+        <div class="flex">
+            <div class="window">
+                <div class="row">
+                    <label for="id">Enter ID:</label>
+                    <input type="text" id="id" name="id" placeholder="Employee ID here">
+                </div>
+                <div class="row">
+                    <label for="name">Enter Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Employee Name here">
+                </div>
+                <div class="row">
+                    <label for="card">Enter Card Number:</label>
+                    <input type="text" id="card" name="card" placeholder="Employee Card here">
+                </div>
+                <button onclick="addUser()">Add</button>
+            </div>
 
-        <div class="userWindow">
-            <div class="row">
-                <label for="id">Enter ID:</label>
-                <input type="text" id="id" name="id" placeholder="Employee ID here">
-            </div>
-            <div class="row">
-                <label for="name">Enter Name:</label>
-                <input type="text" id="name" name="name" placeholder="Employee Name here">
-            </div>
-            <div class="row">
-                <label for="card">Enter Card Number:</label>
-                <input type="text" id="card" name="card" placeholder="Employee Card here">
-            </div>
+            <div class="window">
+                <div class="row">
+                    <label for="deviceID">Enter Device ID:</label>
+                    <input type="text" id="deviceID" name="deviceID" placeholder="Employee Device ID here">
+                </div>
+                <button onclick="deleteUser()">Remove</button>
+            </div>    
         </div>
-        <button onclick="">Add</button>
-        <button onclick="">Remove</button>
-
         <div id="result">Data will appear here</div>    
     </div>
 
