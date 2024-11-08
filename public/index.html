@@ -27,49 +27,32 @@
         <h1>Phihope Biometrics</h1>
         <button onclick="getUsers()">Get Users</button>
         <button onclick="getTransactions()">Get Transactions</button>
-        <div id="status">Idling...</div>
-        <div id="result">Click the button to load data.</div>    
+        <div id="status" class="text">Idling...</div>
+
+        <div class="userWindow">
+            <div class="row">
+                <label for="id">Enter ID:</label>
+                <input type="text" id="id" name="id" placeholder="Employee ID here">
+            </div>
+            <div class="row">
+                <label for="name">Enter Name:</label>
+                <input type="text" id="name" name="name" placeholder="Employee Name here">
+            </div>
+            <div class="row">
+                <label for="card">Enter Card Number:</label>
+                <input type="text" id="card" name="card" placeholder="Employee Card here">
+            </div>
+        </div>
+        <button onclick="">Add</button>
+        <button onclick="">Remove</button>
+
+        <div id="result">Data will appear here</div>    
     </div>
 
 
     <!-- Include Socket.IO client-side script -->
-    <script src="/socket.io/socket.io.js"></script>
-    
-    <script>
-        // Fetch data from the Node server and display it on the page
-        async function getUsers() {
-            try {
-                const response = await fetch('/api/users'); // Send request to the server
-                const data = await response.json();        // Parse JSON response
-
-                // Display the data
-                document.getElementById('result').textContent = data.result;
-            } catch (error) {
-                document.getElementById('result').textContent = 'Error loading data';
-                console.error('Error:', error);
-            }
-        }
-
-        async function getTransactions() {
-            try {
-                const response = await fetch('/api/transactions'); 
-                const data = await response.json();        // Parse JSON response
-
-                // Display the data
-                document.getElementById('result').textContent = data.result;
-            } catch (error) {
-                document.getElementById('result').textContent = 'Error loading data';
-                console.error('Error:', error);
-            }
-        }
-
-        const socket = io();  // Connect to the Socket.IO server
-        // Listen for 'status-update' event from the server
-        socket.on('status-update', (data) => {
-            document.getElementById('status').innerHTML = `Status: ${data.status}`;
-        })
-        // fetch('/start-task').then(response => response.text()).then(console.log);
-    </script>
+    <script src="/socket.io/socket.io.js"></script> 
+    <script src="js/main.js"></script>
 </body>
 
 </html>
