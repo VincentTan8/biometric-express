@@ -19,7 +19,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/datatables.min.css">
 </head>
 
 <body class="body-bg-color">
@@ -53,11 +54,36 @@
                 <button onclick="deleteUser()">Remove</button>
             </div>    
         </div>
-        <div id="result">Data will appear here</div>    
+        <div id="result">Data will appear here</div>   
+
+        <table id="userTable" class="display">
+            <thead>
+            <tr>
+                <th>UID</th>
+                <th>Role</th>
+                <th>Password</th>
+                <th>Name</th>
+                <th>Card Number</th>
+                <th>Employee ID</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 
     <!-- Include Socket.IO client-side script -->
+    <script src="js/jquery-3.7.1.js"></script>
+    <script src="js/datatables.min.js"></script>
     <script src="/socket.io/socket.io.js"></script> 
     <script src="js/main.js"></script>
 </body>
