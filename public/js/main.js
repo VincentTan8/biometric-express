@@ -5,9 +5,9 @@ async function getUsers() {
         const data = await response.json();        // Parse JSON response
 
         // Display the data
-        document.getElementById('result').textContent = data.result;
+        await refreshUserTable(data)
     } catch (error) {
-        document.getElementById('result').textContent = 'Error loading data';
+        document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
@@ -20,7 +20,7 @@ async function readUsers() {
         // Display the data
         document.getElementById('result').textContent = data.result;
     } catch (error) {
-        document.getElementById('result').textContent = 'Error loading data';
+        document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
@@ -33,7 +33,20 @@ async function getTransactions() {
         // Display the data
         document.getElementById('result').textContent = data.result;
     } catch (error) {
-        document.getElementById('result').textContent = 'Error loading data';
+        document.getElementById('status').textContent = 'Error loading data';
+        console.error('Error:', error);
+    }
+}
+
+async function readTransactions() {
+    try {
+        const response = await fetch('/api/readTransactions'); 
+        const data = await response.json();        // Parse JSON response
+
+        // Display the data
+        document.getElementById('result').textContent = data.result;
+    } catch (error) {
+        document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
@@ -90,9 +103,43 @@ async function deleteUser() {
     }
 }
 
+async function refreshUserBase() {
+    //import json file 
+
+    //add every user in json file
+
+}
+
+// throw to datatables
+async function refreshUserTable(data) {
+    $('#userTable').DataTable().clear().destroy()
+    // Initialize DataTable
+    $('#userTable').DataTable({
+        data: JSON.parse(data.result),
+        columns: [
+            { data: 'uid' },
+            { data: 'role' },
+            { data: 'password' },
+            { data: 'name' },
+            { data: 'cardno' },
+            { data: 'userId' }
+        ],
+        paging: true,
+        searching: true,
+        ordering: true
+    })
+}
+
+
 const socket = io();  // Connect to the Socket.IO server
 // Listen for 'status-update' event from the server
 socket.on('status-update', (data) => {
-    document.getElementById('status').innerHTML = `Status: ${data.status}`;
+    var status = document.getElementById('status')
+    var newStatus = document.createTextNode(`\nStatus: ${data.status}`)
+    status.appendChild(newStatus)
+    status.scrollTop = status.scrollHeight;
+})
+socket.on('result', (data) => {
+    document.getElementById('result').textContent = data.result
 })
 // fetch('/start-task').then(response => response.text()).then(console.log);
