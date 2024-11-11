@@ -98,3 +98,7 @@ button:hover {
 button:active {
     background-color: #081732;
 }
+
+.hidden-table {
+    display: none;
+}
