@@ -51,11 +51,11 @@ app.get('/api/users', async (req, res) => {
         const info = await biometric.connect()
         io.emit('status-update', { status: 'Connected!' })
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
-
+        io.emit('status-update', { status: 'Getting users...'})
         const users = await biometric.getUsers().catch(err => {
             io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
         })
-
+        io.emit('status-update', { status: 'Done!'})
         await biometric.disconnect()
 
         biometric.toJSON(users.data, usersFileName)
@@ -75,12 +75,12 @@ app.get('/api/transactions', async (req, res) => {
         const info = await biometric.connect()
         io.emit('status-update', { status: 'Connected!' })
         io.emit('status-update', { status: 'Log Counts: ' + info.logCounts})
-
+        io.emit('result', { result: 'Loading Transactions...'})
         const logs = await biometric.getTransactions().catch(err => {
             // Handle any uncaught errors from the test function
             io.emit('status-update', { status:'Unhandled error in getTransactions: ' + err})
         })
-
+        io.emit('status-update', { status: 'Done!'})
         await biometric.disconnect()
 
         biometric.toJSON(logs.data, logsFileName)
