@@ -54,17 +54,34 @@
                 <button onclick="deleteUser()">Remove</button>
             </div>    
         </div>
-        <div id="result">Data will appear here</div>   
+        <div id="result"></div>   
 
-        <table id="userTable" class="display">
+        <table id="userTable" class="display hidden-table">
             <thead>
             <tr>
                 <th>UID</th>
-                <th>Role</th>
-                <th>Password</th>
                 <th>Name</th>
                 <th>Card Number</th>
                 <th>Employee ID</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="logsTable" class="display hidden-table">
+            <thead>
+            <tr>
+                <th>Log Number</th>
+                <th>UID</th>
+                <th>Timestamp</th>
             </tr>
             </thead>
             <tbody>
