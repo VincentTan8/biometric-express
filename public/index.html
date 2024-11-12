@@ -26,9 +26,60 @@
 <body class="body-bg-color">
     <div class="container">
         <h1>Phihope Biometrics</h1>
-        <button onclick="getUsers()">Get Users</button>
-        <button onclick="getTransactions()">Get Transactions</button>
-        <div id="status" class="text">Idling...</div>
+        <div class="flex" style="justify-content: space-between;">
+            <div>
+                <button onclick="getUsers()">Get Users</button>
+                <button onclick="getTransactions()">Get Transactions</button>
+            </div>
+            <div>
+
+                <button onclick="exportLogs()">Export Logs</button>
+            </div>
+        </div>
+        <div id="status" class="text">Status: Idle</div>
+        <div id="result"></div>   
+
+        <table id="userTable" class="display hidden-table">
+            <thead>
+            <tr>
+                <th>Device User ID</th>
+                <th>Name</th>
+                <th>Card Number</th>
+                <th>Employee ID</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="logsTable" class="display hidden-table">
+            <thead>
+            <tr>
+                <th>Device User ID</th>
+                <th>Username</th>
+                <th>Timestamp</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Add/Remove Users</h2>
         <div class="flex">
             <div class="window">
                 <div class="row">
@@ -54,47 +105,6 @@
                 <button onclick="deleteUser()">Remove</button>
             </div>    
         </div>
-        <div id="result"></div>   
-
-        <table id="userTable" class="display hidden-table">
-            <thead>
-            <tr>
-                <th>UID</th>
-                <th>Name</th>
-                <th>Card Number</th>
-                <th>Employee ID</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-        <table id="logsTable" class="display hidden-table">
-            <thead>
-            <tr>
-                <th>Log Number</th>
-                <th>UID</th>
-                <th>Timestamp</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 
 
