@@ -1,56 +1,54 @@
-// Fetch data from the Node server and display it on the page
+// read user json file
 async function readUsers() {
     try {
         const response = await fetch('/api/readUsers'); 
         const data = await response.json();        // Parse JSON response
 
-        // Display the data
-        document.getElementById('result').textContent = data.result;
+        return data
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
-
+// read logs json file
 async function readTransactions() {
     try {
         const response = await fetch('/api/readTransactions'); 
         const data = await response.json();        // Parse JSON response
 
-        // Display the data
-        document.getElementById('result').textContent = data.result;
+        return data
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
-
+//get users from biometric device
 async function getUsers() {
     try {
         const response = await fetch('/api/users'); // Send request to the server
         const data = await response.json();        // Parse JSON response
 
         // Display the data
-        await refreshUserTable(data)
+        // await refreshUserTable(JSON.parse(data.result))
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
-
+//get logs from biometric device
 async function getTransactions() {
     try {
         const response = await fetch('/api/transactions'); 
         const data = await response.json();        
 
         // Display the data
-        await refreshLogsTable(data)
+        // await refreshLogsTable(JSON.parse(data.result))
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
     }
 }
-
+//add user to the biometric device
 async function addUser() {
     // Get input values
     const id = document.getElementById('id').value;
@@ -77,7 +75,7 @@ async function addUser() {
         document.getElementById('status').textContent = 'Failed to send data.';
     }
 }
-
+//delete user from biometric device
 async function deleteUser() {
     // Get input values
     const deviceID = document.getElementById('deviceID').value;
@@ -109,9 +107,125 @@ async function refreshUserBase() {
     //add every user in json file
 
 }
+//convert logs into readable format and filter if needed
+async function exportLogs() {
+    const users = await readUsers()
+    const logs = await readTransactions()
+    const userJson = JSON.parse(users.result)
+    const logJson = JSON.parse(logs.result)
+
+    //get all unique IDs
+    const allIDs = []
+    userJson.forEach(user => {
+        if (!allIDs.includes(user.userId))
+            allIDs.push(user.userId)
+    })
+
+    // //this renames some of the fields and deletes unneeded fields
+    const allLogs = makeReadable(
+        logJson.filter(log => allIDs.includes(log.deviceUserId)),
+        userJson
+    )
+    
+    // //get first and last log of each user
+    let allFAL = []
+    let startDate = new Date("10/24/2024") // MM/DD/YYYY 00:00:00
+    let endDate = new Date() // MM/DD/YYYY day before endDate will be taken if set
+    allIDs.forEach(id => {
+        const userLogs = allLogs.filter(log => log.deviceUserId === id)
+        const firstAndLast = getFirstAndLastLogPerDay(userLogs, startDate, endDate)
+        allFAL.push(...firstAndLast)
+    })
+
+    await refreshLogsTable(allFAL)
+
+    // Todo export to csv
+    
+    
+}
+
+function makeReadable(data, userData) {
+    data.forEach(log => {
+        const user = userData.find(user => user.userId === log.deviceUserId)
+        if(user)
+            log.userName = user.name //make new field
+        else
+            log.userName = "UserID Not Found: " + log.deviceUserId
+
+        //just for rearranging the field 
+        log.timeStamp = formatDateWithoutGMT(new Date(log.recordTime))
+
+        //removed for clarity, idk what the hr will need from these anyway
+        //all they need is the timestamp and name I think
+        delete log.userSn
+        delete log.ip
+        delete log.recordTime
+    })
+    return data
+}
+
+function getFirstAndLastLogPerDay(data, startDate, endDate) {
+    //data is logs of one user
+    const filteredLogs = []
+    let firstAndLast = []
+    let currentDate = " "
+    data.forEach(log => {
+        const date = new Date(log.timeStamp)
+        //+1 on month since month is 0 index
+        const dateText = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate()
+        //if date is after the start date and before the end date
+        if((date >= startDate) && (date <= endDate)) {
+            //if date is equal to the date we are checking
+            if(dateText === currentDate) {
+                if(firstAndLast.length < 2) {
+                    firstAndLast.push(log)
+                } else {
+                    //replace the potential last entry of the day
+                    firstAndLast[1] = log
+                }
+            } else {
+                if(firstAndLast[1]){
+                    //last log of the day
+                    filteredLogs.push(firstAndLast[1])
+                } 
+                //first log of the day
+                filteredLogs.push(log)
+
+                //set to the current day log
+                currentDate = dateText
+                firstAndLast = []
+                firstAndLast.push(log)
+            }
+        }
+    })
+    //edge case: if no log exists for the next day, last log of the day wont be pushed so we do this
+    //take the last log into filteredLogs
+    if(firstAndLast[1]) 
+        filteredLogs.push(firstAndLast[1])
+
+    return filteredLogs
+}
+
+// Function to format the date without the GMT offset
+function formatDateWithoutGMT(date) {
+    // Get the individual components
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    const seconds = String(date.getSeconds()).padStart(2, '0')
+    
+    // Construct the desired format
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
 
 // throw to datatables
 async function refreshUserTable(data) {
+    if ($.fn.DataTable.isDataTable('#userTable')) {
+        $('#userTable').DataTable().clear().destroy();
+        $('#userTable').addClass('hidden-table');
+    }
     if ($.fn.DataTable.isDataTable('#logsTable')) {
         $('#logsTable').DataTable().clear().destroy();
         $('#logsTable').addClass('hidden-table');
@@ -120,7 +234,7 @@ async function refreshUserTable(data) {
     // Initialize DataTable
     $('#userTable').removeClass('hidden-table');
     $('#userTable').DataTable({
-        data: JSON.parse(data.result),
+        data: data,
         columns: [
             { data: 'uid', defaultContent: 'none set'},
             { data: 'name', defaultContent: 'none set'},
@@ -134,6 +248,10 @@ async function refreshUserTable(data) {
 }
 
 async function refreshLogsTable(data) {
+    if ($.fn.DataTable.isDataTable('#logsTable')) {
+        $('#logsTable').DataTable().clear().destroy();
+        $('#logsTable').addClass('hidden-table');
+    }
     if ($.fn.DataTable.isDataTable('#userTable')) {
         $('#userTable').DataTable().clear().destroy();
         $('#userTable').addClass('hidden-table');
@@ -141,18 +259,17 @@ async function refreshLogsTable(data) {
     // Initialize DataTable
     $('#logsTable').removeClass('hidden-table');
     $('#logsTable').DataTable({
-        data: JSON.parse(data.result),
+        data: data, 
         columns: [
-            { data: 'userSn', defaultContent: 'none set'},
             { data: 'deviceUserId', defaultContent: 'none set'},
-            { data: 'recordTime', defaultContent: 'none set'}
+            { data: 'userName', defaultContent: 'none set'},
+            { data: 'timeStamp', defaultContent: 'none set'}
         ],
-        paging: true,
+        paging: false,
         searching: true,
         ordering: true
     })
 }
-
 
 const socket = io();  // Connect to the Socket.IO server
 // Listen for 'status-update' event from the server
