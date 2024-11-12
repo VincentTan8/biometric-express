@@ -9,7 +9,6 @@ const io = socketIo(server);
 const PORT = 3000
 
 const Bio = require('./bio')
-const XLSX = require('xlsx')
 const fs = require('fs')
 
 // User defined 
