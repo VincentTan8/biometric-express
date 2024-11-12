@@ -27,9 +27,13 @@
     <div class="container">
         <h1>Phihope Biometrics</h1>
         <hr>
-        <div class="flex" style="justify-content: center;">
+        <div class="flex userbase">
             <div>
-                <button onclick="">Send Userbase To Biometric Device</button>
+                <label for="userFile">Enter Filename:</label>
+                <input type="text" id="userFile" name="userFile" placeholder="sampleDB.json">
+            </div>
+            <div>
+                <button onclick="refreshUserbase()">Send Userbase To Biometric Device</button>
             </div>
         </div>
         <hr>
@@ -40,7 +44,7 @@
             </div>
             <div>
                 <label for="date">Enter Date:</label>
-                <input type="text" id="date" name="date" placeholder="Date input here">
+                <input type="text" id="date" name="date" placeholder="MM-DD-YYYY">
                 <button onclick="exportLogs()">Export Logs</button>
             </div>
         </div>
