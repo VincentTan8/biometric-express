@@ -28,8 +28,6 @@ async function getUsers() {
         const response = await fetch('/api/users'); // Send request to the server
         const data = await response.json();        // Parse JSON response
 
-        // Display the data
-        // await refreshUserTable(JSON.parse(data.result))
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
@@ -41,8 +39,6 @@ async function getTransactions() {
         const response = await fetch('/api/transactions'); 
         const data = await response.json();        
 
-        // Display the data
-        // await refreshLogsTable(JSON.parse(data.result))
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data';
         console.error('Error:', error);
@@ -107,6 +103,17 @@ async function refreshUserBase() {
     //add every user in json file
 
 }
+
+async function viewUsers() {
+    const users = await readUsers()
+    await refreshUserTable(JSON.parse(users.result))
+}
+
+async function viewTransactions() {
+    const logs = await readTransactions()
+    await refreshLogsTable(JSON.parse(logs.result), true)
+}
+
 //convert logs into readable format and filter if needed
 async function exportLogs() {
     const users = await readUsers()
@@ -121,6 +128,9 @@ async function exportLogs() {
             allIDs.push(user.userId)
     })
 
+    //for getting logs including IDs of deleted users
+    // const allIDs = [...new Set(logJson.map(log => log.deviceUserId ))]
+
     // //this renames some of the fields and deletes unneeded fields
     const allLogs = makeReadable(
         logJson.filter(log => allIDs.includes(log.deviceUserId)),
@@ -129,7 +139,7 @@ async function exportLogs() {
     
     // //get first and last log of each user
     let allFAL = []
-    let startDate = new Date("10/24/2024") // MM/DD/YYYY 00:00:00
+    let startDate = new Date("10/24/2000") // MM/DD/YYYY 00:00:00
     let endDate = new Date() // MM/DD/YYYY day before endDate will be taken if set
     allIDs.forEach(id => {
         const userLogs = allLogs.filter(log => log.deviceUserId === id)
@@ -137,11 +147,12 @@ async function exportLogs() {
         allFAL.push(...firstAndLast)
     })
 
-    await refreshLogsTable(allFAL)
+    //logging only first and last log of the day during specified dates
+    //if requesting all possible logs, please log allLogs instead of allFAL
+    await refreshLogsTable(allFAL, false)
 
     // Todo export to csv
-    
-    
+
 }
 
 function makeReadable(data, userData) {
@@ -237,9 +248,9 @@ async function refreshUserTable(data) {
         data: data,
         columns: [
             { data: 'uid', defaultContent: 'none set'},
+            { data: 'userId', defaultContent: 'none set'},
             { data: 'name', defaultContent: 'none set'},
             { data: 'cardno', defaultContent: 'none set'},
-            { data: 'userId', defaultContent: 'none set'}
         ],
         paging: true,
         searching: true,
@@ -247,7 +258,7 @@ async function refreshUserTable(data) {
     })
 }
 
-async function refreshLogsTable(data) {
+async function refreshLogsTable(data, raw) {
     if ($.fn.DataTable.isDataTable('#logsTable')) {
         $('#logsTable').DataTable().clear().destroy();
         $('#logsTable').addClass('hidden-table');
@@ -256,19 +267,35 @@ async function refreshLogsTable(data) {
         $('#userTable').DataTable().clear().destroy();
         $('#userTable').addClass('hidden-table');
     }
-    // Initialize DataTable
-    $('#logsTable').removeClass('hidden-table');
-    $('#logsTable').DataTable({
-        data: data, 
-        columns: [
-            { data: 'deviceUserId', defaultContent: 'none set'},
-            { data: 'userName', defaultContent: 'none set'},
-            { data: 'timeStamp', defaultContent: 'none set'}
-        ],
-        paging: false,
-        searching: true,
-        ordering: true
-    })
+    if(raw) {
+        // Initialize DataTable
+        $('#logsTable').removeClass('hidden-table');
+        $('#logsTable').DataTable({
+            data: data, 
+            columns: [
+                { data: 'deviceUserId', defaultContent: 'none set'},
+                { data: 'userSn', defaultContent: 'none set'},
+                { data: 'recordTime', defaultContent: 'none set'}
+            ],
+            paging: false,
+            searching: true,
+            ordering: true
+        })
+    } else {
+        // Initialize DataTable
+        $('#logsTable').removeClass('hidden-table');
+        $('#logsTable').DataTable({
+            data: data, 
+            columns: [
+                { data: 'deviceUserId', defaultContent: 'none set'},
+                { data: 'userName', defaultContent: 'none set'},
+                { data: 'timeStamp', defaultContent: 'none set'}
+            ],
+            paging: false,
+            searching: true,
+            ordering: true
+        })
+    }
 }
 
 const socket = io();  // Connect to the Socket.IO server
