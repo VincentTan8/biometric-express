@@ -139,6 +139,48 @@ app.post('/api/deleteUser', async (req, res) => {
     }
 })
 
+app.post('/api/updateUserbase', async (req, res) => {
+    try {
+        const { filename } = req.body
+        
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        io.emit('status-update', { status: 'Connected!' })
+
+        // get device users and make backup
+        io.emit('status-update', { status: 'Getting users...'})
+        const users = await biometric.getUsers().catch(err => {
+            io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+        })
+        biometric.toJSON(users.data, "userBackup " + new Date())
+
+        //delete everything on device (3000 is the user limit)
+        for (let i = 1; i <= 3000; i++) {
+            io.emit('status-update', { status: "Deleting uid: " + i});
+           //await biometric.deleteUser(i)
+        }
+
+        //add everything from filename
+        io.emit('status-update', { status: "Uploading " + filename + "..."})
+        const newFile = await fs.promises.readFile(filename, 'utf-8')
+        const newFileJson = JSON.parse(newFile)
+        newFileJson.forEach(async user => {
+            const id = user.userId
+            const name = user.name
+            const card = user.cardno
+            io.emit('status-update', { status: "Adding user: " + name });
+            await biometric.addUser(id, name, card)
+        })
+
+        await biometric.disconnect()
+        io.emit('status-update', { status: 'Disconnected!' });
+        
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Failed to fetch data' });
+    }
+})
+
 // app.get('/start-task', (req, res) => {
 //     // Send an initial response immediately
 //     res.send('Task started, check for updates.');
