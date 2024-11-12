@@ -68,7 +68,7 @@ async function addUser() {
         document.getElementById('status').textContent = result.result;
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to send data.';
+        document.getElementById('status').textContent = 'Failed to add user.';
     }
 }
 //delete user from biometric device
@@ -93,15 +93,32 @@ async function deleteUser() {
         document.getElementById('status').textContent = result.result;
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to send data.';
+        document.getElementById('status').textContent = 'Failed to delete user.';
     }
 }
 
-async function refreshUserBase() {
-    //import json file 
+async function refreshUserbase() {
+    const filename = document.getElementById('userFile').value;
+    
+    // Prepare data to send
+    const data = { filename }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/updateUserbase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
 
-    //add every user in json file
-
+        // Handle the response
+        const result = await response.json();
+        document.getElementById('status').textContent = result.result;
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Failed to send data.';
+    }
 }
 
 async function viewUsers() {
