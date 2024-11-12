@@ -12,13 +12,13 @@ const Bio = require('./bio')
 const fs = require('fs')
 
 // User defined 
-const biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
-const logsFileName = 'phihopeLogs.json'
-const usersFileName = 'phihopeUsers.json'
+const biometric = new Bio('171.16.114.76', 4370, 10000, 4000)
+const logsFileName = 'testLogs.json'
+const usersFileName = 'testUsers.json'
 
 //Middleware
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 
 // Serve static files (the HTML file) from the "public" directory
 app.use('/', express.static(path.join(__dirname + '/public')))
