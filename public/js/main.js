@@ -97,14 +97,37 @@ async function deleteUser() {
     }
 }
 
-async function refreshUserbase() {
+async function updateUserbase() {
+    const filename = document.getElementById('updateFile').value;
+
+    // Prepare data to send
+    const data = { filename }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/updateUserbase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Handle the response
+        const result = await response.json();
+        document.getElementById('status').textContent = result.result;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function replaceUserbase() {
     const filename = document.getElementById('userFile').value;
     
     // Prepare data to send
     const data = { filename }
     try {
         // Send POST request using fetch
-        const response = await fetch('/api/updateUserbase', {
+        const response = await fetch('/api/replaceUserbase', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -132,6 +155,10 @@ async function viewTransactions() {
 
 //convert logs into readable format and filter if needed
 async function exportLogs() {
+    const input = document.getElementById('date').value;
+    const date = new Date(input.toString())
+    console.log(date)
+
     const users = await readUsers()
     const logs = await readTransactions()
     const userJson = JSON.parse(users.result)
@@ -325,4 +352,3 @@ socket.on('status-update', (data) => {
 socket.on('result', (data) => {
     document.getElementById('result').textContent = data.result
 })
-// fetch('/start-task').then(response => response.text()).then(console.log);
