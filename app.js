@@ -150,6 +150,70 @@ app.post('/api/updateUserbase', async (req, res) => {
         const { filename } = req.body
 
         //get file
+        io.emit('status-update', { status: "Updating using " + filename + "..."})
+        const newFile = await fs.promises.readFile(filename, 'utf-8')
+        const newFileJson = JSON.parse(newFile)
+
+        //get all operations from file
+        let toAdd = []
+        let toDel = []
+        for(const user of newFileJson) {
+            if(user.status === "ADD") {
+                toAdd.push(user)
+            } else if(user.status === "DELETE") {
+                toDel.push(user)
+            } 
+        }
+
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        io.emit('status-update', { status: 'Connected!' })
+
+        // get device users for searching
+        let users = { data: [] }
+        if(info.userCounts > 0) {
+            io.emit('status-update', { status: 'Getting users for searching...'})
+            users = await biometric.getUsers().catch(err => {
+                io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+            })
+        }
+
+        // Search for user with given employee ID to delete
+        for(const userDel of toDel) {
+            const result = users.data.find(user => user.userId === userDel.userId);
+            if(result) {
+                await biometric.deleteUser(result.uid)
+                io.emit('status-update', { status: "Deleted uid: " + result.uid});
+            } else {
+                io.emit('status-update', { status: "Not found: " + userDel.name});
+            }
+        }
+
+        // Add everything from toAdd
+        for(const userAdd of toAdd) {
+            const id = userAdd.userId
+            const name = userAdd.name
+            const card = userAdd.cardno
+
+            const newUID = await biometric.addUser(users.data, id, name, card)
+            users.data.push({"uid": newUID})
+            io.emit('status-update', { status: "Added user: " + name });
+        }
+
+        await biometric.disconnect()
+        io.emit('status-update', { status: 'Disconnected!' });
+
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ result: 'Failed to update' });
+    }
+})
+
+app.post('/api/replaceUserbase', async (req, res) => {
+    try {
+        const { filename } = req.body
+
+        //get file
         io.emit('status-update', { status: "Uploading " + filename + "..."})
         const newFile = await fs.promises.readFile(filename, 'utf-8')
         const newFileJson = JSON.parse(newFile)
@@ -192,7 +256,7 @@ app.post('/api/updateUserbase', async (req, res) => {
         
     } catch (err) {
         console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to fetch data' });
+        res.status(500).json({ result: 'Failed to update' });
     }
 })
 
