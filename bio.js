@@ -93,7 +93,9 @@ class Bio {
 
         //uid, userID, username, password, role, cardnum
         await this.zkInstance.setUser(uid, userID, username, '', 0, cardnum)
-        console.log('Added User: ' + username)
+        console.log('Added User: ' + uid + " " + username)
+        //return the newly added user uid for reference
+        return uid
     }
 
     async editUser(uid, userID, username, cardnum) {
