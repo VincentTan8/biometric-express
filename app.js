@@ -50,24 +50,30 @@ app.get('/api/users', async (req, res) => {
         const info = await biometric.connect()
         io.emit('status-update', { status: 'Connected!' })
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
-        io.emit('status-update', { status: 'Getting users...'})
-        const users = await biometric.getUsers().catch(err => {
-            io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
-        })
-        io.emit('status-update', { status: 'Done!'})
-        await biometric.disconnect()
+        if(info.userCounts > 0) {
+            io.emit('status-update', { status: 'Getting users...'})
+            const users = await biometric.getUsers().catch(err => {
+                io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+            })
+            io.emit('status-update', { status: 'Done!'})
+            await biometric.disconnect()
 
-        biometric.toJSON(users.data, usersFileName)
-        const jsonData = JSON.stringify(users.data, null, 2)
+            biometric.toJSON(users.data, usersFileName)
+            const jsonData = JSON.stringify(users.data, null, 2)
 
-        res.setHeader('Content-Type', 'application/json');
-        res.json({ result: jsonData })
+            res.setHeader('Content-Type', 'application/json');
+            res.json({ result: jsonData })
+        } else {
+            await biometric.disconnect()
+            res.json({result: [] })
+        }
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Failed to fetch data' });
     }
 })
 
+//todo check if logs is 0
 app.get('/api/transactions', async (req, res) => {
     try {
         io.emit('status-update', { status: 'Connecting...' })
@@ -100,10 +106,21 @@ app.post('/api/addUser', async (req, res) => {
         io.emit('status-update', { status: 'Connected!' })
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
 
-        //Employee ID, Name, Card Num
-        const { id, name, card } = req.body
-        io.emit('status-update', { status: "Adding user..." });
-        await biometric.addUser(id, name, card)
+        let users = {};
+        if(info.userCounts > 0) {
+            users = await biometric.getUsers().catch(err => {
+                io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+            })
+            //Employee ID, Name, Card Num
+            const { id, name, card } = req.body
+            io.emit('status-update', { status: "Adding user..." });
+            await biometric.addUser(users.data, id, name, card)
+        } else {
+            //Employee ID, Name, Card Num
+            const { id, name, card } = req.body
+            io.emit('status-update', { status: "Adding user..." });
+            await biometric.addUser({data: users}, id, name, card)
+        }
 
         await biometric.disconnect()
         io.emit('status-update', { status: 'Disconnected!' });
@@ -112,7 +129,7 @@ app.post('/api/addUser', async (req, res) => {
         res.json({ result: "User Added!" })
     } catch (err) {
         console.error('Error fetching data:', err);
-        res.status(500).json({ error: 'Failed to fetch data' });
+        res.status(500).json({ result: 'Failed to fetch data' });
     }
 })
 
@@ -135,7 +152,7 @@ app.post('/api/deleteUser', async (req, res) => {
         res.json({ result: "User Deleted!" })
     } catch (err) {
         console.error('Error fetching data:', err);
-        res.status(500).json({ error: 'Failed to fetch data' });
+        res.status(500).json({ result: 'Failed to fetch data' });
     }
 })
 
@@ -148,36 +165,37 @@ app.post('/api/updateUserbase', async (req, res) => {
         io.emit('status-update', { status: 'Connected!' })
 
         // get device users and make backup
-        io.emit('status-update', { status: 'Getting users...'})
+        io.emit('status-update', { status: 'Getting users for backup...'})
         const users = await biometric.getUsers().catch(err => {
             io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
         })
-        biometric.toJSON(users.data, "userBackup " + new Date())
+        biometric.toJSON(users.data, "userBackup " + new Date() + ".json")
 
         //delete everything on device (3000 is the user limit)
-        for (let i = 1; i <= 3000; i++) {
-            io.emit('status-update', { status: "Deleting uid: " + i});
-           //await biometric.deleteUser(i)
+        for (const user of users.data) {
+           await biometric.deleteUser(user.uid)
+           io.emit('status-update', { status: "Deleted uid: " + user.uid});
         }
 
         //add everything from filename
         io.emit('status-update', { status: "Uploading " + filename + "..."})
         const newFile = await fs.promises.readFile(filename, 'utf-8')
         const newFileJson = JSON.parse(newFile)
-        newFileJson.forEach(async user => {
+        
+        for(const user of newFileJson) {
             const id = user.userId
             const name = user.name
             const card = user.cardno
-            io.emit('status-update', { status: "Adding user: " + name });
-            await biometric.addUser(id, name, card)
-        })
 
+            await biometric.addUser(users.data, id, name, card)
+            io.emit('status-update', { status: "Added user: " + name });
+        }
         await biometric.disconnect()
         io.emit('status-update', { status: 'Disconnected!' });
         
     } catch (err) {
         console.error('Error fetching data:', err);
-        res.status(500).json({ error: 'Failed to fetch data' });
+        res.status(500).json({ result: 'Failed to fetch data' });
     }
 })
 
