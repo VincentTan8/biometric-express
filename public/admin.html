@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Biometrics</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/datatables.min.css">
+</head>
+
+<body class="body-bg-color">
+    <div class="container">
+        <h1>Biometrics System</h1>
+        <hr>
+        
+        <div class="flex" style="justify-content: space-between;">
+            <div>
+                <button onclick="getUsers()">Get Users</button>
+                <button onclick="getTransactions()">Get Transactions</button>
+            </div>
+            <div>
+                <label for="date">Enter Date:</label>
+                <input type="text" id="date" name="date" placeholder="MM-DD-YYYY">
+                <button onclick="exportLogs()">Export Logs</button>
+            </div>
+        </div>
+        <div id="status" class="text">Status: Idle</div>
+        <div class="flex" style="justify-content: flex-start;">
+            <div>
+                <button onclick="viewUsers()">View Users</button>
+                <button onclick="viewTransactions()">View Transactions</button>
+            </div>
+        </div>
+        <div id="result"></div>   
+
+        <table id="userTable" class="display hidden-table">
+            <thead>
+            <tr>
+                <th>Device User ID</th>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Card Number</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="logsTable" class="display hidden-table">
+            <thead>
+            <tr>
+                <th>Device User ID</th>
+                <th>Username/UserSn</th>
+                <th>Timestamp</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Add/Remove Users</h2>
+        <div class="flex">
+            <div class="window">
+                <div class="row">
+                    <label for="id">Enter ID:</label>
+                    <input type="text" id="id" name="id" placeholder="Employee ID here">
+                </div>
+                <div class="row">
+                    <label for="name">Enter Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Employee Name here">
+                </div>
+                <div class="row">
+                    <label for="card">Enter Card Number:</label>
+                    <input type="text" id="card" name="card" placeholder="Employee Card here">
+                </div>
+                <button onclick="addUser()">Add</button>
+            </div>
+
+            <div class="window">
+                <div class="row">
+                    <label for="deviceID">Enter Device ID:</label>
+                    <input type="text" id="deviceID" name="deviceID" placeholder="Employee Device ID here">
+                </div>
+                <button onclick="deleteUser()">Remove</button>
+            </div>    
+        </div>
+    </div>
+
+
+    <!-- Include Socket.IO client-side script -->
+    <script src="js/jquery-3.7.1.js"></script>
+    <script src="js/datatables.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script> 
+    <script src="js/main.js"></script>
+</body>
+
+</html>

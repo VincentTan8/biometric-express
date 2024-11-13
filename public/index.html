@@ -25,7 +25,7 @@
 
 <body class="body-bg-color">
     <div class="container">
-        <h1>Phihope Biometrics</h1>
+        <h1>Biometrics System</h1>
         <hr>
         <div class="flex userbase">
             <div>
@@ -33,96 +33,10 @@
                 <input type="text" id="userFile" name="userFile" placeholder="sampleDB.json">
             </div>
             <div>
-                <button onclick="refreshUserbase()">Overwrite Userbase To Biometric Device</button>
-            </div>
+                <button onclick="updateUserbase()">Update Userbase</button>
+            </div> 
         </div>
         <hr>
-        <div class="flex" style="justify-content: space-between;">
-            <div>
-                <button onclick="viewUsers()">View Users</button>
-                <button onclick="viewTransactions()">View Transactions</button>
-            </div>
-            <div>
-                <label for="date">Enter Date:</label>
-                <input type="text" id="date" name="date" placeholder="MM-DD-YYYY">
-                <button onclick="exportLogs()">Export Logs</button>
-            </div>
-        </div>
-        <div id="status" class="text">Status: Idle</div>
-        <div class="flex" style="justify-content: flex-start;">
-            <div>
-                <button onclick="getUsers()">Get Users</button>
-                <button onclick="getTransactions()">Get Transactions</button>
-            </div>
-        </div>
-        <div id="result"></div>   
-
-        <table id="userTable" class="display hidden-table">
-            <thead>
-            <tr>
-                <th>Device User ID</th>
-                <th>Employee ID</th>
-                <th>Name</th>
-                <th>Card Number</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-        <table id="logsTable" class="display hidden-table">
-            <thead>
-            <tr>
-                <th>Device User ID</th>
-                <th>Username/UserSn</th>
-                <th>Timestamp</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2>Add/Remove Users</h2>
-        <div class="flex">
-            <div class="window">
-                <div class="row">
-                    <label for="id">Enter ID:</label>
-                    <input type="text" id="id" name="id" placeholder="Employee ID here">
-                </div>
-                <div class="row">
-                    <label for="name">Enter Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Employee Name here">
-                </div>
-                <div class="row">
-                    <label for="card">Enter Card Number:</label>
-                    <input type="text" id="card" name="card" placeholder="Employee Card here">
-                </div>
-                <button onclick="addUser()">Add</button>
-            </div>
-
-            <div class="window">
-                <div class="row">
-                    <label for="deviceID">Enter Device ID:</label>
-                    <input type="text" id="deviceID" name="deviceID" placeholder="Employee Device ID here">
-                </div>
-                <button onclick="deleteUser()">Remove</button>
-            </div>    
-        </div>
     </div>
 
 
