@@ -165,8 +165,10 @@ app.post('/api/updateUserbase', async (req, res) => {
 
         //delete everything on device (3000 is the user limit)
         for (const user of users.data) {
-           await biometric.deleteUser(user.uid)
-           io.emit('status-update', { status: "Deleted uid: " + user.uid});
+            if(user.uid != 1) {
+                await biometric.deleteUser(user.uid)
+                io.emit('status-update', { status: "Deleted uid: " + user.uid});
+            }
         }
 
         //add everything from filename
@@ -174,8 +176,8 @@ app.post('/api/updateUserbase', async (req, res) => {
         const newFile = await fs.promises.readFile(filename, 'utf-8')
         const newFileJson = JSON.parse(newFile)
         
-        //since we are updating from scratch
-        users = { data: [] }
+        //since we are updating from scratch except the admin user
+        users = { data: [{"uid": 1}] }
         for(const user of newFileJson) {
             const id = user.userId
             const name = user.name
