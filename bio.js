@@ -79,14 +79,13 @@ class Bio {
         return users
     }
 
-    async addUser(userID, username, cardnum) {
+    async addUser(users, userID, username, cardnum) {
         //generate uid (valid uids are from 1 to 3000)
-        const users = await this.getUsers()
         let i = 0;
         let notValid = true
         while (i < 3000 && notValid) {
             i++;
-            notValid = users.data.some(user => {
+            notValid = users.some(user => {
                 return i == user.uid
             })
         }
