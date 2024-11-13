@@ -500,7 +500,7 @@ class ZKLibTCP {
 
         // Wait for a short period before retrying
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        console.log("Retrying getInfo...")
         if (retries === 0) {
           return { userCounts: 0, logCounts: 0, logCapacity: 0 };
         }
