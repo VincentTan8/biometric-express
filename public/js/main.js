@@ -117,7 +117,6 @@ async function refreshUserbase() {
         document.getElementById('status').textContent = result.result;
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to send data.';
     }
 }
 
