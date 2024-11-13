@@ -116,12 +116,9 @@ app.post('/api/addUser', async (req, res) => {
         const { id, name, card } = req.body
         io.emit('status-update', { status: "Adding user..." });
         await biometric.addUser(users.data, id, name, card)
-
+        io.emit('status-update', { status: "Added " + name });
         await biometric.disconnect()
         io.emit('status-update', { status: 'Disconnected!' });
-
-        res.setHeader('Content-Type', 'application/json');
-        res.json({ result: "User Added!" })
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ result: 'Failed to fetch data' });
@@ -139,12 +136,9 @@ app.post('/api/deleteUser', async (req, res) => {
         const { deviceID } = req.body
         io.emit('status-update', { status: "Deleting user..." });
         await biometric.deleteUser(deviceID)
-
+        io.emit('status-update', { status: "Deleted uid: " + deviceID});
         await biometric.disconnect()
         io.emit('status-update', { status: 'Disconnected!' });
-
-        res.setHeader('Content-Type', 'application/json');
-        res.json({ result: "User Deleted!" })
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ result: 'Failed to fetch data' });
