@@ -50,23 +50,22 @@ app.get('/api/users', async (req, res) => {
         const info = await biometric.connect()
         io.emit('status-update', { status: 'Connected!' })
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
+        
+        let users = { data: [] }
         if(info.userCounts > 0) {
             io.emit('status-update', { status: 'Getting users...'})
-            const users = await biometric.getUsers().catch(err => {
+            users = await biometric.getUsers().catch(err => {
                 io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
             })
             io.emit('status-update', { status: 'Done!'})
-            await biometric.disconnect()
-
-            biometric.toJSON(users.data, usersFileName)
-            const jsonData = JSON.stringify(users.data, null, 2)
-
-            res.setHeader('Content-Type', 'application/json');
-            res.json({ result: jsonData })
-        } else {
-            await biometric.disconnect()
-            res.json({result: [] })
         }
+        await biometric.disconnect()
+
+        biometric.toJSON(users.data, usersFileName)
+        const jsonData = JSON.stringify(users.data, null, 2)
+
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ result: jsonData })
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Failed to fetch data' });
@@ -106,21 +105,17 @@ app.post('/api/addUser', async (req, res) => {
         io.emit('status-update', { status: 'Connected!' })
         io.emit('status-update', { status: 'User Count: ' + info.userCounts})
 
-        let users = {};
+        let users = { data: [] }
         if(info.userCounts > 0) {
             users = await biometric.getUsers().catch(err => {
                 io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
             })
-            //Employee ID, Name, Card Num
-            const { id, name, card } = req.body
-            io.emit('status-update', { status: "Adding user..." });
-            await biometric.addUser(users.data, id, name, card)
-        } else {
-            //Employee ID, Name, Card Num
-            const { id, name, card } = req.body
-            io.emit('status-update', { status: "Adding user..." });
-            await biometric.addUser({data: users}, id, name, card)
         }
+
+        //Employee ID, Name, Card Num
+        const { id, name, card } = req.body
+        io.emit('status-update', { status: "Adding user..." });
+        await biometric.addUser(users.data, id, name, card)
 
         await biometric.disconnect()
         io.emit('status-update', { status: 'Disconnected!' });
@@ -165,10 +160,13 @@ app.post('/api/updateUserbase', async (req, res) => {
         io.emit('status-update', { status: 'Connected!' })
 
         // get device users and make backup
-        io.emit('status-update', { status: 'Getting users for backup...'})
-        const users = await biometric.getUsers().catch(err => {
-            io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
-        })
+        let users = { data: [] }
+        if(info.userCounts > 0) {
+            io.emit('status-update', { status: 'Getting users for backup...'})
+            users = await biometric.getUsers().catch(err => {
+                io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+            })
+        }
         biometric.toJSON(users.data, "userBackup " + new Date() + ".json")
 
         //delete everything on device (3000 is the user limit)
@@ -182,12 +180,15 @@ app.post('/api/updateUserbase', async (req, res) => {
         const newFile = await fs.promises.readFile(filename, 'utf-8')
         const newFileJson = JSON.parse(newFile)
         
+        //since we are updating from scratch
+        users = { data: [] }
         for(const user of newFileJson) {
             const id = user.userId
             const name = user.name
             const card = user.cardno
 
-            await biometric.addUser(users.data, id, name, card)
+            const newUID = await biometric.addUser(users.data, id, name, card)
+            users.data.push({"uid": newUID})
             io.emit('status-update', { status: "Added user: " + name });
         }
         await biometric.disconnect()
