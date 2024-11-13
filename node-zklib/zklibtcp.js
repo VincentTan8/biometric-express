@@ -28,6 +28,9 @@ class ZKLibTCP {
     return new Promise((resolve, reject) => {
       this.socket = new net.Socket()
 
+      // Set max listeners to avoid warnings
+      this.socket.setMaxListeners(100); // Adjust the number as needed
+
       this.socket.once('error', err => {
         reject(err)
         cbError && cbError(err)
@@ -113,6 +116,8 @@ class ZKLibTCP {
       let timer = null
       let replyBuffer = Buffer.from([])
       const internalCallback = (data) => {
+        if (!data) 
+          return reject(new Error('No data received from socket while requesting data'));
         this.socket.removeListener('data', handleOnData)
         timer && clearTimeout(timer)
         resolve(data)
@@ -228,9 +233,10 @@ class ZKLibTCP {
 
       try {
         reply = await this.requestData(buf)
-
+        if (!reply) 
+          return reject(new Error('No reply received from requestData()'));
       } catch (err) {
-        reject(err)
+        return reject(err)
       }
 
       const header = decodeTCPHeader(reply.subarray(0, 16))
@@ -474,17 +480,31 @@ class ZKLibTCP {
     return await this.closeSocket()
   }
 
-  async getInfo() {
-    try {
-      const data = await this.executeCmd(COMMANDS.CMD_GET_FREE_SIZES, '')
+  async getInfo(retries = 10) {
+    while (retries > 0) {
+      try {
+        const data = await this.executeCmd(COMMANDS.CMD_GET_FREE_SIZES, '');
 
-      return {
-        userCounts: data.readUIntLE(24, 4),
-        logCounts: data.readUIntLE(40, 4),
-        logCapacity: data.readUIntLE(72, 4)
+        if (data.length < 76) {
+          throw new Error(`Unexpected response length: ${data.length} bytes`);
+        }
+
+        return {
+          userCounts: data.readUIntLE(24, 4),
+          logCounts: data.readUIntLE(40, 4),
+          logCapacity: data.readUIntLE(72, 4),
+        };
+      } catch (err) {
+        console.error('Error in getInfo:', err);
+        retries--;
+
+        // Wait for a short period before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (retries === 0) {
+          return { userCounts: 0, logCounts: 0, logCapacity: 0 };
+        }
       }
-    } catch (err) {
-      return Promise.reject(err)
     }
   }
 
