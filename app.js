@@ -148,6 +148,11 @@ app.post('/api/deleteUser', async (req, res) => {
 app.post('/api/updateUserbase', async (req, res) => {
     try {
         const { filename } = req.body
+
+        //get file
+        io.emit('status-update', { status: "Uploading " + filename + "..."})
+        const newFile = await fs.promises.readFile(filename, 'utf-8')
+        const newFileJson = JSON.parse(newFile)
         
         io.emit('status-update', { status: 'Connecting...' })
         const info = await biometric.connect()
@@ -170,11 +175,6 @@ app.post('/api/updateUserbase', async (req, res) => {
                 io.emit('status-update', { status: "Deleted uid: " + user.uid});
             }
         }
-
-        //add everything from filename
-        io.emit('status-update', { status: "Uploading " + filename + "..."})
-        const newFile = await fs.promises.readFile(filename, 'utf-8')
-        const newFileJson = JSON.parse(newFile)
         
         //since we are updating from scratch except the admin user
         users = { data: [{"uid": 1}] }
@@ -195,23 +195,6 @@ app.post('/api/updateUserbase', async (req, res) => {
         res.status(500).json({ result: 'Failed to fetch data' });
     }
 })
-
-// app.get('/start-task', (req, res) => {
-//     // Send an initial response immediately
-//     res.send('Task started, check for updates.');
-
-//     // Notify the client about progress updates
-//     let progress = 0;
-
-//     const interval = setInterval(() => {
-//         progress += 10;
-//         io.emit('status-update', { progress, status: 'Processing...' });
-//         if (progress >= 100) {
-//         clearInterval(interval);
-//         io.emit('status-update', { progress: 100, status: 'Completed' });
-//         }
-//     }, 1000);  // Simulating a long task with a 1-second delay between updates
-// });
 
 // Start the server
 server.listen(PORT, () => {
