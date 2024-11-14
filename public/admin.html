@@ -43,16 +43,18 @@
                 <button onclick="getTransactions()">Get Transactions</button>
             </div>
             <div>
-                <label for="date">Enter Date:</label>
-                <input type="text" id="date" name="date" placeholder="MM-DD-YYYY">
+                <label for="startDate">Enter Start Date:</label>
+                <input type="date" id="startDate" name="startDate" placeholder="MM-DD-YYYY">
+                <label for="endDate">Enter End Date:</label>
+                <input type="date" id="endDate" name="endDate" placeholder="MM-DD-YYYY">
                 <button onclick="exportLogs()">Export Logs</button>
             </div>
         </div>
         <div id="status" class="text">Status: Idle</div>
         <div class="flex" style="justify-content: flex-start;">
             <div>
-                <button onclick="viewUsers()">View Users</button>
-                <button onclick="viewTransactions()">View Transactions</button>
+                <button onclick="viewUsers()">View All Users</button>
+                <button onclick="viewTransactions()">View All Transactions</button>
             </div>
         </div>
         <div id="result"></div>   

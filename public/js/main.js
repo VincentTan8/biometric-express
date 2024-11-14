@@ -155,10 +155,6 @@ async function viewTransactions() {
 
 //convert logs into readable format and filter if needed
 async function exportLogs() {
-    const input = document.getElementById('date').value;
-    const date = new Date(input.toString())
-    console.log(date)
-
     const users = await readUsers()
     const logs = await readTransactions()
     const userJson = JSON.parse(users.result)
@@ -182,8 +178,16 @@ async function exportLogs() {
     
     // //get first and last log of each user
     let allFAL = []
-    let startDate = new Date("10/24/2000") // MM/DD/YYYY 00:00:00
+    let startDate = new Date() // MM/DD/YYYY 08:00:00
     let endDate = new Date() // MM/DD/YYYY day before endDate will be taken if set
+    
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value
+    if (start.length != 0) 
+        startDate = new Date(start + "T00:00:00")
+    if(end.length != 0) 
+        endDate = new Date(end + "T23:59:59")
+
     allIDs.forEach(id => {
         const userLogs = allLogs.filter(log => log.deviceUserId === id)
         const firstAndLast = getFirstAndLastLogPerDay(userLogs, startDate, endDate)
