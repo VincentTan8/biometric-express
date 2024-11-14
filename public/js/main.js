@@ -98,7 +98,10 @@ async function deleteUser() {
 }
 
 async function updateUserbase() {
-    const filename = document.getElementById('updateFile').value;
+    let filename = document.getElementById('updateFile').value;
+    if(!filename) {
+        filename = "update.json"
+    }
 
     // Prepare data to send
     const data = { filename }
@@ -114,7 +117,7 @@ async function updateUserbase() {
 
         // Handle the response
         const result = await response.json();
-        document.getElementById('status').textContent = result.result;
+        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result));
     } catch (error) {
         console.error('Error:', error);
     }
