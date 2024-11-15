@@ -26,9 +26,12 @@
 
 <body class="body-bg-color">
     <div class="container">
-        <h1>Biometrics System</h1>
+        <div class="flex" style="justify-content: space-between;">
+            <h1>Biometrics System</h1>
+            <a href="index.html"><button>Home</button></a>
+        </div>   
         <hr>
-        <div class="flex userbase">
+        <!-- <div class="flex userbase">
             <div>
                 <label for="userFile">Enter Filename:</label>
                 <input type="text" id="userFile" name="userFile" placeholder="sampleDB.json">
@@ -37,7 +40,7 @@
                 <button onclick="replaceUserbase()">Overwrite Userbase To Biometric Device</button>
             </div>
         </div>
-        <hr>
+        <hr> -->
         <div class="flex" style="justify-content: space-between;">
             <div>
                 <button onclick="getUsers()">Get Users</button>
@@ -104,7 +107,7 @@
         <div class="flex">
             <div class="window">
                 <div class="row">
-                    <label for="id">Enter ID:</label>
+                    <label for="id">Enter ID (required):</label>
                     <input type="text" id="id" name="id" placeholder="Employee ID here">
                 </div>
                 <div class="row">
@@ -114,6 +117,21 @@
                 <div class="row">
                     <label for="card">Enter Card Number:</label>
                     <input type="text" id="card" name="card" placeholder="Employee Card here">
+                </div>
+                <div class="row">
+                    <label for="password">Enter Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Password here">
+                </div>
+                <div class="row">
+                    <label for="password2">Reenter Password:</label>
+                    <input type="password" id="password2" name="password2" placeholder="Reenter password">
+                </div>
+                <div class="row">
+                    <label for="role">Enter Role:</label>
+                    <select id="role" class="styled-select">
+                        <option value="normal">Normal User</option>
+                        <option value="admin">Super Admin</option>
+                    </select>
                 </div>
                 <button onclick="addUser()">Add</button>
             </div>

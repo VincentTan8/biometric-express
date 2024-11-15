@@ -50,55 +50,67 @@ async function addUser() {
     const id = document.getElementById('id').value;
     const name = document.getElementById('name').value;
     const card = document.getElementById('card').value;
+    const password = document.getElementById('password').value;
+    const password2 = document.getElementById('password2').value;
+    const role = document.getElementById('role').value;
 
-    // Prepare data to send
-    const data = { id, name, card }
-    try {
-        // Send POST request using fetch
-        const response = await fetch('/api/addUser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+    if(id && (password === password2)) {
+        // Prepare data to send
+        const data = { id, name, card , password, role}
+        try {
+            // Send POST request using fetch
+            const response = await fetch('/api/addUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-        // Handle the response
-        const result = await response.json();
-        document.getElementById('status').textContent = result.result;
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to add user.';
-    }
+            // Handle the response
+            const result = await response.json();
+            document.getElementById('status').textContent = result.result;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('status').textContent = 'Failed to add user.';
+        }
+    } else 
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'));
 }
 //delete user from biometric device
 async function deleteUser() {
     // Get input values
     const deviceID = document.getElementById('deviceID').value;
+    
+    if(deviceID) {
+        // Prepare data to send
+        const data = { deviceID }
+        try {
+            // Send POST request using fetch
+            const response = await fetch('/api/deleteUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-    // Prepare data to send
-    const data = { deviceID }
-    try {
-        // Send POST request using fetch
-        const response = await fetch('/api/deleteUser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        // Handle the response
-        const result = await response.json();
-        document.getElementById('status').textContent = result.result;
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to delete user.';
-    }
+            // Handle the response
+            const result = await response.json();
+            document.getElementById('status').textContent = result.result;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('status').textContent = 'Failed to delete user.';
+        }
+    } else
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID field empty'));
 }
 
 async function updateUserbase() {
-    const filename = document.getElementById('updateFile').value;
+    let filename = document.getElementById('updateFile').value;
+    if(!filename) {
+        filename = "update.json"
+    }
 
     // Prepare data to send
     const data = { filename }
@@ -114,7 +126,7 @@ async function updateUserbase() {
 
         // Handle the response
         const result = await response.json();
-        document.getElementById('status').textContent = result.result;
+        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result));
     } catch (error) {
         console.error('Error:', error);
     }

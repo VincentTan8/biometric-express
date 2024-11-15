@@ -79,7 +79,7 @@ class Bio {
         return users
     }
 
-    async addUser(users, userID, username, cardnum) {
+    async addUser(users, userID, username, password, role, cardnum) {
         //generate uid (valid uids are from 1 to 3000)
         let i = 0;
         let notValid = true
@@ -92,13 +92,24 @@ class Bio {
         const uid = i
 
         //uid, userID, username, password, role, cardnum
-        await this.zkInstance.setUser(uid, userID, username, '', 0, cardnum)
-        console.log('Added User: ' + uid + " " + username)
+        //password default is '' while role default is 0. Role for admin is 14
+        switch (role) {
+            case "normal":
+                role = 0;
+                break;
+            case "admin":
+                role = 14;
+                break;
+            default:
+                role = 0;
+        }
+        await this.zkInstance.setUser(uid, userID, username, password, role, cardnum)
+        console.log('Added User UID: ' + uid + " " + username)
         //return the newly added user uid for reference
         return uid
     }
 
-    async editUser(uid, userID, username, cardnum) {
+    async editUser(uid, userID, username, password, role, cardnum) {
         //check if user exists
         const users = await this.getUsers()
 
@@ -108,7 +119,7 @@ class Bio {
         if(editedUser.length == 1){
             console.log('User Found')
             //set user by overwriting data
-            await this.zkInstance.setUser(uid, userID, username, '', 0, cardnum)
+            await this.zkInstance.setUser(uid, userID, username, password, role, cardnum)
             console.log('Edited User: ' + username)
         } else {
             console.log('User Not Found')

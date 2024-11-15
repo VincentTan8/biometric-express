@@ -12,14 +12,14 @@ const Bio = require('./bio')
 const fs = require('fs')
 
 // User defined 
-// const biometric = new Bio('171.16.114.76', 4370, 10000, 4000) //earthhouse
-const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
-// const logsFileName = 'testLogs.json'
-// const usersFileName = 'testUsers.json'
+const biometric = new Bio('171.16.114.76', 4370, 10000, 4000) //earthhouse
+//const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
+const logsFileName = 'testLogs.json'
+const usersFileName = 'testUsers.json'
 
 // const biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
-const logsFileName = 'phihopeLogs.json'
-const usersFileName = 'phihopeUsers.json'
+// const logsFileName = 'phihopeLogs.json'
+// const usersFileName = 'phihopeUsers.json'
 
 //Middleware
 app.use(express.json())
@@ -129,9 +129,9 @@ app.post('/api/addUser', async (req, res) => {
             }
 
             //Employee ID, Name, Card Num
-            const { id, name, card } = req.body
+            const { id, name, card, password, role } = req.body
             io.emit('status-update', { status: "Adding user..." });
-            await biometric.addUser(users.data, id, name, card)
+            await biometric.addUser(users.data, id, name, password, role, card)
             io.emit('status-update', { status: "Added " + name });
             await biometric.disconnect()
             io.emit('status-update', { status: 'Disconnected!' });
@@ -217,21 +217,23 @@ app.post('/api/updateUserbase', async (req, res) => {
             for(const userAdd of toAdd) {
                 const id = userAdd.userId
                 const name = userAdd.name
+                const password = userAdd.password
+                const role = userAdd.role
                 const card = userAdd.cardno
 
-                const newUID = await biometric.addUser(users.data, id, name, card)
+                const newUID = await biometric.addUser(users.data, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('status-update', { status: "Added user: " + name });
             }
 
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' });
+            io.emit('status-update', { status: 'Update Finished' });
         } else {
             io.emit('status-update', { status: 'Failed to update userbase' })
         }
     } catch (err) {
         console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to update' });
+        res.status(500).json({ result: 'Failed to update\n' + err});
     }
 })
 
@@ -272,9 +274,11 @@ app.post('/api/replaceUserbase', async (req, res) => {
             for(const user of newFileJson) {
                 const id = user.userId
                 const name = user.name
+                const password = userAdd.password
+                const role = userAdd.role
                 const card = user.cardno
 
-                const newUID = await biometric.addUser(users.data, id, name, card)
+                const newUID = await biometric.addUser(users.data, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('status-update', { status: "Added user: " + name });
             }

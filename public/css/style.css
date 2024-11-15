@@ -61,7 +61,7 @@ hr {
 }
 
 .window {
-    width: 25%;
+    width: auto;
     display: flex;
     flex-direction: column;
     margin: 0.5rem;
@@ -71,6 +71,15 @@ hr {
     display: flex;
     justify-content: space-between;
     padding-bottom: 0.5rem;
+    gap: 1rem;
+}
+
+.styled-select {
+    appearance: none;
+    width: 40%;
+    text-align: center;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
 }
 
 button {
