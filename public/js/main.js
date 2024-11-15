@@ -50,51 +50,59 @@ async function addUser() {
     const id = document.getElementById('id').value;
     const name = document.getElementById('name').value;
     const card = document.getElementById('card').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
 
-    // Prepare data to send
-    const data = { id, name, card }
-    try {
-        // Send POST request using fetch
-        const response = await fetch('/api/addUser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+    if(id) {
+        // Prepare data to send
+        const data = { id, name, card , password, role}
+        try {
+            // Send POST request using fetch
+            const response = await fetch('/api/addUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-        // Handle the response
-        const result = await response.json();
-        document.getElementById('status').textContent = result.result;
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to add user.';
-    }
+            // Handle the response
+            const result = await response.json();
+            document.getElementById('status').textContent = result.result;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('status').textContent = 'Failed to add user.';
+        }
+    } else 
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty'));
 }
 //delete user from biometric device
 async function deleteUser() {
     // Get input values
     const deviceID = document.getElementById('deviceID').value;
+    
+    if(deviceID) {
+        // Prepare data to send
+        const data = { deviceID }
+        try {
+            // Send POST request using fetch
+            const response = await fetch('/api/deleteUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-    // Prepare data to send
-    const data = { deviceID }
-    try {
-        // Send POST request using fetch
-        const response = await fetch('/api/deleteUser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        // Handle the response
-        const result = await response.json();
-        document.getElementById('status').textContent = result.result;
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('status').textContent = 'Failed to delete user.';
-    }
+            // Handle the response
+            const result = await response.json();
+            document.getElementById('status').textContent = result.result;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('status').textContent = 'Failed to delete user.';
+        }
+    } else
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID field empty'));
 }
 
 async function updateUserbase() {
