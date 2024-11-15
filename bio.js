@@ -93,6 +93,16 @@ class Bio {
 
         //uid, userID, username, password, role, cardnum
         //password default is '' while role default is 0. Role for admin is 14
+        switch (role) {
+            case "normal":
+                role = 0;
+                break;
+            case "admin":
+                role = 14;
+                break;
+            default:
+                role = 0;
+        }
         await this.zkInstance.setUser(uid, userID, username, password, role, cardnum)
         console.log('Added User UID: ' + uid + " " + username)
         //return the newly added user uid for reference
