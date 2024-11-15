@@ -12,14 +12,14 @@ const Bio = require('./bio')
 const fs = require('fs')
 
 // User defined 
-// const biometric = new Bio('171.16.114.76', 4370, 10000, 4000) //earthhouse
-const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
-// const logsFileName = 'testLogs.json'
-// const usersFileName = 'testUsers.json'
+const biometric = new Bio('171.16.114.76', 4370, 10000, 4000) //earthhouse
+//const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
+const logsFileName = 'testLogs.json'
+const usersFileName = 'testUsers.json'
 
 // const biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
-const logsFileName = 'phihopeLogs.json'
-const usersFileName = 'phihopeUsers.json'
+// const logsFileName = 'phihopeLogs.json'
+// const usersFileName = 'phihopeUsers.json'
 
 //Middleware
 app.use(express.json())
