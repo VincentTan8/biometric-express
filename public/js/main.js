@@ -51,9 +51,10 @@ async function addUser() {
     const name = document.getElementById('name').value;
     const card = document.getElementById('card').value;
     const password = document.getElementById('password').value;
+    const password2 = document.getElementById('password2').value;
     const role = document.getElementById('role').value;
 
-    if(id) {
+    if(id && (password === password2)) {
         // Prepare data to send
         const data = { id, name, card , password, role}
         try {
@@ -74,7 +75,7 @@ async function addUser() {
             document.getElementById('status').textContent = 'Failed to add user.';
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty'));
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'));
 }
 //delete user from biometric device
 async function deleteUser() {
