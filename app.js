@@ -21,6 +21,9 @@ const usersFileName = 'testUsers.json'
 // const logsFileName = 'phihopeLogs.json'
 // const usersFileName = 'phihopeUsers.json'
 
+//Wetalk
+// const biometric = new Bio('171.16.113.238', 4370, 10000, 4000)
+
 //Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -227,7 +230,8 @@ app.post('/api/updateUserbase', async (req, res) => {
             }
 
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Update Finished' });
+            res.json({ result: 'Update Finished!' })
+            io.emit('status-update', { status: 'You may now close this tab' })
         } else {
             io.emit('status-update', { status: 'Failed to update userbase' })
         }
@@ -283,7 +287,8 @@ app.post('/api/replaceUserbase', async (req, res) => {
                 io.emit('status-update', { status: "Added user: " + name });
             }
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' });
+            res.json({ result: 'Overwrite Complete!' })
+            io.emit('status-update', { status: 'You may now close this tab' })
         } else {
             io.emit('status-update', { status: 'Failed to replace userbase' })
         }
