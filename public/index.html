@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Biometrics</title>
+    <title>Biometrics Logs</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -42,6 +42,18 @@
         </div>
         <hr>
     </div>
+    <!-- Modal for confirmation -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Userbase Update</h2>
+            <p>Finished! Press OK to quit this tab</p>
+            <div class="flex" style="justify-content: center; gap: 1rem;">
+                <button onclick="closeTab()" style="width: 45%">OK</button>
+                <button onclick="closeModal()" style="width: 45%">Cancel</button>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Include Socket.IO client-side script -->
@@ -49,10 +61,12 @@
     <script src="js/datatables.min.js"></script>
     <script src="/socket.io/socket.io.js"></script> 
     <script src="js/main.js"></script>
+    <script src="js/modal.js"></script>
 
     <script>
         //uncomment for instant run
-        //updateUserbase()
+        // updateUserbase()
+        openModal()
     </script>
 </body>
 

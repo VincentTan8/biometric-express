@@ -1,58 +1,61 @@
+//select biometric device
+
+
 // read user json file
 async function readUsers() {
     try {
-        const response = await fetch('/api/readUsers'); 
-        const data = await response.json();        // Parse JSON response
+        const response = await fetch('/api/readUsers') 
+        const data = await response.json()        // Parse JSON response
 
         return data
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data';
-        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Error loading data'
+        console.error('Error:', error)
     }
 }
 // read logs json file
 async function readTransactions() {
     try {
-        const response = await fetch('/api/readTransactions'); 
-        const data = await response.json();        // Parse JSON response
+        const response = await fetch('/api/readTransactions')
+        const data = await response.json()        // Parse JSON response
 
         return data
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data';
-        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Error loading data'
+        console.error('Error:', error)
     }
 }
 //get users from biometric device
 async function getUsers() {
     try {
-        const response = await fetch('/api/users'); // Send request to the server
-        const data = await response.json();        // Parse JSON response
+        const response = await fetch('/api/users') // Send request to the server
+        const data = await response.json()        // Parse JSON response
 
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data';
-        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Error loading data'
+        console.error('Error:', error)
     }
 }
 //get logs from biometric device
 async function getTransactions() {
     try {
-        const response = await fetch('/api/transactions'); 
-        const data = await response.json();        
+        const response = await fetch('/api/transactions') 
+        const data = await response.json()       
 
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data';
-        console.error('Error:', error);
+        document.getElementById('status').textContent = 'Error loading data'
+        console.error('Error:', error)
     }
 }
 //add user to the biometric device
 async function addUser() {
     // Get input values
-    const id = document.getElementById('id').value;
-    const name = document.getElementById('name').value;
-    const card = document.getElementById('card').value;
-    const password = document.getElementById('password').value;
-    const password2 = document.getElementById('password2').value;
-    const role = document.getElementById('role').value;
+    const id = document.getElementById('id').value
+    const name = document.getElementById('name').value
+    const card = document.getElementById('card').value
+    const password = document.getElementById('password').value
+    const password2 = document.getElementById('password2').value
+    const role = document.getElementById('role').value
 
     if(id && (password === password2)) {
         // Prepare data to send
@@ -65,22 +68,22 @@ async function addUser() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            });
+            })
 
             // Handle the response
-            const result = await response.json();
-            document.getElementById('status').textContent = result.result;
+            const result = await response.json()
+            document.getElementById('status').textContent = result.result
         } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('status').textContent = 'Failed to add user.';
+            console.error('Error:', error)
+            document.getElementById('status').textContent = 'Failed to add user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'));
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'))
 }
 //delete user from biometric device
 async function deleteUser() {
     // Get input values
-    const deviceID = document.getElementById('deviceID').value;
+    const deviceID = document.getElementById('deviceID').value
     
     if(deviceID) {
         // Prepare data to send
@@ -93,21 +96,21 @@ async function deleteUser() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            });
+            })
 
             // Handle the response
-            const result = await response.json();
-            document.getElementById('status').textContent = result.result;
+            const result = await response.json()
+            document.getElementById('status').textContent = result.result
         } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('status').textContent = 'Failed to delete user.';
+            console.error('Error:', error)
+            document.getElementById('status').textContent = 'Failed to delete user.'
         }
     } else
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID field empty'));
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID field empty'))
 }
 
 async function updateUserbase() {
-    let filename = document.getElementById('updateFile').value;
+    let filename = document.getElementById('updateFile').value
     if(!filename) {
         filename = "update.json"
     }
@@ -122,18 +125,18 @@ async function updateUserbase() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        });
+        })
 
         // Handle the response
-        const result = await response.json();
-        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result));
+        const result = await response.json()
+        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error)
     }
 }
 
 async function replaceUserbase() {
-    const filename = document.getElementById('userFile').value;
+    const filename = document.getElementById('userFile').value
     
     // Prepare data to send
     const data = { filename }
@@ -145,13 +148,13 @@ async function replaceUserbase() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        });
+        })
 
         // Handle the response
-        const result = await response.json();
-        document.getElementById('status').textContent = result.result;
+        const result = await response.json()
+        document.getElementById('status').textContent = result.result
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error)
     }
 }
 
@@ -193,7 +196,7 @@ async function exportLogs() {
     let startDate = new Date() // MM/DD/YYYY 08:00:00
     let endDate = new Date() // MM/DD/YYYY day before endDate will be taken if set
     
-    const start = document.getElementById('startDate').value;
+    const start = document.getElementById('startDate').value
     const end = document.getElementById('endDate').value
     if (start.length != 0) 
         startDate = new Date(start + "T00:00:00")
@@ -293,16 +296,16 @@ function formatDateWithoutGMT(date) {
 // throw to datatables
 async function refreshUserTable(data) {
     if ($.fn.DataTable.isDataTable('#userTable')) {
-        $('#userTable').DataTable().clear().destroy();
-        $('#userTable').addClass('hidden-table');
+        $('#userTable').DataTable().clear().destroy()
+        $('#userTable').addClass('hidden-table')
     }
     if ($.fn.DataTable.isDataTable('#logsTable')) {
-        $('#logsTable').DataTable().clear().destroy();
-        $('#logsTable').addClass('hidden-table');
+        $('#logsTable').DataTable().clear().destroy()
+        $('#logsTable').addClass('hidden-table')
     }
     
     // Initialize DataTable
-    $('#userTable').removeClass('hidden-table');
+    $('#userTable').removeClass('hidden-table')
     $('#userTable').DataTable({
         data: data,
         columns: [
@@ -319,16 +322,16 @@ async function refreshUserTable(data) {
 
 async function refreshLogsTable(data, raw) {
     if ($.fn.DataTable.isDataTable('#logsTable')) {
-        $('#logsTable').DataTable().clear().destroy();
-        $('#logsTable').addClass('hidden-table');
+        $('#logsTable').DataTable().clear().destroy()
+        $('#logsTable').addClass('hidden-table')
     }
     if ($.fn.DataTable.isDataTable('#userTable')) {
-        $('#userTable').DataTable().clear().destroy();
-        $('#userTable').addClass('hidden-table');
+        $('#userTable').DataTable().clear().destroy()
+        $('#userTable').addClass('hidden-table')
     }
     if(raw) {
         // Initialize DataTable
-        $('#logsTable').removeClass('hidden-table');
+        $('#logsTable').removeClass('hidden-table')
         const logsTable = $('#logsTable').DataTable({
             data: data, 
             columns: [
@@ -346,14 +349,14 @@ async function refreshLogsTable(data, raw) {
             }
         })
         $('div.dt-search input[type="search"]').on('keyup', function() {
-            const searchValue = this.value;
+            const searchValue = this.value
             // Convert space-separated terms to a regex pattern for OR search
-            const regexPattern = searchValue.split(' ').join('|');
-            logsTable.search(regexPattern, true, false).draw();
-        });
+            const regexPattern = searchValue.split(' ').join('|')
+            logsTable.search(regexPattern, true, false).draw()
+        })
     } else {
         // Initialize DataTable
-        $('#logsTable').removeClass('hidden-table');
+        $('#logsTable').removeClass('hidden-table')
         const logsTable = $('#logsTable').DataTable({
             data: data, 
             columns: [
@@ -371,21 +374,23 @@ async function refreshLogsTable(data, raw) {
             }
         })
         $('div.dt-search input[type="search"]').on('keyup', function() {
-            const searchValue = this.value;
+            const searchValue = this.value
+            // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
+            // \b<name>\b to avoid matching names like paul with johnpaul or paula
             // Convert space-separated terms to a regex pattern for OR search
-            const regexPattern = searchValue.split(' ').join('|');
-            logsTable.search(regexPattern, true, false).draw();
-        });
+            const regexPattern = searchValue.split(' ').join('|')
+            logsTable.search(regexPattern, true, false).draw()
+        })
     }
 }
 
-const socket = io();  // Connect to the Socket.IO server
+const socket = io()  // Connect to the Socket.IO server
 // Listen for 'status-update' event from the server
 socket.on('status-update', (data) => {
     var status = document.getElementById('status')
     var newStatus = document.createTextNode(`\nStatus: ${data.status}`)
     status.appendChild(newStatus)
-    status.scrollTop = status.scrollHeight;
+    status.scrollTop = status.scrollHeight
 })
 socket.on('result', (data) => {
     document.getElementById('result').textContent = data.result
