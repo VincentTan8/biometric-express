@@ -114,26 +114,25 @@ async function updateUserbase() {
     if(!filename) {
         filename = "update.json"
     }
-    alert('Update Finished')
-    document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Yippie!'))
-    // Prepare data to send
-    // const data = { filename }
-    // try {
-    //     // Send POST request using fetch
-    //     const response = await fetch('/api/updateUserbase', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(data)
-    //     })
 
-    //     // Handle the response
-    //     const result = await response.json()
-    //     document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
-    // } catch (error) {
-    //     console.error('Error:', error)
-    // }
+    // Prepare data to send
+    const data = { filename }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/updateUserbase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+    } catch (error) {
+        console.error('Error:', error)
+    }
 }
 
 async function replaceUserbase() {
@@ -376,52 +375,13 @@ async function refreshLogsTable(data, raw) {
         })
         $('div.dt-search input[type="search"]').on('keyup', function() {
             const searchValue = this.value
+            // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
+            // \b<name>\b to avoid matching names like paul with johnpaul or paula
             // Convert space-separated terms to a regex pattern for OR search
             const regexPattern = searchValue.split(' ').join('|')
             logsTable.search(regexPattern, true, false).draw()
         })
     }
-}
-
-// Get the modal element
-const modal = document.getElementById('update-modal')
-// Get the button that closes the modal
-const closeModalBtn = document.getElementById('closeModalBtn')
-// Get the <span> element that closes the modal
-const closeSpan = document.querySelector('.close')
-
-// Open modal when the button is clicked
-openModalBtn.addEventListener('click', () => {
-    modal.style.display = 'block'
-})
-
-// Close modal when the <span> (x) is clicked
-closeSpan.addEventListener('click', () => {
-    closeModal()
-})
-
-// Close modal when the "Close Modal" button is clicked
-closeModalBtn.addEventListener('click', () => {
-    closeModal()
-})
-
-// Close modal when clicking outside the modal content
-window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        closeModal()
-    }
-})
-
-// Close modal when pressing the "Escape" key
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        closeModal()
-    }
-})
-
-// Function to close the modal
-function closeModal() {
-    modal.style.display = 'none'
 }
 
 const socket = io()  // Connect to the Socket.IO server
