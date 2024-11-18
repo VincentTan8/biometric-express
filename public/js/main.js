@@ -329,7 +329,7 @@ async function refreshLogsTable(data, raw) {
     if(raw) {
         // Initialize DataTable
         $('#logsTable').removeClass('hidden-table');
-        $('#logsTable').DataTable({
+        const logsTable = $('#logsTable').DataTable({
             data: data, 
             columns: [
                 { data: 'deviceUserId', defaultContent: 'none set'},
@@ -338,12 +338,23 @@ async function refreshLogsTable(data, raw) {
             ],
             paging: false,
             searching: true,
-            ordering: true
+            ordering: true,
+            layout: {
+                topStart: {
+                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            }
         })
+        $('div.dt-search input[type="search"]').on('keyup', function() {
+            const searchValue = this.value;
+            // Convert space-separated terms to a regex pattern for OR search
+            const regexPattern = searchValue.split(' ').join('|');
+            logsTable.search(regexPattern, true, false).draw();
+        });
     } else {
         // Initialize DataTable
         $('#logsTable').removeClass('hidden-table');
-        $('#logsTable').DataTable({
+        const logsTable = $('#logsTable').DataTable({
             data: data, 
             columns: [
                 { data: 'deviceUserId', defaultContent: 'none set'},
@@ -352,8 +363,19 @@ async function refreshLogsTable(data, raw) {
             ],
             paging: false,
             searching: true,
-            ordering: true
+            ordering: true,
+            layout: {
+                topStart: {
+                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            }
         })
+        $('div.dt-search input[type="search"]').on('keyup', function() {
+            const searchValue = this.value;
+            // Convert space-separated terms to a regex pattern for OR search
+            const regexPattern = searchValue.split(' ').join('|');
+            logsTable.search(regexPattern, true, false).draw();
+        });
     }
 }
 
