@@ -64,9 +64,12 @@
     <script src="js/modal.js"></script>
 
     <script>
-        //uncomment for instant run
-        // updateUserbase()
-        openModal()
+        async function run() {
+            //wait for update to finish
+            await updateUserbase()
+            openModal()
+        }
+        run()
     </script>
 </body>
 
