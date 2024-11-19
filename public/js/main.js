@@ -81,10 +81,7 @@ async function addUser() {
         document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'))
 }
 //delete user from biometric device
-async function deleteUser() {
-    // Get input values
-    const deviceID = document.getElementById('deviceID').value
-    
+async function deleteUser(deviceID) {
     if(deviceID) {
         // Prepare data to send
         const data = { deviceID }
@@ -106,7 +103,11 @@ async function deleteUser() {
             document.getElementById('status').textContent = 'Failed to delete user.'
         }
     } else
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID field empty'))
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID empty'))
+}
+
+async function editUser() {
+
 }
 
 async function updateUserbase() {
@@ -212,9 +213,6 @@ async function exportLogs() {
     //logging only first and last log of the day during specified dates
     //if requesting all possible logs, please log allLogs instead of allFAL
     await refreshLogsTable(allFAL, false)
-
-    // Todo export to csv
-
 }
 
 function makeReadable(data, userData) {
@@ -313,10 +311,41 @@ async function refreshUserTable(data) {
             { data: 'userId', defaultContent: 'none set'},
             { data: 'name', defaultContent: 'none set'},
             { data: 'cardno', defaultContent: 'none set'},
+            { data: null, defaultContent: 'none set'},
+        ],
+        columnDefs: [
+            {
+                targets: '_all',
+                className: 'dt-right' //align the text to the right
+            },
+            {
+                targets: -1, //target last column
+                width: '14rem',
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn-edit" data-id="${row.uid}">Edit</button>
+                        <button class="btn-delete" data-id="${row.uid}" data-user="${row.name}">Delete</button>
+                    `
+                }
+            }
         ],
         paging: true,
         searching: true,
         ordering: true
+    })
+
+    //button logic for userTable
+    $('#userTable').on('click', '.btn-edit', function () {
+        const entryId = $(this).data('id')
+        editUser(entryId)
+    })
+
+    $('#userTable').on('click', '.btn-delete', function () {
+        const entryId = $(this).data('id')
+        const entryName = $(this).data('user')
+        if (confirm(`Are you sure you want to delete ${entryName} with UID: ${entryId}?`)) {
+            deleteUser(entryId)
+        }
     })
 }
 
@@ -336,7 +365,7 @@ async function refreshLogsTable(data, raw) {
             data: data, 
             columns: [
                 { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userSn', defaultContent: 'none set'},
+                { data: 'userSn', title: "Log Number", defaultContent: 'none set'},
                 { data: 'recordTime', defaultContent: 'none set'}
             ],
             paging: false,
@@ -344,7 +373,7 @@ async function refreshLogsTable(data, raw) {
             ordering: true,
             layout: {
                 topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    buttons: ['copy', 'csv', 'excel', 'print']
                 }
             }
         })
@@ -361,7 +390,7 @@ async function refreshLogsTable(data, raw) {
             data: data, 
             columns: [
                 { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userName', defaultContent: 'none set'},
+                { data: 'userName', title: "Username", defaultContent: 'none set'},
                 { data: 'timeStamp', defaultContent: 'none set'}
             ],
             paging: false,
@@ -369,7 +398,7 @@ async function refreshLogsTable(data, raw) {
             ordering: true,
             layout: {
                 topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    buttons: ['copy', 'csv', 'excel', 'print']
                 }
             }
         })
@@ -377,7 +406,6 @@ async function refreshLogsTable(data, raw) {
             const searchValue = this.value
             // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
             // \b<name>\b to avoid matching names like paul with johnpaul or paula
-            // Convert space-separated terms to a regex pattern for OR search
             const regexPattern = searchValue.split(' ').join('|')
             logsTable.search(regexPattern, true, false).draw()
         })
