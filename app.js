@@ -171,6 +171,37 @@ app.post('/api/deleteUser', async (req, res) => {
     }
 })
 
+app.post('/api/editUser', async (req, res) => {
+    try {
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        if(info) {
+            io.emit('status-update', { status: 'Connected!' })
+            io.emit('status-update', { status: 'User Count: ' + info.userCounts})
+
+            let users = { data: [] }
+            if(info.userCounts > 0) {
+                users = await biometric.getUsers().catch(err => {
+                    io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+                })
+            }
+
+            //Employee ID, Name, Card Num
+            const { uid, id, name, card, password, role } = req.body
+            io.emit('status-update', { status: "Editing user..." });
+            await biometric.editUser(users.data, uid, id, name, password, role, card)
+            io.emit('status-update', { status: "Edited " + name });
+            await biometric.disconnect()
+            io.emit('status-update', { status: 'Disconnected!' });
+        } else {
+            io.emit('status-update', { status: 'Failed to edit user' })
+        }
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ result: 'Failed to fetch data' });
+    }
+})
+
 app.post('/api/updateUserbase', async (req, res) => {
     try {
         const { filename } = req.body
@@ -288,7 +319,6 @@ app.post('/api/replaceUserbase', async (req, res) => {
             }
             await biometric.disconnect()
             res.json({ result: 'Overwrite Complete!' })
-            io.emit('status-update', { status: 'You may now close this tab' })
         } else {
             io.emit('status-update', { status: 'Failed to replace userbase' })
         }
