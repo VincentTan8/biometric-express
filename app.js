@@ -278,8 +278,8 @@ app.post('/api/replaceUserbase', async (req, res) => {
             for(const user of newFileJson) {
                 const id = user.userId
                 const name = user.name
-                const password = userAdd.password
-                const role = userAdd.role
+                const password = user.password
+                const role = user.role
                 const card = user.cardno
 
                 const newUID = await biometric.addUser(users.data, id, name, password, role, card)

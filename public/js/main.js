@@ -72,7 +72,7 @@ async function addUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').textContent = result.result
+            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to add user.'
@@ -100,7 +100,7 @@ async function deleteUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').textContent = result.result
+            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to delete user.'
@@ -152,7 +152,7 @@ async function replaceUserbase() {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').textContent = result.result
+        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
     } catch (error) {
         console.error('Error:', error)
     }
