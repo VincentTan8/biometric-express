@@ -1,6 +1,3 @@
-//select biometric device
-
-
 // read user json file
 async function readUsers() {
     try {
@@ -107,7 +104,40 @@ async function deleteUser(deviceID) {
 }
 
 async function editUser() {
+    const modal = document.getElementById('updateModal')
+    
+    const uid = modal.querySelector('#editUID').value 
+    const id = modal.querySelector('#editID').value 
+    const name = modal.querySelector('#editName').value 
+    const card = modal.querySelector('#editCard').value 
+    const password = modal.querySelector('#editPassword').value
+    const password2 = modal.querySelector('#editPassword2').value  
+    const role = modal.querySelector('#editRole').value 
+    
+    if(password === password2) {
+        // Prepare data to send
+        const data = { uid, id, name, card , password, role}
+        try {
+            // Send POST request using fetch
+            const response = await fetch('/api/editUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
 
+            // Handle the response
+            const result = await response.json()
+            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+            //close modal
+            modal.style.display = 'none'
+        } catch (error) {
+            console.error('Error:', error)
+            document.getElementById('status').textContent = 'Failed to edit user.'
+        }
+    } else 
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Password mismatch'))
 }
 
 async function updateUserbase() {
@@ -323,7 +353,15 @@ async function refreshUserTable(data) {
                 width: '14rem',
                 render: function (data, type, row) {
                     return `
-                        <button class="btn-edit" data-id="${row.uid}">Edit</button>
+                        <button class="btn-edit" 
+                            data-uid="${row.uid}"
+                            data-id="${row.userId}"  
+                            data-user="${row.name}"
+                            data-pw="${row.password}"
+                            data-card="${row.cardno}"
+                            data-role="${row.role}">
+                            Edit
+                        </button>
                         <button class="btn-delete" data-id="${row.uid}" data-user="${row.name}">Delete</button>
                     `
                 }
@@ -336,8 +374,27 @@ async function refreshUserTable(data) {
 
     //button logic for userTable
     $('#userTable').on('click', '.btn-edit', function () {
+        const entryUID = $(this).data('uid')
         const entryId = $(this).data('id')
-        editUser(entryId)
+        const entryName = $(this).data('user')
+        const entryPassword = $(this).data('pw')
+        const entryCard = $(this).data('card')
+        const entryRole = $(this).data('role')
+        //open edit window
+        const modal = document.getElementById('updateModal')
+        modal.style.display = 'block'
+        //access title
+        modal.querySelector('#title').textContent = `Edit User: ${entryName}`
+        modal.querySelector('#editUID').value = entryUID
+        modal.querySelector('#editID').value = entryId
+        modal.querySelector('#editName').value = entryName
+        modal.querySelector('#editPassword').value = entryPassword
+        modal.querySelector('#editPassword2').value = entryPassword
+        modal.querySelector('#editCard').value = entryCard
+        if(parseInt(entryRole) === 14)
+            modal.querySelector('#editRole').value = "admin"
+        else if(parseInt(entryRole) === 0)
+            modal.querySelector('#editRole').value = "normal"
     })
 
     $('#userTable').on('click', '.btn-delete', function () {
