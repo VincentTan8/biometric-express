@@ -126,6 +126,7 @@ app.post('/api/addUser', async (req, res) => {
 
             let users = { data: [] }
             if(info.userCounts > 0) {
+                io.emit('status-update', { status: 'Getting users...' })
                 users = await biometric.getUsers().catch(err => {
                     io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
                 })
@@ -138,6 +139,7 @@ app.post('/api/addUser', async (req, res) => {
             io.emit('status-update', { status: "Added " + name });
             await biometric.disconnect()
             io.emit('status-update', { status: 'Disconnected!' });
+            res.json({ result: 'Process Finished!' })
         } else {
             io.emit('status-update', { status: 'Failed to add user' })
         }
@@ -162,6 +164,7 @@ app.post('/api/deleteUser', async (req, res) => {
             io.emit('status-update', { status: "Deleted uid: " + deviceID});
             await biometric.disconnect()
             io.emit('status-update', { status: 'Disconnected!' });
+            res.json({ result: 'Process Finished!' })
         } else {
             io.emit('status-update', { status: 'Failed to delete user' })
         }
@@ -181,6 +184,7 @@ app.post('/api/editUser', async (req, res) => {
 
             let users = { data: [] }
             if(info.userCounts > 0) {
+                io.emit('status-update', { status: 'Getting users...' })
                 users = await biometric.getUsers().catch(err => {
                     io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
                 })
@@ -189,10 +193,14 @@ app.post('/api/editUser', async (req, res) => {
             //Employee ID, Name, Card Num
             const { uid, id, name, card, password, role } = req.body
             io.emit('status-update', { status: "Editing user..." });
-            await biometric.editUser(users.data, uid, id, name, password, role, card)
-            io.emit('status-update', { status: "Edited " + name });
+            const success = await biometric.editUser(users.data, uid, id, name, password, role, card)
+            if(success)
+                io.emit('status-update', { status: "Edited " + name })
+            else
+                io.emit('status-update', { status: 'Failed to edit user' })
             await biometric.disconnect()
             io.emit('status-update', { status: 'Disconnected!' });
+            res.json({ result: 'Process Finished!' })
         } else {
             io.emit('status-update', { status: 'Failed to edit user' })
         }
@@ -295,6 +303,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
                 })
             }
             biometric.toJSON(users.data, "userBackup " + new Date() + ".json")
+            io.emit('status-update', { status: 'Backup finished' })
 
             //delete everything on device (3000 is the user limit)
             for (const user of users.data) {
