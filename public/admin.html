@@ -139,12 +139,54 @@
         </div>
     </div>
 
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="window">
+                <h2 id="title"></h2>
+                <div class="row" style="padding-top: 1rem;">
+                    <label for="editUID">UID:</label>
+                    <input type="text" id="editUID" name="editUID" disabled>
+                </div>
+                <div class="row">
+                    <label for="editID">Employee ID:</label>
+                    <input type="text" id="editID" name="editID" disabled>
+                </div>
+                <div class="row">
+                    <label for="editName">Edit Name:</label>
+                    <input type="text" id="editName" name="editName" placeholder="Employee Name here">
+                </div>
+                <div class="row">
+                    <label for="editCard">Edit Card Number:</label>
+                    <input type="text" id="editCard" name="editCard" placeholder="Employee Card here">
+                </div>
+                <div class="row">
+                    <label for="editPassword">Edit Password:</label>
+                    <input type="password" id="editPassword" name="editPassword" placeholder="Password here">
+                </div>
+                <div class="row">
+                    <label for="editPassword2">Reenter Password:</label>
+                    <input type="password" id="editPassword2" name="editPassword2" placeholder="Reenter password">
+                </div>
+                <div class="row" style="padding-bottom: 1rem;">
+                    <label for="editRole">Edit Role:</label>
+                    <select id="editRole" class="styled-select">
+                        <option value="normal">Normal User</option>
+                        <option value="admin">Super Admin</option>
+                    </select>
+                </div>
+                <button onclick="editUser()">Done</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Include Socket.IO client-side script -->
     <script src="js/jquery-3.7.1.js"></script>
     <script src="js/datatables.min.js"></script>
     <script src="/socket.io/socket.io.js"></script> 
     <script src="js/main.js"></script>
+    <script src="js/modal.js"></script>
 </body>
 
 </html>
