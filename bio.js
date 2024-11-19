@@ -109,20 +109,29 @@ class Bio {
         return uid
     }
 
-    async editUser(uid, userID, username, password, role, cardnum) {
-        //check if user exists
-        const users = await this.getUsers()
-
-        const editedUser = users.data.filter(user => {
+    async editUser(users, uid, userID, username, password, role, cardnum) {
+        const editedUser = users.filter(user => {
             return user.uid == uid
         })
         if(editedUser.length == 1){
             console.log('User Found')
             //set user by overwriting data
+            switch (role) {
+                case "normal":
+                    role = 0;
+                    break;
+                case "admin":
+                    role = 14;
+                    break;
+                default:
+                    role = 0;
+            }
             await this.zkInstance.setUser(uid, userID, username, password, role, cardnum)
             console.log('Edited User: ' + username)
+            return true
         } else {
             console.log('User Not Found')
+            return false
         }
     }
 

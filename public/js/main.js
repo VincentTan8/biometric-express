@@ -1,6 +1,3 @@
-//select biometric device
-
-
 // read user json file
 async function readUsers() {
     try {
@@ -81,10 +78,7 @@ async function addUser() {
         document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'))
 }
 //delete user from biometric device
-async function deleteUser() {
-    // Get input values
-    const deviceID = document.getElementById('deviceID').value
-    
+async function deleteUser(deviceID) {
     if(deviceID) {
         // Prepare data to send
         const data = { deviceID }
@@ -106,7 +100,44 @@ async function deleteUser() {
             document.getElementById('status').textContent = 'Failed to delete user.'
         }
     } else
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID field empty'))
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID empty'))
+}
+
+async function editUser() {
+    const modal = document.getElementById('updateModal')
+    
+    const uid = modal.querySelector('#editUID').value 
+    const id = modal.querySelector('#editID').value 
+    const name = modal.querySelector('#editName').value 
+    const card = modal.querySelector('#editCard').value 
+    const password = modal.querySelector('#editPassword').value
+    const password2 = modal.querySelector('#editPassword2').value  
+    const role = modal.querySelector('#editRole').value 
+    
+    if(password === password2) {
+        // Prepare data to send
+        const data = { uid, id, name, card , password, role}
+        try {
+            // Send POST request using fetch
+            const response = await fetch('/api/editUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            // Handle the response
+            const result = await response.json()
+            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+            //close modal
+            modal.style.display = 'none'
+        } catch (error) {
+            console.error('Error:', error)
+            document.getElementById('status').textContent = 'Failed to edit user.'
+        }
+    } else 
+        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Password mismatch'))
 }
 
 async function updateUserbase() {
@@ -212,9 +243,6 @@ async function exportLogs() {
     //logging only first and last log of the day during specified dates
     //if requesting all possible logs, please log allLogs instead of allFAL
     await refreshLogsTable(allFAL, false)
-
-    // Todo export to csv
-
 }
 
 function makeReadable(data, userData) {
@@ -313,10 +341,68 @@ async function refreshUserTable(data) {
             { data: 'userId', defaultContent: 'none set'},
             { data: 'name', defaultContent: 'none set'},
             { data: 'cardno', defaultContent: 'none set'},
+            { data: null, defaultContent: 'none set'},
+        ],
+        columnDefs: [
+            {
+                targets: '_all',
+                className: 'dt-right' //align the text to the right
+            },
+            {
+                targets: -1, //target last column
+                width: '14rem',
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn-edit" 
+                            data-uid="${row.uid}"
+                            data-id="${row.userId}"  
+                            data-user="${row.name}"
+                            data-pw="${row.password}"
+                            data-card="${row.cardno}"
+                            data-role="${row.role}">
+                            Edit
+                        </button>
+                        <button class="btn-delete" data-id="${row.uid}" data-user="${row.name}">Delete</button>
+                    `
+                }
+            }
         ],
         paging: true,
         searching: true,
         ordering: true
+    })
+
+    //button logic for userTable
+    $('#userTable').on('click', '.btn-edit', function () {
+        const entryUID = $(this).data('uid')
+        const entryId = $(this).data('id')
+        const entryName = $(this).data('user')
+        const entryPassword = $(this).data('pw')
+        const entryCard = $(this).data('card')
+        const entryRole = $(this).data('role')
+        //open edit window
+        const modal = document.getElementById('updateModal')
+        modal.style.display = 'block'
+        //access title
+        modal.querySelector('#title').textContent = `Edit User: ${entryName}`
+        modal.querySelector('#editUID').value = entryUID
+        modal.querySelector('#editID').value = entryId
+        modal.querySelector('#editName').value = entryName
+        modal.querySelector('#editPassword').value = entryPassword
+        modal.querySelector('#editPassword2').value = entryPassword
+        modal.querySelector('#editCard').value = entryCard
+        if(parseInt(entryRole) === 14)
+            modal.querySelector('#editRole').value = "admin"
+        else if(parseInt(entryRole) === 0)
+            modal.querySelector('#editRole').value = "normal"
+    })
+
+    $('#userTable').on('click', '.btn-delete', function () {
+        const entryId = $(this).data('id')
+        const entryName = $(this).data('user')
+        if (confirm(`Are you sure you want to delete ${entryName} with UID: ${entryId}?`)) {
+            deleteUser(entryId)
+        }
     })
 }
 
@@ -336,7 +422,7 @@ async function refreshLogsTable(data, raw) {
             data: data, 
             columns: [
                 { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userSn', defaultContent: 'none set'},
+                { data: 'userSn', title: "Log Number", defaultContent: 'none set'},
                 { data: 'recordTime', defaultContent: 'none set'}
             ],
             paging: false,
@@ -344,7 +430,7 @@ async function refreshLogsTable(data, raw) {
             ordering: true,
             layout: {
                 topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    buttons: ['copy', 'csv', 'excel', 'print']
                 }
             }
         })
@@ -361,7 +447,7 @@ async function refreshLogsTable(data, raw) {
             data: data, 
             columns: [
                 { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userName', defaultContent: 'none set'},
+                { data: 'userName', title: "Username", defaultContent: 'none set'},
                 { data: 'timeStamp', defaultContent: 'none set'}
             ],
             paging: false,
@@ -369,7 +455,7 @@ async function refreshLogsTable(data, raw) {
             ordering: true,
             layout: {
                 topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    buttons: ['copy', 'csv', 'excel', 'print']
                 }
             }
         })
@@ -377,7 +463,6 @@ async function refreshLogsTable(data, raw) {
             const searchValue = this.value
             // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
             // \b<name>\b to avoid matching names like paul with johnpaul or paula
-            // Convert space-separated terms to a regex pattern for OR search
             const regexPattern = searchValue.split(' ').join('|')
             logsTable.search(regexPattern, true, false).draw()
         })

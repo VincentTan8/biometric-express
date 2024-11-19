@@ -76,7 +76,7 @@ hr {
 
 .styled-select {
     appearance: none;
-    width: 40%;
+    width: 146px; /* approx same length as input fields */
     text-align: center;
     padding-left: 0.25rem;
     padding-right: 0.25rem;
