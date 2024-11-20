@@ -130,6 +130,7 @@ async function editUser() {
             // Handle the response
             const result = await response.json()
             document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+            
             //close modal
             modal.style.display = 'none'
         } catch (error) {
@@ -161,6 +162,10 @@ async function updateUserbase() {
         // Handle the response
         const result = await response.json()
         document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+
+        //show modal for exit options
+        const modal = document.getElementById('updateModal')
+        modal.style.display = 'block'
     } catch (error) {
         console.error('Error:', error)
     }
