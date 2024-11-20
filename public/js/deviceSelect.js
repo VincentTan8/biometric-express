@@ -24,8 +24,32 @@ function movePill(selectedWord) {
     selectedWord.style.color = `white`
 }
 
+// Function to set the ip of biometrics device
+async function changeIP(company) {
+    // Prepare data to send
+    const data = { company }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/changeIP', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to change IP'
+    }
+}
+
 // Set default pill position to selected word
 const defaultWord = document.querySelector('.word.selected')
+changeIP(defaultWord.id)
 movePill(defaultWord)
 
 // Add click event listeners to words
@@ -38,6 +62,7 @@ words.forEach(word => {
         })
         // add 'selected' to clicked word
         word.classList.add('selected')
+        changeIP(word.id)
         movePill(word)
     })
 })
