@@ -30,4 +30,5 @@ function closeModal() {
 
 function closeTab() {
     window.close() //only works if window was opened through javascript
+    closeModal()
 }
