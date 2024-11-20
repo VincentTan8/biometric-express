@@ -184,3 +184,26 @@ button:active {
         opacity: 1;
     }
 }
+
+.word-container {
+    display: flex;
+    gap: 16px; 
+}
+
+.word {
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1;
+    padding: 0 8px; 
+}
+
+.highlight-pill {
+    position: absolute;
+    background-color: var(--main-color); 
+    border-radius: 10px;
+    transition: all 0.3s ease; 
+    height: 30px; /* will be adjusted based on font size by js*/
+    width: 0;
+    z-index: 0;
+}
