@@ -50,7 +50,12 @@ async function changeIP(company) {
 // Set default pill position to selected word
 const defaultWord = document.querySelector('.word.selected')
 changeIP(defaultWord.id)
-movePill(defaultWord)
+//for the css and js to properly load on first go
+setTimeout(() => {
+    if (defaultWord) {
+        movePill(defaultWord)
+    }
+}, 10)
 
 // Add click event listeners to words
 words.forEach(word => {
