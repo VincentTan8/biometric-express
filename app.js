@@ -13,9 +13,9 @@ const fs = require('fs')
 
 
 //const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
-let biometric = null
-let logsFileName = null
-let usersFileName = null
+let biometric = new Bio('171.16.114.76', 4370, 10000, 4000) //earthhouse
+let logsFileName = 'testLogs.json'
+let usersFileName = 'testUsers.json'
 
 //Middleware
 app.use(express.json())
