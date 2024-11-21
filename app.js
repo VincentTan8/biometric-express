@@ -47,8 +47,7 @@ app.post('/api/changeIP', async (req, res) => {
             usersFileName = 'wetalkUsers.json'
             break;
     }
-    io.emit('status-update', { status: "IP set to " + company })
-    res.json({ result: 'Process Finished!' })
+    res.json({ result: 'IP set to ' + company })
 })
 
 app.get('/api/readUsers', (req, res) => {
@@ -157,8 +156,7 @@ app.post('/api/addUser', async (req, res) => {
             await biometric.addUser(users.data, id, name, password, role, card)
             io.emit('status-update', { status: "Added " + name })
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' })
-            res.json({ result: 'Process Finished!' })
+            res.json({ result: 'Disconnected!' })
         } else {
             io.emit('status-update', { status: 'Failed to add user' })
         }
@@ -182,8 +180,7 @@ app.post('/api/deleteUser', async (req, res) => {
             await biometric.deleteUser(deviceID)
             io.emit('status-update', { status: "Deleted uid: " + deviceID})
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' })
-            res.json({ result: 'Process Finished!' })
+            res.json({ result: 'Disconnected!' })
         } else {
             io.emit('status-update', { status: 'Failed to delete user' })
         }
@@ -218,8 +215,7 @@ app.post('/api/editUser', async (req, res) => {
             else
                 io.emit('status-update', { status: 'Failed to edit user' })
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' })
-            res.json({ result: 'Process Finished!' })
+            res.json({ result: 'Disconnected!' })
         } else {
             io.emit('status-update', { status: 'Failed to edit user' })
         }
