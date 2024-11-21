@@ -70,12 +70,14 @@ async function addUser() {
             // Handle the response
             const result = await response.json()
             document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to add user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'ID field empty or password mismatch'))
+        document.getElementById('status').appendChild(document.createTextNode(`ID field empty or password mismatch\n`))
+        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 }
 //delete user from biometric device
 async function deleteUser(deviceID) {
@@ -95,12 +97,14 @@ async function deleteUser(deviceID) {
             // Handle the response
             const result = await response.json()
             document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to delete user.'
         }
     } else
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Device ID empty'))
+        document.getElementById('status').appendChild(document.createTextNode(`Device ID empty\n`))
+        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 }
 
 async function editUser() {
@@ -130,6 +134,7 @@ async function editUser() {
             // Handle the response
             const result = await response.json()
             document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
             
             //close modal
             modal.style.display = 'none'
@@ -138,7 +143,8 @@ async function editUser() {
             document.getElementById('status').textContent = 'Failed to edit user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`\n` + 'Password mismatch'))
+        document.getElementById('status').appendChild(document.createTextNode(`Password mismatch\n`))
+        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 }
 
 async function updateUserbase() {
@@ -162,6 +168,7 @@ async function updateUserbase() {
         // Handle the response
         const result = await response.json()
         document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 
         //show modal for exit options
         const modal = document.getElementById('updateModal')
@@ -189,6 +196,7 @@ async function replaceUserbase() {
         // Handle the response
         const result = await response.json()
         document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
     } catch (error) {
         console.error('Error:', error)
     }
@@ -483,8 +491,8 @@ async function refreshLogsTable(data, raw) {
 const socket = io()  // Connect to the Socket.IO server
 // Listen for 'status-update' event from the server
 socket.on('status-update', (data) => {
-    var status = document.getElementById('status')
-    var newStatus = document.createTextNode(`\nStatus: ${data.status}`)
+    let status = document.getElementById('status')
+    let newStatus = document.createTextNode(`Status: ${data.status}\n`)
     status.appendChild(newStatus)
     status.scrollTop = status.scrollHeight
 })
