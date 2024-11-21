@@ -38,7 +38,7 @@
             <div>
                 <button onclick="updateUserbase()">Update Userbase</button>
             </div> 
-            <div id="status" class="text">Status: Idle</div>
+            <div id="status" class="text"></div>
         </div>
         <hr>
     </div>
@@ -49,8 +49,8 @@
             <h2>Userbase Update</h2>
             <p>Finished! Press OK to quit this tab</p>
             <div class="flex" style="justify-content: center; gap: 1rem;">
-                <button onclick="closeTab()" style="width: 45%">OK</button>
-                <button onclick="closeModal()" style="width: 45%">Cancel</button>
+                <button id="updateOK" style="width: 45%">OK</button>
+                <button id="updateCancel" style="width: 45%">Cancel</button>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
     <script src="js/modal.js"></script>
 
     <script>
-        updateUserbase()
+        // updateUserbase()
     </script>
 </body>
 

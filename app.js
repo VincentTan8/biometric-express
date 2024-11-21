@@ -1,28 +1,21 @@
 const express = require('express')
 const path = require('path')
-const http = require('http');
-const socketIo = require('socket.io');
+const http = require('http')
+const socketIo = require('socket.io')
 
 const app = express()
-const server = http.createServer(app);
-const io = socketIo(server);
+const server = http.createServer(app)
+const io = socketIo(server)
 const PORT = 3000
 
 const Bio = require('./bio')
 const fs = require('fs')
 
-// User defined 
-const biometric = new Bio('171.16.114.76', 4370, 10000, 4000) //earthhouse
+
 //const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
-const logsFileName = 'testLogs.json'
-const usersFileName = 'testUsers.json'
-
-// const biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
-// const logsFileName = 'phihopeLogs.json'
-// const usersFileName = 'phihopeUsers.json'
-
-//Wetalk
-// const biometric = new Bio('171.16.113.238', 4370, 10000, 4000)
+let biometric = null
+let logsFileName = null
+let usersFileName = null
 
 //Middleware
 app.use(express.json())
@@ -32,6 +25,31 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/', express.static(path.join(__dirname + '/public')))
 
 // Route to get the result of the Node code
+app.post('/api/changeIP', async (req, res) => {
+    //company string match with ip
+    const { company } = req.body
+
+    io.emit('status-update', { status: "Setting ip..." })
+    switch (company) {
+        case "earthhouse": 
+            biometric = new Bio('171.16.114.76', 4370, 10000, 4000) 
+            logsFileName = 'testLogs.json'
+            usersFileName = 'testUsers.json'
+            break;
+        case "phihope":
+            biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
+            logsFileName = 'phihopeLogs.json'
+            usersFileName = 'phihopeUsers.json'
+            break;
+        case "wetalk":
+            biometric = new Bio('171.16.113.238', 4370, 10000, 4000)
+            logsFileName = 'wetalkLogs.json'
+            usersFileName = 'wetalkUsers.json'
+            break;
+    }
+    res.json({ result: 'IP set to ' + company })
+})
+
 app.get('/api/readUsers', (req, res) => {
     fs.readFile(usersFileName, 'utf8', (err, data) => {
         if (err) {
@@ -73,14 +91,14 @@ app.get('/api/users', async (req, res) => {
             biometric.toJSON(users.data, usersFileName)
             const jsonData = JSON.stringify(users.data, null, 2)
 
-            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Content-Type', 'application/json')
             res.json({ result: jsonData })
         } else {
             io.emit('status-update', { status: 'Failed to get users' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ error: 'Failed to fetch data' });
+        console.error('Error fetching data:', err)
+        res.status(500).json({ error: 'Failed to fetch data' })
     }
 })
 
@@ -105,14 +123,14 @@ app.get('/api/transactions', async (req, res) => {
             biometric.toJSON(logs.data, logsFileName)
             const jsonData = JSON.stringify(logs.data, null, 2)
 
-            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Content-Type', 'application/json')
             res.json({ result: jsonData })
         } else {
             io.emit('status-update', { status: 'Failed to get transactions' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ error: 'Failed to fetch data' });
+        console.error('Error fetching data:', err)
+        res.status(500).json({ error: 'Failed to fetch data' })
     }
 })
 
@@ -134,18 +152,17 @@ app.post('/api/addUser', async (req, res) => {
 
             //Employee ID, Name, Card Num
             const { id, name, card, password, role } = req.body
-            io.emit('status-update', { status: "Adding user..." });
+            io.emit('status-update', { status: "Adding user..." })
             await biometric.addUser(users.data, id, name, password, role, card)
-            io.emit('status-update', { status: "Added " + name });
+            io.emit('status-update', { status: "Added " + name })
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' });
-            res.json({ result: 'Process Finished!' })
+            res.json({ result: 'Disconnected!' })
         } else {
             io.emit('status-update', { status: 'Failed to add user' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to fetch data' });
+        console.error('Error fetching data:', err)
+        res.status(500).json({ result: 'Failed to fetch data' })
     }
 })
 
@@ -159,18 +176,17 @@ app.post('/api/deleteUser', async (req, res) => {
 
             //Device ID
             const { deviceID } = req.body
-            io.emit('status-update', { status: "Deleting user..." });
+            io.emit('status-update', { status: "Deleting user..." })
             await biometric.deleteUser(deviceID)
-            io.emit('status-update', { status: "Deleted uid: " + deviceID});
+            io.emit('status-update', { status: "Deleted uid: " + deviceID})
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' });
-            res.json({ result: 'Process Finished!' })
+            res.json({ result: 'Disconnected!' })
         } else {
             io.emit('status-update', { status: 'Failed to delete user' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to fetch data' });
+        console.error('Error fetching data:', err)
+        res.status(500).json({ result: 'Failed to fetch data' })
     }
 })
 
@@ -192,21 +208,20 @@ app.post('/api/editUser', async (req, res) => {
 
             //Employee ID, Name, Card Num
             const { uid, id, name, card, password, role } = req.body
-            io.emit('status-update', { status: "Editing user..." });
+            io.emit('status-update', { status: "Editing user..." })
             const success = await biometric.editUser(users.data, uid, id, name, password, role, card)
             if(success)
                 io.emit('status-update', { status: "Edited " + name })
             else
                 io.emit('status-update', { status: 'Failed to edit user' })
             await biometric.disconnect()
-            io.emit('status-update', { status: 'Disconnected!' });
-            res.json({ result: 'Process Finished!' })
+            res.json({ result: 'Disconnected!' })
         } else {
             io.emit('status-update', { status: 'Failed to edit user' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to fetch data' });
+        console.error('Error fetching data:', err)
+        res.status(500).json({ result: 'Failed to fetch data' })
     }
 })
 
@@ -246,12 +261,12 @@ app.post('/api/updateUserbase', async (req, res) => {
 
             // Search for user with given employee ID to delete
             for(const userDel of toDel) {
-                const result = users.data.find(user => user.userId === userDel.userId);
+                const result = users.data.find(user => user.userId === userDel.userId)
                 if(result) {
                     await biometric.deleteUser(result.uid)
-                    io.emit('status-update', { status: "Deleted uid: " + result.uid});
+                    io.emit('status-update', { status: "Deleted uid: " + result.uid})
                 } else {
-                    io.emit('status-update', { status: "Not found: " + userDel.name});
+                    io.emit('status-update', { status: "Not found: " + userDel.name})
                 }
             }
 
@@ -265,7 +280,7 @@ app.post('/api/updateUserbase', async (req, res) => {
 
                 const newUID = await biometric.addUser(users.data, id, name, password, role, card)
                 users.data.push({"uid": newUID})
-                io.emit('status-update', { status: "Added user: " + name });
+                io.emit('status-update', { status: "Added user: " + name })
             }
 
             await biometric.disconnect()
@@ -275,8 +290,8 @@ app.post('/api/updateUserbase', async (req, res) => {
             io.emit('status-update', { status: 'Failed to update userbase' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to update\n' + err});
+        console.error('Error fetching data:', err)
+        res.status(500).json({ result: 'Failed to update\n' + err})
     }
 })
 
@@ -309,7 +324,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
             for (const user of users.data) {
                 if(user.uid != 1) {
                     await biometric.deleteUser(user.uid)
-                    io.emit('status-update', { status: "Deleted uid: " + user.uid});
+                    io.emit('status-update', { status: "Deleted uid: " + user.uid})
                 }
             }
             
@@ -324,7 +339,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
 
                 const newUID = await biometric.addUser(users.data, id, name, password, role, card)
                 users.data.push({"uid": newUID})
-                io.emit('status-update', { status: "Added user: " + name });
+                io.emit('status-update', { status: "Added user: " + name })
             }
             await biometric.disconnect()
             res.json({ result: 'Overwrite Complete!' })
@@ -332,8 +347,8 @@ app.post('/api/replaceUserbase', async (req, res) => {
             io.emit('status-update', { status: 'Failed to replace userbase' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ result: 'Failed to update' });
+        console.error('Error fetching data:', err)
+        res.status(500).json({ result: 'Failed to update' })
     }
 })
 
