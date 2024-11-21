@@ -405,9 +405,15 @@ async function refreshUserTable(data) {
     $('#userTable').off('click', '.btn-delete').on('click', '.btn-delete', function () {
         const entryId = $(this).data('id')
         const entryName = $(this).data('user')
-        if (confirm(`Are you sure you want to delete ${entryName} with UID: ${entryId}?`)) {
+        //open edit window
+        const modal = document.getElementById('deleteModal')
+        modal.style.display = 'block'
+        //access title
+        modal.querySelector('#title').textContent = `Are you sure you want to delete ${entryName} with UID: ${entryId}?`
+        $('#deleteModal').off('click', '#deleteConfirm').on('click', '#deleteConfirm', () => {
             deleteUser(entryId)
-        }
+            modal.style.display = 'none'
+        })
     })
 }
 
