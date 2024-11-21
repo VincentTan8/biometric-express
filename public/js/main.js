@@ -104,7 +104,7 @@ async function deleteUser(deviceID) {
 }
 
 async function editUser() {
-    const modal = document.getElementById('updateModal')
+    const modal = document.getElementById('editModal')
     
     const uid = modal.querySelector('#editUID').value 
     const id = modal.querySelector('#editID').value 
@@ -378,7 +378,7 @@ async function refreshUserTable(data) {
     })
 
     //button logic for userTable
-    $('#userTable').on('click', '.btn-edit', function () {
+    $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
         const entryUID = $(this).data('uid')
         const entryId = $(this).data('id')
         const entryName = $(this).data('user')
@@ -386,7 +386,7 @@ async function refreshUserTable(data) {
         const entryCard = $(this).data('card')
         const entryRole = $(this).data('role')
         //open edit window
-        const modal = document.getElementById('updateModal')
+        const modal = document.getElementById('editModal')
         modal.style.display = 'block'
         //access title
         modal.querySelector('#title').textContent = `Edit User: ${entryName}`
@@ -401,8 +401,8 @@ async function refreshUserTable(data) {
         else if(parseInt(entryRole) === 0)
             modal.querySelector('#editRole').value = "normal"
     })
-
-    $('#userTable').on('click', '.btn-delete', function () {
+    //turn prev listeners off
+    $('#userTable').off('click', '.btn-delete').on('click', '.btn-delete', function () {
         const entryId = $(this).data('id')
         const entryName = $(this).data('user')
         if (confirm(`Are you sure you want to delete ${entryName} with UID: ${entryId}?`)) {
