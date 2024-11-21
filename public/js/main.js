@@ -69,7 +69,7 @@ async function addUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to add user.'
@@ -94,7 +94,7 @@ async function deleteUser(deviceID) {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to delete user.'
@@ -129,7 +129,7 @@ async function editUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
             
             //close modal
             modal.style.display = 'none'
@@ -161,7 +161,7 @@ async function updateUserbase() {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
 
         //show modal for exit options
         const modal = document.getElementById('updateModal')
@@ -188,7 +188,7 @@ async function replaceUserbase() {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(`\n`+result.result))
+        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
     } catch (error) {
         console.error('Error:', error)
     }
