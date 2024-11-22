@@ -229,11 +229,26 @@ app.post('/api/editUser', async (req, res) => {
 app.post('/api/updateUserbase', async (req, res) => {
     try {
         const { filename } = req.body
+        let newFileJson = null
 
         //get file
         io.emit('userbase-status', { status: "Updating using " + filename + "..."})
-        const newFile = await fs.promises.readFile(filename, 'utf-8')
-        const newFileJson = JSON.parse(newFile)
+        // const newFile = await fs.promises.readFile(filename, 'utf-8')
+        try {
+            const response = await fetch(filename);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // const newFile = await response.text(); // For raw text (e.g., JSON string)
+            const newFile = await response.json(); // if response is JSON
+
+            // newFileJson = JSON.parse(newFile)
+            newFileJson = newFile
+            
+        } catch (err) {
+            console.error('Error fetching file:', err);
+            throw err;
+        }
 
         //get all operations from file
         let toAdd = []
