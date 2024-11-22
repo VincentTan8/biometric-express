@@ -84,17 +84,17 @@ class Bio {
         return users
     }
 
-    async addUser(users, userID, username, password, role, cardnum) {
+    async addUser(users, uid, userID, username, password, role, cardnum) {
         //generate uid (valid uids are from 1 to 3000)
-        let i = 0;
-        let notValid = true
-        while (i < 3000 && notValid) {
-            i++;
-            notValid = users.some(user => {
-                return i == user.uid
-            })
-        }
-        const uid = i
+        // let i = 0;
+        // let notValid = true
+        // while (i < 3000 && notValid) {
+        //     i++;
+        //     notValid = users.some(user => {
+        //         return i == user.uid
+        //     })
+        // }
+        // const uid = i
 
         //uid, userID, username, password, role, cardnum
         //password default is '' while role default is 0. Role for admin is 14
