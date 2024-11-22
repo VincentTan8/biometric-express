@@ -150,7 +150,7 @@ async function editUser() {
 async function updateUserbase() {
     let filename = document.getElementById('updateFile').value
     if(!filename) {
-        filename = "update.json"
+        filename = "http://phihope.systems/update.json"
     }
 
     // Prepare data to send
