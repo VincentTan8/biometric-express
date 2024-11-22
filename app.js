@@ -151,10 +151,9 @@ app.post('/api/addUser', async (req, res) => {
             }
 
             //Employee ID, Name, Card Num
-            const { id, name, card, password, role } = req.body
+            const { uid, id, name, card, password, role } = req.body
             io.emit('status-update', { status: "Adding user..." })
-            //todo add uid in this func
-            await biometric.addUser(users.data, id, name, password, role, card)
+            await biometric.addUser(users.data, uid, id, name, password, role, card)
             io.emit('status-update', { status: "Added " + name })
             await biometric.disconnect()
             res.json({ result: 'Disconnected!' })
@@ -348,13 +347,13 @@ app.post('/api/replaceUserbase', async (req, res) => {
             //since we are updating from scratch except the admin user
             users = { data: [{"uid": 1}] }
             for(const user of newFileJson) {
+                const uid = user.uid
                 const id = user.userId
                 const name = user.name
                 const password = user.password
                 const role = user.role
                 const card = user.cardno
-                //todo add custom uid here
-                const newUID = await biometric.addUser(users.data, id, name, password, role, card)
+                const newUID = await biometric.addUser(users.data, uid, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('status-update', { status: "Added user: " + name })
             }
