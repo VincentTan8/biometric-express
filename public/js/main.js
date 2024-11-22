@@ -27,7 +27,7 @@ async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
         const data = await response.json()        // Parse JSON response
-
+        await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
         console.error('Error:', error)
@@ -38,7 +38,7 @@ async function getTransactions() {
     try {
         const response = await fetch('/api/transactions') 
         const data = await response.json()       
-
+        await viewTransactions()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
         console.error('Error:', error)
