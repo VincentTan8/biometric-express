@@ -61,12 +61,12 @@
             </div>
         </div>
         <div id="status" class="text"></div>
-        <div class="flex" style="justify-content: flex-start;">
+        <!-- <div class="flex" style="justify-content: flex-start;">
             <div>
                 <button onclick="viewUsers()">View All Users</button>
                 <button onclick="viewTransactions()">View All Transactions</button>
             </div>
-        </div>
+        </div> -->
         <div id="result"></div>   
 
         <table id="userTable" class="display hidden-table">
@@ -114,7 +114,11 @@
             <div class="window">
                 <h2>Add Users</h2>
                 <div class="row">
-                    <label for="id">Enter ID (required):</label>
+                    <label for="uid">Enter Device ID (required):</label>
+                    <input type="text" id="uid" name="uid" placeholder="Device ID here">
+                </div>
+                <div class="row">
+                    <label for="id">Enter Employee ID (required):</label>
                     <input type="text" id="id" name="id" placeholder="Employee ID here">
                 </div>
                 <div class="row">
