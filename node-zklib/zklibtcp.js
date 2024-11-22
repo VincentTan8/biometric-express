@@ -14,7 +14,8 @@ const { createTCPHeader,
 const { log } = require('./helpers/errorLog')
 
 class ZKLibTCP {
-  constructor(ip, port, timeout) {
+  constructor(ip, port, timeout, io) {
+    this.io = io
     this.ip = ip
     this.port = port
     this.timeout = timeout
@@ -501,6 +502,8 @@ class ZKLibTCP {
         // Wait for a short period before retrying
         await new Promise(resolve => setTimeout(resolve, 1000));
         console.log("Retrying getInfo...")
+        this.io.emit('status-update', { status: 'Retrying to get data...' })
+        this.io.emit('userbase-status', { status: 'Retrying to get data...' })
         if (retries === 0) {
           return { userCounts: 0, logCounts: 0, logCapacity: 0 };
         }

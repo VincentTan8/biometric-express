@@ -2,9 +2,10 @@ const fs = require('fs')
 const ZKLib = require('./node-zklib/zklib')
 
 class Bio {
-    constructor(ip, port, timeout, inport) {
+    constructor(ip, port, timeout, inport, io) {
         this.info = {}
-        this.zkInstance = new ZKLib(ip, port, timeout, inport)
+        this.zkInstance = new ZKLib(ip, port, timeout, inport, io)
+        this.io = io
     }
 
     async connect() {
@@ -72,6 +73,10 @@ class Bio {
         while(users.data.length != this.info.userCounts){
             console.log("User count mismatch: " + users.data.length)
             console.log("Retrying...")
+            this.io.emit('status-update', { status: 'User count mismatch: ' + users.data.length })
+            this.io.emit('status-update', { status: 'Retrying...' })
+            this.io.emit('userbase-status', { status: 'User count mismatch: ' + users.data.length })
+            this.io.emit('userbase-status', { status: 'Retrying...' })
             users = await this.zkInstance.getUsers()
         }
         console.log("Total users: " + users.data.length)
