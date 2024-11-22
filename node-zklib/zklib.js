@@ -203,6 +203,12 @@ class ZKLib {
         )
     }
 
+    async setTime(time) {
+        return await this.functionWrapper(
+            () => this.zklibTcp.setTime(time)
+        )
+    }
+
     async getSocketStatus(){
         return await this.functionWrapper(
             ()=>this.zklibTcp.getSocketStatus(),
