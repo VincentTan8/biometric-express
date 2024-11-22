@@ -167,8 +167,8 @@ async function updateUserbase() {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        document.getElementById('userbase-status').appendChild(document.createTextNode(result.result+`\n`))
+        document.getElementById('userbase-status').scrollTop = document.getElementById('userbase-status').scrollHeight
 
         //show modal for exit options
         const modal = document.getElementById('updateModal')
@@ -496,6 +496,13 @@ socket.on('status-update', (data) => {
     status.appendChild(newStatus)
     status.scrollTop = status.scrollHeight
 })
-socket.on('result', (data) => {
-    document.getElementById('result').textContent = data.result
+socket.on('userbase-status', (data) => {
+    let status = document.getElementById('userbase-status')
+    let newStatus = document.createTextNode(`Status: ${data.status}\n`)
+    status.appendChild(newStatus)
+    status.scrollTop = status.scrollHeight
 })
+socket.on('connect', () => {
+    console.log('WebSocket connected!');
+    updateUserbase()
+});

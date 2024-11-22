@@ -13,9 +13,9 @@ const fs = require('fs')
 
 
 //const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
-let biometric = null
-let logsFileName = null
-let usersFileName = null
+let biometric = new Bio('171.16.114.76', 4370, 10000, 4000, io) //earthhouse
+let logsFileName = 'testLogs.json'
+let usersFileName = 'testUsers.json'
 
 //Middleware
 app.use(express.json())
@@ -32,17 +32,17 @@ app.post('/api/changeIP', async (req, res) => {
     io.emit('status-update', { status: "Setting ip..." })
     switch (company) {
         case "earthhouse": 
-            biometric = new Bio('171.16.114.76', 4370, 10000, 4000) 
+            biometric = new Bio('171.16.114.76', 4370, 10000, 4000, io) 
             logsFileName = 'testLogs.json'
             usersFileName = 'testUsers.json'
             break;
         case "phihope":
-            biometric = new Bio('171.16.109.24', 4370, 10000, 4000)
+            biometric = new Bio('171.16.109.24', 4370, 10000, 4000, io)
             logsFileName = 'phihopeLogs.json'
             usersFileName = 'phihopeUsers.json'
             break;
         case "wetalk":
-            biometric = new Bio('171.16.113.238', 4370, 10000, 4000)
+            biometric = new Bio('171.16.113.238', 4370, 10000, 4000, io)
             logsFileName = 'wetalkLogs.json'
             usersFileName = 'wetalkUsers.json'
             break;
@@ -153,6 +153,7 @@ app.post('/api/addUser', async (req, res) => {
             //Employee ID, Name, Card Num
             const { id, name, card, password, role } = req.body
             io.emit('status-update', { status: "Adding user..." })
+            //todo add uid in this func
             await biometric.addUser(users.data, id, name, password, role, card)
             io.emit('status-update', { status: "Added " + name })
             await biometric.disconnect()
@@ -230,7 +231,7 @@ app.post('/api/updateUserbase', async (req, res) => {
         const { filename } = req.body
 
         //get file
-        io.emit('status-update', { status: "Updating using " + filename + "..."})
+        io.emit('userbase-status', { status: "Updating using " + filename + "..."})
         const newFile = await fs.promises.readFile(filename, 'utf-8')
         const newFileJson = JSON.parse(newFile)
 
@@ -245,17 +246,17 @@ app.post('/api/updateUserbase', async (req, res) => {
             } 
         }
 
-        io.emit('status-update', { status: 'Connecting...' })
+        io.emit('userbase-status', { status: 'Connecting...' })
         const info = await biometric.connect()
         if(info) {
-            io.emit('status-update', { status: 'Connected!' })
+            io.emit('userbase-status', { status: 'Connected!' })
 
             // get device users for searching
             let users = { data: [] }
             if(info.userCounts > 0) {
-                io.emit('status-update', { status: 'Getting users for searching...'})
+                io.emit('userbase-status', { status: 'Getting users for searching...'})
                 users = await biometric.getUsers().catch(err => {
-                    io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
+                    io.emit('userbase-status', { status: 'Unhandled error in getUsers: ' + err})
                 })
             }
 
@@ -264,30 +265,31 @@ app.post('/api/updateUserbase', async (req, res) => {
                 const result = users.data.find(user => user.userId === userDel.userId)
                 if(result) {
                     await biometric.deleteUser(result.uid)
-                    io.emit('status-update', { status: "Deleted uid: " + result.uid})
+                    io.emit('userbase-status', { status: "Deleted uid: " + result.uid})
                 } else {
-                    io.emit('status-update', { status: "Not found: " + userDel.name})
+                    io.emit('userbase-status', { status: "Not found: " + userDel.name})
                 }
             }
 
             // Add everything from toAdd
             for(const userAdd of toAdd) {
+                const uid = userAdd.uid
                 const id = userAdd.userId
                 const name = userAdd.name
                 const password = userAdd.password
                 const role = userAdd.role
                 const card = userAdd.cardno
 
-                const newUID = await biometric.addUser(users.data, id, name, password, role, card)
+                const newUID = await biometric.addUser(users.data, uid, id, name, password, role, card)
                 users.data.push({"uid": newUID})
-                io.emit('status-update', { status: "Added user: " + name })
+                io.emit('userbase-status', { status: "Added user: " + name })
             }
 
             await biometric.disconnect()
             res.json({ result: 'Update Finished!' })
-            io.emit('status-update', { status: 'You may now close this tab' })
+            io.emit('userbase-status', { status: 'You may now close this tab' })
         } else {
-            io.emit('status-update', { status: 'Failed to update userbase' })
+            io.emit('userbase-status', { status: 'Failed to update userbase' })
         }
     } catch (err) {
         console.error('Error fetching data:', err)
@@ -336,7 +338,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
                 const password = user.password
                 const role = user.role
                 const card = user.cardno
-
+                //todo add custom uid here
                 const newUID = await biometric.addUser(users.data, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('status-update', { status: "Added user: " + name })

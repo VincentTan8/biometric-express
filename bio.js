@@ -2,9 +2,10 @@ const fs = require('fs')
 const ZKLib = require('./node-zklib/zklib')
 
 class Bio {
-    constructor(ip, port, timeout, inport) {
+    constructor(ip, port, timeout, inport, io) {
         this.info = {}
-        this.zkInstance = new ZKLib(ip, port, timeout, inport)
+        this.zkInstance = new ZKLib(ip, port, timeout, inport, io)
+        this.io = io
     }
 
     async connect() {
@@ -72,6 +73,10 @@ class Bio {
         while(users.data.length != this.info.userCounts){
             console.log("User count mismatch: " + users.data.length)
             console.log("Retrying...")
+            this.io.emit('status-update', { status: 'User count mismatch: ' + users.data.length })
+            this.io.emit('status-update', { status: 'Retrying...' })
+            this.io.emit('userbase-status', { status: 'User count mismatch: ' + users.data.length })
+            this.io.emit('userbase-status', { status: 'Retrying...' })
             users = await this.zkInstance.getUsers()
         }
         console.log("Total users: " + users.data.length)
@@ -79,17 +84,17 @@ class Bio {
         return users
     }
 
-    async addUser(users, userID, username, password, role, cardnum) {
+    async addUser(users, uid, userID, username, password, role, cardnum) {
         //generate uid (valid uids are from 1 to 3000)
-        let i = 0;
-        let notValid = true
-        while (i < 3000 && notValid) {
-            i++;
-            notValid = users.some(user => {
-                return i == user.uid
-            })
-        }
-        const uid = i
+        // let i = 0;
+        // let notValid = true
+        // while (i < 3000 && notValid) {
+        //     i++;
+        //     notValid = users.some(user => {
+        //         return i == user.uid
+        //     })
+        // }
+        // const uid = i
 
         //uid, userID, username, password, role, cardnum
         //password default is '' while role default is 0. Role for admin is 14
