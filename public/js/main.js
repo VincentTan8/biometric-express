@@ -373,6 +373,8 @@ async function refreshUserTable(data) {
             },
             {
                 targets: -1, //target last column
+                searchable: false,
+                orderable: false,
                 width: '14rem',
                 render: function (data, type, row) {
                     return `
