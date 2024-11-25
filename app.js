@@ -37,12 +37,12 @@ app.post('/api/changeIP', async (req, res) => {
             usersFileName = 'testUsers.json'
             break;
         case "phihope":
-            biometric = new Bio('171.16.109.24', 4370, 10000, 4000, io)
+            biometric = new Bio('192.168.68.115', 4370, 10000, 4000, io)
             logsFileName = 'phihopeLogs.json'
             usersFileName = 'phihopeUsers.json'
             break;
         case "wetalk":
-            biometric = new Bio('171.16.113.238', 4370, 10000, 4000, io)
+            biometric = new Bio('192.168.68.104', 4370, 10000, 4000, io)
             logsFileName = 'wetalkLogs.json'
             usersFileName = 'wetalkUsers.json'
             break;
@@ -151,10 +151,9 @@ app.post('/api/addUser', async (req, res) => {
             }
 
             //Employee ID, Name, Card Num
-            const { id, name, card, password, role } = req.body
+            const { uid, id, name, card, password, role } = req.body
             io.emit('status-update', { status: "Adding user..." })
-            //todo add uid in this func
-            await biometric.addUser(users.data, id, name, password, role, card)
+            await biometric.addUser(users.data, uid, id, name, password, role, card)
             io.emit('status-update', { status: "Added " + name })
             await biometric.disconnect()
             res.json({ result: 'Disconnected!' })
@@ -229,11 +228,26 @@ app.post('/api/editUser', async (req, res) => {
 app.post('/api/updateUserbase', async (req, res) => {
     try {
         const { filename } = req.body
+        let newFileJson = null
 
         //get file
         io.emit('userbase-status', { status: "Updating using " + filename + "..."})
-        const newFile = await fs.promises.readFile(filename, 'utf-8')
-        const newFileJson = JSON.parse(newFile)
+        // const newFile = await fs.promises.readFile(filename, 'utf-8')
+        try {
+            const response = await fetch(filename);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // const newFile = await response.text(); // For raw text (e.g., JSON string)
+            const newFile = await response.json(); // if response is JSON
+
+            // newFileJson = JSON.parse(newFile)
+            newFileJson = newFile
+            
+        } catch (err) {
+            console.error('Error fetching file:', err);
+            throw err;
+        }
 
         //get all operations from file
         let toAdd = []
@@ -333,13 +347,13 @@ app.post('/api/replaceUserbase', async (req, res) => {
             //since we are updating from scratch except the admin user
             users = { data: [{"uid": 1}] }
             for(const user of newFileJson) {
+                const uid = user.uid
                 const id = user.userId
                 const name = user.name
                 const password = user.password
                 const role = user.role
                 const card = user.cardno
-                //todo add custom uid here
-                const newUID = await biometric.addUser(users.data, id, name, password, role, card)
+                const newUID = await biometric.addUser(users.data, uid, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('status-update', { status: "Added user: " + name })
             }

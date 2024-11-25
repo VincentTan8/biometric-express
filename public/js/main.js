@@ -27,7 +27,7 @@ async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
         const data = await response.json()        // Parse JSON response
-
+        await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
         console.error('Error:', error)
@@ -38,7 +38,7 @@ async function getTransactions() {
     try {
         const response = await fetch('/api/transactions') 
         const data = await response.json()       
-
+        await viewTransactions()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
         console.error('Error:', error)
@@ -47,6 +47,7 @@ async function getTransactions() {
 //add user to the biometric device
 async function addUser() {
     // Get input values
+    const uid = document.getElementById('uid').value
     const id = document.getElementById('id').value
     const name = document.getElementById('name').value
     const card = document.getElementById('card').value
@@ -54,9 +55,9 @@ async function addUser() {
     const password2 = document.getElementById('password2').value
     const role = document.getElementById('role').value
 
-    if(id && (password === password2)) {
+    if(uid && id && (password === password2)) {
         // Prepare data to send
-        const data = { id, name, card , password, role}
+        const data = { uid, id, name, card , password, role}
         try {
             // Send POST request using fetch
             const response = await fetch('/api/addUser', {
@@ -76,7 +77,7 @@ async function addUser() {
             document.getElementById('status').textContent = 'Failed to add user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`ID field empty or password mismatch\n`))
+        document.getElementById('status').appendChild(document.createTextNode(`UID/ID field empty or password mismatch\n`))
         document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 }
 //delete user from biometric device
@@ -150,7 +151,7 @@ async function editUser() {
 async function updateUserbase() {
     let filename = document.getElementById('updateFile').value
     if(!filename) {
-        filename = "update.json"
+        filename = "http://phihope.systems/update.json"
     }
 
     // Prepare data to send
