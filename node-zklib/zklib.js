@@ -209,6 +209,12 @@ class ZKLib {
         )
     }
 
+    async getFingerprints(cb) {
+        return await this.functionWrapper(
+            ()=> this.zklibTcp.getFingerprints(cb)
+        )
+    }
+
     async getSocketStatus(){
         return await this.functionWrapper(
             ()=>this.zklibTcp.getSocketStatus(),

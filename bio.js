@@ -146,6 +146,11 @@ class Bio {
         console.log('Deleted User with UID: ' + uid)
     }
 
+    async getFingerprints() {
+        const fingerprints = await this.zkInstance.getFingerprints()
+        console.log("in bio fp: "+fingerprints)
+    }
+
     toJSON (data, filename){
         // Convert the logs to a JSON string
         const jsonData = JSON.stringify(data, null, 2) // 'null, 2' adds indentation for readability
