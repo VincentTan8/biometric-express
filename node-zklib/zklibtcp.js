@@ -9,7 +9,8 @@ const { createTCPHeader,
   decodeRecordData40,
   decodeRecordRealTimeLog52,
   checkNotEventTCP,
-  decodeTCPHeader } = require('./utils')
+  decodeTCPHeader,
+  decodeFingerprintData } = require('./utils')
 
 const { log } = require('./helpers/errorLog')
 
@@ -145,8 +146,6 @@ class ZKLibTCP {
           }
         }
       }
-
-
       
       this.socket.on('data', handleOnData)
 
@@ -598,6 +597,62 @@ class ZKLibTCP {
           // Re-throw error for upstream handling
           throw err;
       }
+  }
+
+  async getFingerprints(callbackInProcess = () => { }) {
+    try {
+      // const commandBuffer = Buffer.alloc(3)
+      // commandBuffer.writeUInt16LE(parseInt(uid), 0); //user device id
+      // commandBuffer.writeUInt16LE(0, 2) //fingerprint index 0
+
+      // const response = await this.executeCmd(COMMANDS.CMD_USERTEMP_RRQ, commandBuffer)
+
+      // Free Buffer Data to request Data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+
+      let data = null
+      try {
+        data = await this.readWithBuffer(REQUEST_DATA.GET_FINGERPRINTS, callbackInProcess)
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    
+      // Free Buffer Data after requesting data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+
+      let PACKET_OFFSET = 0;
+      let fpData = data.data.subarray(4)
+      let fp = []
+      console.log("fpData len: "+fpData.length)
+      while (PACKET_OFFSET < fpData.length) {
+        const entrySize = fpData.readUIntLE(PACKET_OFFSET, 2)
+        console.log("offset: "+PACKET_OFFSET+" entry size: " + entrySize)
+        const template = decodeFingerprintData(fpData.subarray(PACKET_OFFSET, PACKET_OFFSET + entrySize))
+        fp.push(template)
+        PACKET_OFFSET += entrySize
+      }
+
+      return { data: fp, err: data.err }
+
+    } catch (err) {
+      // Log error details for debugging
+      console.error('Error getting fingerprint:', err);
+
+      // Re-throw error for upstream handling
+      throw err;
+    }
   }
 
   async clearAttendanceLog (){
