@@ -37,12 +37,12 @@ app.post('/api/changeIP', async (req, res) => {
             usersFileName = 'testUsers.json'
             break;
         case "phihope":
-            biometric = new Bio('171.16.109.24', 4370, 10000, 4000, io)
+            biometric = new Bio('192.168.68.115', 4370, 10000, 4000, io)
             logsFileName = 'phihopeLogs.json'
             usersFileName = 'phihopeUsers.json'
             break;
         case "wetalk":
-            biometric = new Bio('171.16.113.238', 4370, 10000, 4000, io)
+            biometric = new Bio('192.168.68.104', 4370, 10000, 4000, io)
             logsFileName = 'wetalkLogs.json'
             usersFileName = 'wetalkUsers.json'
             break;
