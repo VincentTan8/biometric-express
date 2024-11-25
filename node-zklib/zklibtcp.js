@@ -459,6 +459,33 @@ class ZKLibTCP {
         throw err;
     }
 	}
+
+  async setTime(tm) {
+    try {
+      // Validate the input time
+      if (!(tm instanceof Date) && typeof tm !== 'number') {
+        throw new TypeError('Invalid time parameter. Must be a Date object or a timestamp.');
+      }
+
+      // Convert the input time to a Date object if it's not already
+      const date = (tm instanceof Date) ? tm : new Date(tm);
+
+      // Encode the time into the required format
+      const encodedTime = timeParser.encode(date);
+
+      // Create a buffer and write the encoded time
+      const commandString = Buffer.alloc(32);
+      commandString.writeUInt32LE(encodedTime, 0);
+
+      // Send the command to set the time
+      return await this.executeCmd(COMMANDS.CMD_SET_TIME, commandString);
+    } catch (err) {
+      // Log the error for debugging
+      console.error('Error setting time:', err);
+      // Re-throw the error for the caller to handle
+      throw err;
+    }
+  }
   
   async freeData() {
     return await this.executeCmd(COMMANDS.CMD_FREE_DATA, '')

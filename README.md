@@ -14,8 +14,8 @@ If you are not depending on the included node binaries and node_modules then:
 
 - Install Node.js
 
-- Then run: 
+Navigate to the project directory then run: 
 * npm install
 * node app.js
 
-- Then open localhost:3000 on your preferred browser
+Then open localhost:3000 on your preferred browser
