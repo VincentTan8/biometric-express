@@ -209,8 +209,21 @@ async function viewUsers() {
 }
 
 async function viewTransactions() {
+    const users = await readUsers()
     const logs = await readTransactions()
-    await refreshLogsTable(JSON.parse(logs.result), true)
+    const userJson = JSON.parse(users.result)
+    const logJson = JSON.parse(logs.result)
+
+    //for getting logs including IDs of deleted users
+    const allIDs = [...new Set(logJson.map(log => log.deviceUserId ))]
+
+    //this renames some of the fields and deletes unneeded fields
+    const allLogs = makeReadable(
+        logJson.filter(log => allIDs.includes(log.deviceUserId)),
+        userJson
+    )
+
+    await refreshLogsTable(allLogs)
 }
 
 //convert logs into readable format and filter if needed
@@ -227,16 +240,13 @@ async function exportLogs() {
             allIDs.push(user.userId)
     })
 
-    //for getting logs including IDs of deleted users
-    // const allIDs = [...new Set(logJson.map(log => log.deviceUserId ))]
-
-    // //this renames some of the fields and deletes unneeded fields
+    //this renames some of the fields and deletes unneeded fields
     const allLogs = makeReadable(
         logJson.filter(log => allIDs.includes(log.deviceUserId)),
         userJson
     )
     
-    // //get first and last log of each user
+    //get first and last log of each user
     let allFAL = []
     let startDate = new Date() // MM/DD/YYYY 08:00:00
     let endDate = new Date() // MM/DD/YYYY day before endDate will be taken if set
@@ -255,8 +265,7 @@ async function exportLogs() {
     })
 
     //logging only first and last log of the day during specified dates
-    //if requesting all possible logs, please log allLogs instead of allFAL
-    await refreshLogsTable(allFAL, false)
+    await refreshLogsTable(allFAL)
 }
 
 function makeReadable(data, userData) {
@@ -265,7 +274,7 @@ function makeReadable(data, userData) {
         if(user)
             log.userName = user.name //make new field
         else
-            log.userName = "UserID Not Found: " + log.deviceUserId
+            log.userName = "Username Not Found: " + log.deviceUserId
 
         //just for rearranging the field 
         log.timeStamp = formatDateWithoutGMT(new Date(log.recordTime))
@@ -426,7 +435,7 @@ async function refreshUserTable(data) {
     })
 }
 
-async function refreshLogsTable(data, raw) {
+async function refreshLogsTable(data) {
     if ($.fn.DataTable.isDataTable('#logsTable')) {
         $('#logsTable').DataTable().clear().destroy()
         $('#logsTable').addClass('hidden-table')
@@ -435,58 +444,33 @@ async function refreshLogsTable(data, raw) {
         $('#userTable').DataTable().clear().destroy()
         $('#userTable').addClass('hidden-table')
     }
-    if(raw) {
-        // Initialize DataTable
-        $('#logsTable').removeClass('hidden-table')
-        const logsTable = $('#logsTable').DataTable({
-            data: data, 
-            columns: [
-                { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userSn', title: "Log Number", defaultContent: 'none set'},
-                { data: 'recordTime', defaultContent: 'none set'}
-            ],
-            paging: false,
-            searching: true,
-            ordering: true,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'print']
-                }
+    
+    // Initialize DataTable
+    $('#logsTable').removeClass('hidden-table')
+    const logsTable = $('#logsTable').DataTable({
+        data: data, 
+        columns: [
+            { data: 'deviceUserId', defaultContent: 'none set'},
+            { data: 'userName', title: "Username", defaultContent: 'none set'},
+            { data: 'timeStamp', defaultContent: 'none set'}
+        ],
+        paging: false,
+        searching: true,
+        ordering: true,
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'print']
             }
-        })
-        $('div.dt-search input[type="search"]').on('keyup', function() {
-            const searchValue = this.value
-            // Convert space-separated terms to a regex pattern for OR search
-            const regexPattern = searchValue.split(' ').join('|')
-            logsTable.search(regexPattern, true, false).draw()
-        })
-    } else {
-        // Initialize DataTable
-        $('#logsTable').removeClass('hidden-table')
-        const logsTable = $('#logsTable').DataTable({
-            data: data, 
-            columns: [
-                { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userName', title: "Username", defaultContent: 'none set'},
-                { data: 'timeStamp', defaultContent: 'none set'}
-            ],
-            paging: false,
-            searching: true,
-            ordering: true,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'print']
-                }
-            }
-        })
-        $('div.dt-search input[type="search"]').on('keyup', function() {
-            const searchValue = this.value
-            // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
-            // \b<name>\b to avoid matching names like paul with johnpaul or paula
-            const regexPattern = searchValue.split(' ').join('|')
-            logsTable.search(regexPattern, true, false).draw()
-        })
-    }
+        }
+    })
+    $('div.dt-search input[type="search"]').on('keyup', function() {
+        const searchValue = this.value
+        // Convert space-separated terms to a regex pattern for OR search
+        // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
+        // \b<name>\b to avoid matching names like paul with johnpaul or paula
+        const regexPattern = searchValue.split(' ').join('|')
+        logsTable.search(regexPattern, true, false).draw()
+    })
 }
 
 const socket = io()  // Connect to the Socket.IO server
