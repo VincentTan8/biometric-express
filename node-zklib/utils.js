@@ -168,14 +168,16 @@ module.exports.decodeRecordData16 = (recordData)=>{
 
 module.exports.decodeFingerprintData = (fpData)=>{
     const fpSize = fpData.readUIntLE(0, 2) - 6
-    console.log("fpSize: " + fpSize)
     const fingerprint = {
       uid: fpData.readUIntLE(2, 2),
       fpIndex: fpData.readUIntLE(4, 1),
       fpFlag: fpData.readUIntLE(5, 1),
-      fpTemplate: fpData.slice(6, fpSize)
+      fpTemplate: fpData
+        .slice(6, 6+fpSize)
+        .toString('base64')
+        .split('\0')
+        .shift()
     }
-    console.log("finger? " + fingerprint.uid + " index: " + fingerprint.fpIndex)
     return fingerprint
 }
 
