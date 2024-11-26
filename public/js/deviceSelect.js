@@ -51,7 +51,13 @@ async function changeIP(company) {
 window.onload = () => {
     // Set default pill position to selected word
     const defaultWord = document.querySelector('.word.selected')
-    changeIP(defaultWord.id)
+
+    const socket = io()  // Connect to the Socket.IO server
+    socket.on('connect', () => {
+        console.log('WebSocket connected in deviceSelect')
+        changeIP(defaultWord.id)
+    })
+
     if (defaultWord) {
         movePill(defaultWord)
     }

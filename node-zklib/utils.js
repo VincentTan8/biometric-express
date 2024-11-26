@@ -166,6 +166,22 @@ module.exports.decodeRecordData16 = (recordData)=>{
     return record
 }
 
+module.exports.decodeFingerprintData = (fpData)=>{
+    const fpSize = fpData.readUIntLE(0, 2) - 6
+    const fingerprint = {
+      uid: fpData.readUIntLE(2, 2),
+      fpIndex: fpData.readUIntLE(4, 1),
+      fpFlag: fpData.readUIntLE(5, 1),
+      fpTemplate: fpData
+        .slice(6, 6+fpSize)
+        .toString('base64')
+        .split('\0')
+        .shift(),
+      entrySize: fpData.readUIntLE(0, 2),
+    }
+    return fingerprint
+}
+
 module.exports.decodeRecordRealTimeLog18 = (recordData)=>{
     const userId = recordData.readUIntLE(8,1)
     const attTime = parseHexToTime(recordData.subarray(12,18))

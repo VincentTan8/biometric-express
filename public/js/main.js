@@ -26,7 +26,8 @@ async function readTransactions() {
 async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
-        const data = await response.json()        // Parse JSON response
+        const data = await response.json()        // Parse JSON response   
+        respondMessage(data)
         await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -37,7 +38,8 @@ async function getUsers() {
 async function getTransactions() {
     try {
         const response = await fetch('/api/transactions') 
-        const data = await response.json()       
+        const data = await response.json() 
+        respondMessage(data)        
         await viewTransactions()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -70,15 +72,13 @@ async function addUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+            respondMessage(result)
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to add user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`UID/ID field empty or password mismatch\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage({ result: `UID/ID field empty or password mismatch\n`})
 }
 //delete user from biometric device
 async function deleteUser(deviceID) {
@@ -97,15 +97,13 @@ async function deleteUser(deviceID) {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+            respondMessage(result)
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to delete user.'
         }
     } else
-        document.getElementById('status').appendChild(document.createTextNode(`Device ID empty\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage({ result: `Device ID empty\n`})
 }
 
 async function editUser() {
@@ -134,8 +132,7 @@ async function editUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+            respondMessage(result)
             
             //close modal
             modal.style.display = 'none'
@@ -144,8 +141,7 @@ async function editUser() {
             document.getElementById('status').textContent = 'Failed to edit user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`Password mismatch\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage({ result: `Password mismatch\n`})
 }
 
 async function updateUserbase() {
@@ -196,8 +192,7 @@ async function replaceUserbase() {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage(result)
     } catch (error) {
         console.error('Error:', error)
     }
@@ -209,8 +204,21 @@ async function viewUsers() {
 }
 
 async function viewTransactions() {
+    const users = await readUsers()
     const logs = await readTransactions()
-    await refreshLogsTable(JSON.parse(logs.result), true)
+    const userJson = JSON.parse(users.result)
+    const logJson = JSON.parse(logs.result)
+
+    //for getting logs including IDs of deleted users
+    const allIDs = [...new Set(logJson.map(log => log.deviceUserId ))]
+
+    //this renames some of the fields and deletes unneeded fields
+    const allLogs = makeReadable(
+        logJson.filter(log => allIDs.includes(log.deviceUserId)),
+        userJson
+    )
+
+    await refreshLogsTable(allLogs)
 }
 
 //convert logs into readable format and filter if needed
@@ -227,16 +235,13 @@ async function exportLogs() {
             allIDs.push(user.userId)
     })
 
-    //for getting logs including IDs of deleted users
-    // const allIDs = [...new Set(logJson.map(log => log.deviceUserId ))]
-
-    // //this renames some of the fields and deletes unneeded fields
+    //this renames some of the fields and deletes unneeded fields
     const allLogs = makeReadable(
         logJson.filter(log => allIDs.includes(log.deviceUserId)),
         userJson
     )
     
-    // //get first and last log of each user
+    //get first and last log of each user
     let allFAL = []
     let startDate = new Date() // MM/DD/YYYY 08:00:00
     let endDate = new Date() // MM/DD/YYYY day before endDate will be taken if set
@@ -255,8 +260,8 @@ async function exportLogs() {
     })
 
     //logging only first and last log of the day during specified dates
-    //if requesting all possible logs, please log allLogs instead of allFAL
-    await refreshLogsTable(allFAL, false)
+    await refreshLogsTable(allFAL)
+    respondMessage({ result: 'Logs ready for export'})
 }
 
 function makeReadable(data, userData) {
@@ -265,7 +270,7 @@ function makeReadable(data, userData) {
         if(user)
             log.userName = user.name //make new field
         else
-            log.userName = "UserID Not Found: " + log.deviceUserId
+            log.userName = "Username Not Found: " + log.deviceUserId
 
         //just for rearranging the field 
         log.timeStamp = formatDateWithoutGMT(new Date(log.recordTime))
@@ -364,6 +369,8 @@ async function refreshUserTable(data) {
             },
             {
                 targets: -1, //target last column
+                searchable: false,
+                orderable: false,
                 width: '14rem',
                 render: function (data, type, row) {
                     return `
@@ -426,7 +433,7 @@ async function refreshUserTable(data) {
     })
 }
 
-async function refreshLogsTable(data, raw) {
+async function refreshLogsTable(data) {
     if ($.fn.DataTable.isDataTable('#logsTable')) {
         $('#logsTable').DataTable().clear().destroy()
         $('#logsTable').addClass('hidden-table')
@@ -435,58 +442,38 @@ async function refreshLogsTable(data, raw) {
         $('#userTable').DataTable().clear().destroy()
         $('#userTable').addClass('hidden-table')
     }
-    if(raw) {
-        // Initialize DataTable
-        $('#logsTable').removeClass('hidden-table')
-        const logsTable = $('#logsTable').DataTable({
-            data: data, 
-            columns: [
-                { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userSn', title: "Log Number", defaultContent: 'none set'},
-                { data: 'recordTime', defaultContent: 'none set'}
-            ],
-            paging: false,
-            searching: true,
-            ordering: true,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'print']
-                }
+    
+    // Initialize DataTable
+    $('#logsTable').removeClass('hidden-table')
+    const logsTable = $('#logsTable').DataTable({
+        data: data, 
+        columns: [
+            { data: 'deviceUserId', defaultContent: 'none set'},
+            { data: 'userName', title: "Username", defaultContent: 'none set'},
+            { data: 'timeStamp', defaultContent: 'none set'}
+        ],
+        paging: false,
+        searching: true,
+        ordering: true,
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'print']
             }
-        })
-        $('div.dt-search input[type="search"]').on('keyup', function() {
-            const searchValue = this.value
-            // Convert space-separated terms to a regex pattern for OR search
-            const regexPattern = searchValue.split(' ').join('|')
-            logsTable.search(regexPattern, true, false).draw()
-        })
-    } else {
-        // Initialize DataTable
-        $('#logsTable').removeClass('hidden-table')
-        const logsTable = $('#logsTable').DataTable({
-            data: data, 
-            columns: [
-                { data: 'deviceUserId', defaultContent: 'none set'},
-                { data: 'userName', title: "Username", defaultContent: 'none set'},
-                { data: 'timeStamp', defaultContent: 'none set'}
-            ],
-            paging: false,
-            searching: true,
-            ordering: true,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'print']
-                }
-            }
-        })
-        $('div.dt-search input[type="search"]').on('keyup', function() {
-            const searchValue = this.value
-            // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
-            // \b<name>\b to avoid matching names like paul with johnpaul or paula
-            const regexPattern = searchValue.split(' ').join('|')
-            logsTable.search(regexPattern, true, false).draw()
-        })
-    }
+        }
+    })
+    $('div.dt-search input[type="search"]').on('keyup', function() {
+        const searchValue = this.value
+        // Convert space-separated terms to a regex pattern for OR search
+        // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
+        // \b<name>\b to avoid matching names like paul with johnpaul or paula
+        const regexPattern = searchValue.split(' ').join('|')
+        logsTable.search(regexPattern, true, false).draw()
+    })
+}
+
+function respondMessage(msg) {
+    document.getElementById('status').appendChild(document.createTextNode(`Status: ${msg.result}\n`))
+    document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 }
 
 const socket = io()  // Connect to the Socket.IO server
@@ -504,6 +491,7 @@ socket.on('userbase-status', (data) => {
     status.scrollTop = status.scrollHeight
 })
 socket.on('connect', () => {
-    console.log('WebSocket connected!');
-    updateUserbase()
+    console.log('WebSocket connected in main')
+    if(document.getElementById('updateFile'))
+        updateUserbase()
 });

@@ -12,7 +12,6 @@ class Bio {
         console.log("Initializing...")
         try {
             // Create socket to machine 
-            console.log("Connecting...")
             await this.zkInstance.createSocket()
 
             // Get general info like logCapacity, user counts, logs count
@@ -21,9 +20,10 @@ class Bio {
             console.log(this.info)
             return this.info
         } catch (e) {
-            console.log(e)
+            console.log("Connection failed")
             if (e.code === 'EADDRINUSE') {
             }
+            throw e
         }
     }
 
@@ -56,11 +56,6 @@ class Bio {
         // delete the data in machine
         // You should do this when there are too many data in the machine, this issue can slow down machine 
         // this.zkInstances.clearAttendanceLog()
-        
-        // Get the device time
-        const getTime = await this.zkInstance.getTime()
-        console.log("Time now is: " + getTime.toString())
-        // const setTime = await this.zkInstance.setTime(new Date("2024-01-01T07:41:32"))
         return logs
     }
 
@@ -86,10 +81,10 @@ class Bio {
 
     async addUser(users, uid, userID, username, password, role, cardnum) {
         //generate uid (valid uids are from 1 to 3000)
-        // let i = 0;
+        // let i = 0
         // let notValid = true
         // while (i < 3000 && notValid) {
-        //     i++;
+        //     i++
         //     notValid = users.some(user => {
         //         return i == user.uid
         //     })
@@ -144,6 +139,29 @@ class Bio {
         // deleteUser takes uid which is different from userID
         const deletedUser = await this.zkInstance.deleteUser(uid)
         console.log('Deleted User with UID: ' + uid)
+    }
+
+    async setFingerprint(uid, index, flag, template, fpSize) {
+        await this.zkInstance.setFingerprint(uid, index, flag, template, fpSize)
+        console.log('Fingerprint set for UID: ' + uid + " at index: " + index)
+    }
+
+    async getFingerprints() {
+        const fingerprints = await this.zkInstance.getFingerprints()
+        console.log("Total Fingerprints: " + fingerprints.data.length)
+        return fingerprints
+    }
+    
+    async setTime(time) {
+        // const setTime = await this.zkInstance.setTime(new Date("2024-01-01T07:41:32"))
+        await this.zkInstance.setTime(new Date(time))
+        console.log("Time set to: " + time)
+    }
+
+    async getTime() {
+        // Get the device time
+        const getTime = await this.zkInstance.getTime()
+        console.log("Time now is: " + getTime.toString())
     }
 
     toJSON (data, filename){

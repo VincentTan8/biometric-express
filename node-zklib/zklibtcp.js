@@ -9,7 +9,8 @@ const { createTCPHeader,
   decodeRecordData40,
   decodeRecordRealTimeLog52,
   checkNotEventTCP,
-  decodeTCPHeader } = require('./utils')
+  decodeTCPHeader,
+  decodeFingerprintData } = require('./utils')
 
 const { log } = require('./helpers/errorLog')
 
@@ -145,8 +146,6 @@ class ZKLibTCP {
           }
         }
       }
-
-
       
       this.socket.on('data', handleOnData)
 
@@ -600,33 +599,115 @@ class ZKLibTCP {
       }
   }
 
+  async getFingerprints(callbackInProcess = () => { }) {
+    try { 
+      // Free Buffer Data to request Data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+
+      let data = null
+      try {
+        data = await this.readWithBuffer(REQUEST_DATA.GET_FINGERPRINTS, callbackInProcess)
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    
+      // Free Buffer Data after requesting data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+
+      let PACKET_OFFSET = 0;
+      let fpData = data.data.subarray(4)
+      let fp = []
+
+      while (PACKET_OFFSET < fpData.length) {
+        const entrySize = fpData.readUIntLE(PACKET_OFFSET, 2)
+        const template = decodeFingerprintData(fpData.subarray(PACKET_OFFSET, PACKET_OFFSET + entrySize))
+        fp.push(template)
+        PACKET_OFFSET += entrySize
+      }
+
+      return { data: fp, err: data.err }
+
+    } catch (err) {
+      // Log error details for debugging
+      console.error('Error getting fingerprint:', err);
+
+      // Re-throw error for upstream handling
+      throw err;
+    }
+  }
+
+  async setFingerprint(uid, index, flag, template, fpSize) {
+    try {
+      // Validate input parameters
+      if (
+          parseInt(uid) <= 0 || parseInt(uid) > 3000
+      ) {
+          throw new Error('Invalid input parameters');
+      }
+
+      // Free Buffer Data to request Data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+
+      //init the prep struct
+      const prepBuffer = Buffer.alloc(4)
+      prepBuffer.writeUInt16LE(parseInt(fpSize), 0)
+      prepBuffer.writeUInt16LE(0, 2)
+
+      // Allocate and initialize the command buffer
+      const commandBuffer = Buffer.alloc(6);
+      // Fill the buffer with user data
+      commandBuffer.writeUInt16LE(parseInt(uid), 0)
+      commandBuffer.writeUInt16LE(parseInt(index), 2)
+      commandBuffer.writeUInt16LE(parseInt(flag), 3) //0 means invalid, 1 is valid, 3 is duress
+      commandBuffer.writeUInt16LE(parseInt(fpSize), 4)
+      
+      //convert string back to binary using base64
+      const binaryData = Buffer.from(template, 'base64')
+      const templateBuffer = Buffer.alloc(fpSize)
+      binaryData.copy(templateBuffer, 0)
+      // Send the commands and return the result
+      await this.executeCmd(COMMANDS.CMD_PREPARE_DATA, prepBuffer)
+      await this.executeCmd(COMMANDS.CMD_DATA, templateBuffer)
+      await this.executeCmd(COMMANDS.CMD_TMP_WRITE, commandBuffer)
+
+      // Free Buffer Data after requesting data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+    } catch (err) {
+      // Log error details for debugging
+      console.error('Error setting fingerprint:', err);
+
+      // Re-throw error for upstream handling
+      throw err;
+    }
+  }
+
   async clearAttendanceLog (){
     return await this.executeCmd(COMMANDS.CMD_CLEAR_ATTLOG, '')
   }
-
-  // async getRealTimeLogs(cb = () => { }) {
-  //   this.replyId++;
-
-  //   const buf = createTCPHeader(COMMANDS.CMD_REG_EVENT, this.sessionId, this.replyId, Buffer.from([0x01, 0x00, 0x00, 0x00]))
-
-  //   this.socket.write(buf, null, err => {})
-
-  //   this.socket.listenerCount('data') === 0 && this.socket.on('data', (data) => {
-
-  //     if (!checkNotEventTCP(data)) {
-  //       console.log("pumasok?")
-  //       return;
-  //     }
-  //     else {
-  //       console.log("lumabas?")
-  //     }
-  //     if (data.length > 16) {
-  //       cb(decodeRecordRealTimeLog52(data))
-  //     }
-
-  //   })
-
-  // }
 
   async getRealTimeLogs(cb = () => {}) {
       this.replyId++; // Increment the reply ID for this request
