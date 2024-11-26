@@ -26,7 +26,8 @@ async function readTransactions() {
 async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
-        const data = await response.json()        // Parse JSON response
+        const data = await response.json()        // Parse JSON response   
+        respondMessage(data)
         await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -37,7 +38,8 @@ async function getUsers() {
 async function getTransactions() {
     try {
         const response = await fetch('/api/transactions') 
-        const data = await response.json()       
+        const data = await response.json() 
+        respondMessage(data)        
         await viewTransactions()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -70,15 +72,13 @@ async function addUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+            respondMessage(result)
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to add user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`UID/ID field empty or password mismatch\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage({ result: `UID/ID field empty or password mismatch\n`})
 }
 //delete user from biometric device
 async function deleteUser(deviceID) {
@@ -97,15 +97,13 @@ async function deleteUser(deviceID) {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+            respondMessage(result)
         } catch (error) {
             console.error('Error:', error)
             document.getElementById('status').textContent = 'Failed to delete user.'
         }
     } else
-        document.getElementById('status').appendChild(document.createTextNode(`Device ID empty\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage({ result: `Device ID empty\n`})
 }
 
 async function editUser() {
@@ -134,8 +132,7 @@ async function editUser() {
 
             // Handle the response
             const result = await response.json()
-            document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-            document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+            respondMessage(result)
             
             //close modal
             modal.style.display = 'none'
@@ -144,8 +141,7 @@ async function editUser() {
             document.getElementById('status').textContent = 'Failed to edit user.'
         }
     } else 
-        document.getElementById('status').appendChild(document.createTextNode(`Password mismatch\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage({ result: `Password mismatch\n`})
 }
 
 async function updateUserbase() {
@@ -196,8 +192,7 @@ async function replaceUserbase() {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
-        document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
+        respondMessage(result)
     } catch (error) {
         console.error('Error:', error)
     }
@@ -266,6 +261,7 @@ async function exportLogs() {
 
     //logging only first and last log of the day during specified dates
     await refreshLogsTable(allFAL)
+    respondMessage({ result: 'Logs ready for export'})
 }
 
 function makeReadable(data, userData) {
@@ -473,6 +469,11 @@ async function refreshLogsTable(data) {
         const regexPattern = searchValue.split(' ').join('|')
         logsTable.search(regexPattern, true, false).draw()
     })
+}
+
+function respondMessage(msg) {
+    document.getElementById('status').appendChild(document.createTextNode(`Status: ${msg.result}\n`))
+    document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
 }
 
 const socket = io()  // Connect to the Socket.IO server
