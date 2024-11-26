@@ -209,9 +209,15 @@ class ZKLib {
         )
     }
 
+    async setFingerprint(uid, index, flag, template, fpSize) {
+        return await this.functionWrapper(
+            () => this.zklibTcp.setFingerprint(uid, index, flag, template, fpSize)
+        )
+    }
+
     async getFingerprints(cb) {
         return await this.functionWrapper(
-            ()=> this.zklibTcp.getFingerprints(cb)
+            () => this.zklibTcp.getFingerprints(cb)
         )
     }
 

@@ -86,10 +86,10 @@ class Bio {
 
     async addUser(users, uid, userID, username, password, role, cardnum) {
         //generate uid (valid uids are from 1 to 3000)
-        // let i = 0;
+        // let i = 0
         // let notValid = true
         // while (i < 3000 && notValid) {
-        //     i++;
+        //     i++
         //     notValid = users.some(user => {
         //         return i == user.uid
         //     })
@@ -146,9 +146,15 @@ class Bio {
         console.log('Deleted User with UID: ' + uid)
     }
 
+    async setFingerprint(uid, index, flag, template, fpSize) {
+        await this.zkInstance.setFingerprint(uid, index, flag, template, fpSize)
+        console.log('Fingerprint set for UID: ' + uid + " at index: " + index)
+    }
+
     async getFingerprints() {
         const fingerprints = await this.zkInstance.getFingerprints()
-        console.log("in bio fp: "+fingerprints)
+        console.log("Total Fingerprints: " + fingerprints.data.length)
+        return fingerprints
     }
 
     toJSON (data, filename){
