@@ -666,22 +666,27 @@ class ZKLibTCP {
         }
       }
 
-      // Allocate and initialize the buffer
+      //init the prep struct
+      const prepBuffer = Buffer.alloc(4)
+      prepBuffer.writeUInt16LE(parseInt(fpSize), 0)
+      prepBuffer.writeUInt16LE(0, 2)
+
+      // Allocate and initialize the command buffer
       const commandBuffer = Buffer.alloc(6);
       // Fill the buffer with user data
       commandBuffer.writeUInt16LE(parseInt(uid), 0)
       commandBuffer.writeUInt16LE(parseInt(index), 2)
       commandBuffer.writeUInt16LE(parseInt(flag), 3) //0 means invalid, 1 is valid, 3 is duress
-      commandBuffer.writeUInt16LE()
+      commandBuffer.writeUInt16LE(parseInt(fpSize), 4)
       
       //convert string back to binary using base64
       const binaryData = Buffer.from(template, 'base64')
       const templateBuffer = Buffer.alloc(fpSize)
       binaryData.copy(templateBuffer, 0)
       // Send the commands and return the result
+      await this.executeCmd(COMMANDS.CMD_PREPARE_DATA, prepBuffer)
       await this.executeCmd(COMMANDS.CMD_DATA, templateBuffer)
       await this.executeCmd(COMMANDS.CMD_TMP_WRITE, commandBuffer)
-      console.log("in zklibtcp writing! ")
 
       // Free Buffer Data after requesting data
       if (this.socket) {
@@ -703,30 +708,6 @@ class ZKLibTCP {
   async clearAttendanceLog (){
     return await this.executeCmd(COMMANDS.CMD_CLEAR_ATTLOG, '')
   }
-
-  // async getRealTimeLogs(cb = () => { }) {
-  //   this.replyId++;
-
-  //   const buf = createTCPHeader(COMMANDS.CMD_REG_EVENT, this.sessionId, this.replyId, Buffer.from([0x01, 0x00, 0x00, 0x00]))
-
-  //   this.socket.write(buf, null, err => {})
-
-  //   this.socket.listenerCount('data') === 0 && this.socket.on('data', (data) => {
-
-  //     if (!checkNotEventTCP(data)) {
-  //       console.log("pumasok?")
-  //       return;
-  //     }
-  //     else {
-  //       console.log("lumabas?")
-  //     }
-  //     if (data.length > 16) {
-  //       cb(decodeRecordRealTimeLog52(data))
-  //     }
-
-  //   })
-
-  // }
 
   async getRealTimeLogs(cb = () => {}) {
       this.replyId++; // Increment the reply ID for this request
