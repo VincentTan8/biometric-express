@@ -84,21 +84,18 @@ app.get('/api/users', async (req, res) => {
                 users = await biometric.getUsers().catch(err => {
                     io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
                 })
-                io.emit('status-update', { status: 'Done!'})
             }
             await biometric.disconnect()
 
             biometric.toJSON(users.data, usersFileName)
-            const jsonData = JSON.stringify(users.data, null, 2)
 
-            res.setHeader('Content-Type', 'application/json')
-            res.json({ result: jsonData })
+            res.json({ result: 'Users fetched!' })
         } else {
             io.emit('status-update', { status: 'Failed to get users' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ error: 'Failed to fetch data' })
+        console.error('Error getting users:', err)
+        res.status(500).json({ result: 'Error getting users\n' + err.err.stack})
     }
 })
 
@@ -116,21 +113,18 @@ app.get('/api/transactions', async (req, res) => {
                 logs = await biometric.getTransactions().catch(err => {
                     io.emit('status-update', { status:'Unhandled error in getTransactions: ' + err})
                 })
-                io.emit('status-update', { status: 'Done!'})
             }
             await biometric.disconnect()
 
             biometric.toJSON(logs.data, logsFileName)
-            const jsonData = JSON.stringify(logs.data, null, 2)
 
-            res.setHeader('Content-Type', 'application/json')
-            res.json({ result: jsonData })
+            res.json({ result: 'Transactions fetched!' })
         } else {
             io.emit('status-update', { status: 'Failed to get transactions' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ error: 'Failed to fetch data' })
+        console.error('Error getting transactions:', err)
+        res.status(500).json({ result: 'Error getting transactions\n' + err.err.stack})
     }
 })
 
@@ -161,8 +155,8 @@ app.post('/api/addUser', async (req, res) => {
             io.emit('status-update', { status: 'Failed to add user' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ result: 'Failed to fetch data' })
+        console.error('Error adding user:', err)
+        res.status(500).json({ result: 'Error adding user\n' + err.err.stack})
     }
 })
 
@@ -185,8 +179,8 @@ app.post('/api/deleteUser', async (req, res) => {
             io.emit('status-update', { status: 'Failed to delete user' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ result: 'Failed to fetch data' })
+        console.error('Error deleting user:', err)
+        res.status(500).json({ result: 'Error deleting user\n' + err.err.stack})
     }
 })
 
@@ -220,8 +214,8 @@ app.post('/api/editUser', async (req, res) => {
             io.emit('status-update', { status: 'Failed to edit user' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ result: 'Failed to fetch data' })
+        console.error('Error editing user:', err)
+        res.status(500).json({ result: 'Error editing user\n' + err.err.stack})
     }
 })
 
@@ -236,7 +230,10 @@ app.post('/api/updateUserbase', async (req, res) => {
         try {
             const response = await fetch(filename);
             if (!response.ok) {
+                io.emit('userbase-status', { status: "Fetch failed!" })
                 throw new Error(`HTTP error! status: ${response.status}`);
+            } else {
+                io.emit('userbase-status', { status: "Fetch success!" })
             }
             // const newFile = await response.text(); // For raw text (e.g., JSON string)
             const newFile = await response.json(); // if response is JSON
@@ -306,8 +303,8 @@ app.post('/api/updateUserbase', async (req, res) => {
             io.emit('userbase-status', { status: 'Failed to update userbase' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ result: 'Failed to update\n' + err})
+        console.error('Error updating userbase:', err)
+        res.status(500).json({ result: 'Error updating userbase\n' + err.err.stack})
     }
 })
 
@@ -363,8 +360,8 @@ app.post('/api/replaceUserbase', async (req, res) => {
             io.emit('status-update', { status: 'Failed to replace userbase' })
         }
     } catch (err) {
-        console.error('Error fetching data:', err)
-        res.status(500).json({ result: 'Failed to update' })
+        console.error('Error replacing userbase:', err)
+        res.status(500).json({ result: 'Error replacing userbase\n' + err.err.stack})
     }
 })
 
