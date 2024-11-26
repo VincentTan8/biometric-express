@@ -12,7 +12,6 @@ class Bio {
         console.log("Initializing...")
         try {
             // Create socket to machine 
-            console.log("Connecting...")
             await this.zkInstance.createSocket()
 
             // Get general info like logCapacity, user counts, logs count
@@ -21,9 +20,10 @@ class Bio {
             console.log(this.info)
             return this.info
         } catch (e) {
-            console.log(e)
+            console.log("Connection failed")
             if (e.code === 'EADDRINUSE') {
             }
+            throw e
         }
     }
 
