@@ -176,7 +176,8 @@ module.exports.decodeFingerprintData = (fpData)=>{
         .slice(6, 6+fpSize)
         .toString('base64')
         .split('\0')
-        .shift()
+        .shift(),
+      entrySize: fpData.readUIntLE(0, 2),
     }
     return fingerprint
 }
