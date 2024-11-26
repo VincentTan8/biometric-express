@@ -600,13 +600,7 @@ class ZKLibTCP {
   }
 
   async getFingerprints(callbackInProcess = () => { }) {
-    try {
-      // const commandBuffer = Buffer.alloc(3)
-      // commandBuffer.writeUInt16LE(parseInt(uid), 0); //user device id
-      // commandBuffer.writeUInt16LE(0, 2) //fingerprint index 0
-
-      // const response = await this.executeCmd(COMMANDS.CMD_USERTEMP_RRQ, commandBuffer)
-
+    try { 
       // Free Buffer Data to request Data
       if (this.socket) {
         try {
@@ -635,10 +629,9 @@ class ZKLibTCP {
       let PACKET_OFFSET = 0;
       let fpData = data.data.subarray(4)
       let fp = []
-      console.log("fpData len: "+fpData.length)
+
       while (PACKET_OFFSET < fpData.length) {
         const entrySize = fpData.readUIntLE(PACKET_OFFSET, 2)
-        console.log("offset: "+PACKET_OFFSET+" entry size: " + entrySize)
         const template = decodeFingerprintData(fpData.subarray(PACKET_OFFSET, PACKET_OFFSET + entrySize))
         fp.push(template)
         PACKET_OFFSET += entrySize
@@ -649,6 +642,58 @@ class ZKLibTCP {
     } catch (err) {
       // Log error details for debugging
       console.error('Error getting fingerprint:', err);
+
+      // Re-throw error for upstream handling
+      throw err;
+    }
+  }
+
+  async setFingerprint(uid, index, flag, template, fpSize) {
+    try {
+      // Validate input parameters
+      if (
+          parseInt(uid) <= 0 || parseInt(uid) > 3000
+      ) {
+          throw new Error('Invalid input parameters');
+      }
+
+      // Free Buffer Data to request Data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+
+      // Allocate and initialize the buffer
+      const commandBuffer = Buffer.alloc(6);
+      // Fill the buffer with user data
+      commandBuffer.writeUInt16LE(parseInt(uid), 0)
+      commandBuffer.writeUInt16LE(parseInt(index), 2)
+      commandBuffer.writeUInt16LE(parseInt(flag), 3) //0 means invalid, 1 is valid, 3 is duress
+      commandBuffer.writeUInt16LE()
+      
+      //convert string back to binary using base64
+      const binaryData = Buffer.from(template, 'base64')
+      const templateBuffer = Buffer.alloc(fpSize)
+      binaryData.copy(templateBuffer, 0)
+      // Send the commands and return the result
+      await this.executeCmd(COMMANDS.CMD_DATA, templateBuffer)
+      await this.executeCmd(COMMANDS.CMD_TMP_WRITE, commandBuffer)
+      console.log("in zklibtcp writing! ")
+
+      // Free Buffer Data after requesting data
+      if (this.socket) {
+        try {
+          await this.freeData()
+        } catch (err) {
+          return Promise.reject(err)
+        }
+      }
+    } catch (err) {
+      // Log error details for debugging
+      console.error('Error setting fingerprint:', err);
 
       // Re-throw error for upstream handling
       throw err;
