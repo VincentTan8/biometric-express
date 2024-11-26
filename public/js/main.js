@@ -491,6 +491,7 @@ socket.on('userbase-status', (data) => {
     status.scrollTop = status.scrollHeight
 })
 socket.on('connect', () => {
-    console.log('WebSocket connected!');
-    updateUserbase()
+    console.log('WebSocket connected in main')
+    if(document.getElementById('updateFile'))
+        updateUserbase()
 });
