@@ -69,18 +69,17 @@ class ZKLib {
         try{
             if(!this.zklibTcp.socket){
                 try{
-                    await this.zklibTcp.createSocket(cbErr,cbClose)
-                   
-
+                    console.log('Trying TCP...')
+                    await this.zklibTcp.createSocket(cbErr,cbClose)   
                 }catch(err){
-                    throw err;
+                    throw err
                 }
               
                 try{
                     await this.zklibTcp.connect();
                     console.log('TCP Connected!')
                 }catch(err){
-                    throw err;
+                    throw err
                 }
             }      
 
@@ -88,6 +87,7 @@ class ZKLib {
 
         }catch(err){
             try{
+                console.log('TCP failed, disconnecting...')
                 await this.zklibTcp.disconnect()
             }catch(err){}
 
@@ -97,6 +97,7 @@ class ZKLib {
 
             try {
                 if(!this.zklibUdp.socket){
+                    console.log('Trying UDP...')
                     await this.zklibUdp.createSocket(cbErr, cbClose)
                     await this.zklibUdp.connect()
                 }   
@@ -104,25 +105,22 @@ class ZKLib {
                 console.log('UDP Connected!')
                 this.connectionType = 'udp'
             }catch(err){
-
-
-
                 if(err.code !== 'EADDRINUSE'){
                     this.connectionType = null
                     try{
+                        console.log('UDP failed, disconnecting...')
                         await this.zklibUdp.disconnect()
                         this.zklibUdp.socket = null
                         this.zklibTcp.socket = null
                     }catch(err){}
 
-
                     return Promise.reject(new ZKError(err, 'UDP CONNECT' , this.ip))
                 }else{
                     this.connectionType = 'udp'
-                    
                 }
                 
             }
+            throw err
         }
     }
 
