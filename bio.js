@@ -56,11 +56,6 @@ class Bio {
         // delete the data in machine
         // You should do this when there are too many data in the machine, this issue can slow down machine 
         // this.zkInstances.clearAttendanceLog()
-        
-        // Get the device time
-        // const getTime = await this.zkInstance.getTime()
-        // console.log("Time now is: " + getTime.toString())
-        // const setTime = await this.zkInstance.setTime(new Date("2024-01-01T07:41:32"))
         return logs
     }
 
@@ -155,6 +150,18 @@ class Bio {
         const fingerprints = await this.zkInstance.getFingerprints()
         console.log("Total Fingerprints: " + fingerprints.data.length)
         return fingerprints
+    }
+    
+    async setTime(time) {
+        // const setTime = await this.zkInstance.setTime(new Date("2024-01-01T07:41:32"))
+        await this.zkInstance.setTime(new Date(time))
+        console.log("Time set to: " + time)
+    }
+
+    async getTime() {
+        // Get the device time
+        const getTime = await this.zkInstance.getTime()
+        console.log("Time now is: " + getTime.toString())
     }
 
     toJSON (data, filename){
