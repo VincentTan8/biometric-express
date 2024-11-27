@@ -701,7 +701,28 @@ class ZKLibTCP {
       console.error('Error setting fingerprint:', err);
 
       // Re-throw error for upstream handling
-      throw err;
+      throw err
+    }
+  }
+   
+  async deleteFingerprint(uid) {
+    try {
+        // Allocate and initialize the buffer
+        const commandBuffer = Buffer.alloc(3)
+
+        // Write userID to the buffer
+        commandBuffer.writeUInt16LE(parseInt(uid), 0)
+        commandBuffer.writeUInt8(0, 2)
+
+        // Send the delete command and return the result
+        await this.executeCmd(COMMANDS.CMD_DELETE_USERTEMP, commandBuffer)
+        await this.executeCmd(COMMANDS.CMD_REFRESHDATA, '')
+    } catch (err) {
+        // Log error details for debugging
+        console.error('Error deleting fingerprint:', err);
+
+        // Re-throw error for upstream handling
+        throw err
     }
   }
 
