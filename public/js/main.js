@@ -22,12 +22,28 @@ async function readTransactions() {
         console.error('Error:', error)
     }
 }
+//read fingerprints json file
+async function readFingerprints() {
+    try {
+        const response = await fetch('/api/readFingerprints')
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        document.getElementById('status').textContent = 'Error loading data'
+        console.error('Error:', error)
+    }
+}
 //get users from biometric device
 async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
         const data = await response.json()        // Parse JSON response   
         respondMessage(data)
+
+        //get fingerprints as well
+        await getFingerprints()
+
         await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -211,7 +227,24 @@ async function replaceUserbase() {
 
 async function viewUsers() {
     const users = await readUsers()
-    await refreshUserTable(JSON.parse(users.result))
+    const fingerprints = await readFingerprints()
+    const userJSON = JSON.parse(users.result)
+    const fpJSON = JSON.parse(fingerprints.result)
+
+    //group fingerprints for each user
+    let groupedFP = fpJSON.reduce((acc, item) => {
+        acc[item.uid] = acc[item.uid] || []
+        acc[item.uid].push(item)
+        return acc
+    }, {})
+
+    //merge with user json
+    const mergedData = userJSON.map(item => {
+        let matchingItems = groupedFP[item.uid] || []
+        return { ...item, fingerprints: matchingItems }
+    }) 
+
+    await refreshUserTable(mergedData)
 }
 
 async function viewTransactions() {
@@ -371,6 +404,13 @@ async function refreshUserTable(data) {
             { data: 'userId', defaultContent: 'none set'},
             { data: 'name', defaultContent: 'none set'},
             { data: 'cardno', defaultContent: 'none set'},
+            { 
+                data: 'fingerprints',
+                render: function(data, type, row) {
+                    if(!data || data.length === 0) return '0'
+                    return data.length
+                }
+            },
             { data: null, defaultContent: 'none set'},
         ],
         columnDefs: [
