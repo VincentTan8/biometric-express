@@ -219,9 +219,9 @@ class ZKLib {
         )
     }
 
-    async deleteFingerprint(uid) {
+    async deleteFingerprints(user) {
         return await this.functionWrapper(
-            () => this.zklibTcp.deleteFingerprint(uid)
+            () => this.zklibTcp.deleteFingerprints(user)
         )
     }
 
