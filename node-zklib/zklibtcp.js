@@ -520,6 +520,7 @@ class ZKLibTCP {
           userCounts: data.readUIntLE(24, 4),
           logCounts: data.readUIntLE(40, 4),
           logCapacity: data.readUIntLE(72, 4),
+          fpCounts: data.readUIntLE(32, 4)
         };
       } catch (err) {
         console.error('Error in getInfo:', err);
@@ -705,18 +706,12 @@ class ZKLibTCP {
     }
   }
    
-  async deleteFingerprint(uid) {
+  async deleteFingerprints(user) {
     try {
-        // Allocate and initialize the buffer
-        const commandBuffer = Buffer.alloc(3)
+      //delete user
 
-        // Write userID to the buffer
-        commandBuffer.writeUInt16LE(parseInt(uid), 0)
-        commandBuffer.writeUInt8(0, 2)
-
-        // Send the delete command and return the result
-        await this.executeCmd(COMMANDS.CMD_DELETE_USERTEMP, commandBuffer)
-        await this.executeCmd(COMMANDS.CMD_REFRESHDATA, '')
+      //add user back
+      
     } catch (err) {
         // Log error details for debugging
         console.error('Error deleting fingerprint:', err);
