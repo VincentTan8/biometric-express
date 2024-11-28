@@ -74,6 +74,16 @@ app.get('/api/readTransactions', (req, res) => {
     })
 })
 
+app.get('/api/readFingerprints', (req, res) => {
+    fs.readFile(fingerprintsFileName, 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).send('Error reading file')
+        } else {
+            res.json({ result: data })
+        }
+    })
+})
+
 app.get('/api/users', async (req, res) => {
     try {
         io.emit('status-update', { status: 'Connecting...' })
