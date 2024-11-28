@@ -16,6 +16,7 @@ const fs = require('fs')
 let biometric = new Bio('171.16.114.76', 4370, 10000, 4000, io) //earthhouse
 let logsFileName = 'testLogs.json'
 let usersFileName = 'testUsers.json'
+let fingerprintsFileName = 'testFingerprints.json'
 
 //Middleware
 app.use(express.json())
@@ -32,19 +33,22 @@ app.post('/api/changeIP', async (req, res) => {
     io.emit('status-update', { status: "Setting ip..." })
     switch (company) {
         case "earthhouse": 
-            biometric = new Bio('171.16.114.76', 4370, 10000, 4000, io) 
+            biometric = new Bio('192.168.68.153', 4370, 10000, 4000, io) 
             logsFileName = 'testLogs.json'
             usersFileName = 'testUsers.json'
+            fingerprintsFileName = 'testFingerprints.json'
             break;
         case "phihope":
             biometric = new Bio('192.168.68.115', 4370, 10000, 4000, io)
             logsFileName = 'phihopeLogs.json'
             usersFileName = 'phihopeUsers.json'
+            fingerprintsFileName = 'phihopeFingerprints.json'
             break;
         case "wetalk":
             biometric = new Bio('192.168.68.104', 4370, 10000, 4000, io)
             logsFileName = 'wetalkLogs.json'
             usersFileName = 'wetalkUsers.json'
+            fingerprintsFileName = 'wetalkFingerprints.json'
             break;
     }
     res.json({ result: 'IP set to ' + company })
@@ -105,7 +109,7 @@ app.get('/api/transactions', async (req, res) => {
         const info = await biometric.connect()
         if(info) {
             io.emit('status-update', { status: 'Connected!' })
-            io.emit('status-update', { status: 'Log Counts: ' + info.logCounts})
+            io.emit('status-update', { status: 'Log Count: ' + info.logCounts})
             
             let logs = { data: [] }
             if(info.logCounts > 0) {
@@ -125,6 +129,35 @@ app.get('/api/transactions', async (req, res) => {
     } catch (err) {
         console.error('Error getting transactions:', err)
         res.status(500).json({ result: 'Error getting transactions\n' + err.err.stack})
+    }
+})
+
+app.get('/api/fingerprints', async (req, res) => {
+    try {
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        if(info) {
+            io.emit('status-update', { status: 'Connected!' })
+            io.emit('status-update', { status: 'Fingerprint Count: ' + info.fpCounts})
+            
+            let fps = { data: [] }
+            if(info.fpCounts > 0) {
+                io.emit('status-update', { status: 'Getting Fingerprints...'})
+                fps = await biometric.getFingerprints().catch(err => {
+                    io.emit('status-update', { status:'Unhandled error in getFingerprints: ' + err})
+                })
+            }
+            await biometric.disconnect()
+
+            biometric.toJSON(fps.data, fingerprintsFileName)
+
+            res.json({ result: 'Fingerprints fetched!' })
+        } else {
+            io.emit('status-update', { status: 'Failed to get fingerprints' })
+        }
+    } catch (err) {
+         console.error('Error getting fingerprints:', err)
+        res.status(500).json({ result: 'Error getting fingerprints\n' + err.err.stack})
     }
 })
 
