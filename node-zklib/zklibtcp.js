@@ -88,6 +88,7 @@ class ZKLibTCP {
       const timer = setTimeout(() => {
         resolve(true)
       }, 2000)
+      this.socket = null
     })
   }
 
