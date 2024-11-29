@@ -407,8 +407,16 @@ async function refreshUserTable(data) {
             { 
                 data: 'fingerprints',
                 render: function(data, type, row) {
-                    if(!data || data.length === 0) return '0'
-                    return data.length
+                    if(data) {
+                        return `
+                            <a href="#" class="fp-count"
+                                data-fps='${JSON.stringify(data)}'
+                                data-uid="${row.uid}"
+                                data-user="${row.name}">
+                                ${data.length}
+                            </a>
+                        `
+                    }
                 }
             },
             { data: null, defaultContent: 'none set'},
@@ -444,6 +452,18 @@ async function refreshUserTable(data) {
         ordering: true
     })
 
+    $('#userTable').off('click', '.fp-count').on('click', '.fp-count', function(e) {
+        e.preventDefault()
+        const fps = $(this).data('fps')
+        const entryUID = $(this).data('uid')
+        const entryName = $(this).data('user')
+        //open edit window
+        const modal = document.getElementById('fpModal')
+        modal.style.display = 'block'
+        //access title
+        modal.querySelector('#title').textContent = `Fingerprints of user: ${entryName}`
+        
+    })
     //button logic for userTable
     $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
         const entryUID = $(this).data('uid')
@@ -545,4 +565,4 @@ socket.on('connect', () => {
     console.log('WebSocket connected in main')
     if(document.getElementById('updateFile'))
         updateUserbase()
-});
+})
