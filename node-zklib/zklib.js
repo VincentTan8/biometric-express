@@ -81,9 +81,12 @@ class ZKLib {
                 }catch(err){
                     throw err
                 }
-            }      
-
-            this.connectionType = 'tcp'
+                this.connectionType = 'tcp'
+                return true
+            } else {
+                await this.zklibTcp.closeSocket()
+                return false
+            }            
 
         }catch(err){
             try{
