@@ -11,9 +11,7 @@ const PORT = 3000
 const Bio = require('./bio')
 const fs = require('fs')
 
-
-//const biometric = new Bio('171.16.114.88', 4370, 10000, 4000) //F18
-let biometric = new Bio('171.16.114.76', 4370, 10000, 4000, io) //earthhouse
+let biometric = new Bio('192.168.68.153', 4370, 10000, 4000, io) //earthhouse
 let logsFileName = 'testLogs.json'
 let usersFileName = 'testUsers.json'
 let fingerprintsFileName = 'testFingerprints.json'
@@ -33,7 +31,7 @@ app.post('/api/changeIP', async (req, res) => {
     io.emit('status-update', { status: "Setting ip..." })
     switch (company) {
         case "earthhouse": 
-            biometric = new Bio('192.168.68.153', 4370, 10000, 4000, io) 
+            biometric = new Bio('192.168.68.128', 4370, 10000, 4000, io) 
             logsFileName = 'testLogs.json'
             usersFileName = 'testUsers.json'
             fingerprintsFileName = 'testFingerprints.json'
@@ -179,18 +177,10 @@ app.post('/api/addUser', async (req, res) => {
             io.emit('status-update', { status: 'Connected!' })
             io.emit('status-update', { status: 'User Count: ' + info.userCounts})
 
-            let users = { data: [] }
-            if(info.userCounts > 0) {
-                io.emit('status-update', { status: 'Getting users...' })
-                users = await biometric.getUsers().catch(err => {
-                    io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
-                })
-            }
-
             //Employee ID, Name, Card Num
             const { uid, id, name, card, password, role } = req.body
             io.emit('status-update', { status: "Adding user..." })
-            await biometric.addUser(users.data, uid, id, name, password, role, card)
+            await biometric.addUser(uid, id, name, password, role, card)
             io.emit('status-update', { status: "Added " + name })
             await biometric.disconnect()
             res.json({ result: 'Disconnected!' })
@@ -334,7 +324,7 @@ app.post('/api/updateUserbase', async (req, res) => {
                 const role = userAdd.role
                 const card = userAdd.cardno
 
-                const newUID = await biometric.addUser(users.data, uid, id, name, password, role, card)
+                const newUID = await biometric.addUser(uid, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('userbase-status', { status: "Added user: " + name })
             }
@@ -393,7 +383,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
                 const password = user.password
                 const role = user.role
                 const card = user.cardno
-                const newUID = await biometric.addUser(users.data, uid, id, name, password, role, card)
+                const newUID = await biometric.addUser(uid, id, name, password, role, card)
                 users.data.push({"uid": newUID})
                 io.emit('status-update', { status: "Added user: " + name })
             }
@@ -408,6 +398,29 @@ app.post('/api/replaceUserbase', async (req, res) => {
     }
 })
 
+app.post('/api/downloadFps', async (req, res) => { 
+    //fingerprint array and username
+    const { fps, username } = req.body
+    io.emit('status-update', { status: 'Downloading fingerprints...' })
+    biometric.toJSON(fps, username + "_fps.json")
+    res.json({ result: 'Downloaded ' + username + ' fingerprints!' })
+})
+
+app.post('/api/uploadFp', async (req, res) => {
+    try {
+
+    } catch (err) {
+        
+    }
+})
+
+app.post('/api/deleteFps', async (req, res) => {
+    try {
+
+    } catch (err) {
+        
+    }
+})
 // Start the server
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
