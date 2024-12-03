@@ -105,7 +105,7 @@ class ZKLibTCP {
         if (err) {
           reject(err)
         } else if (this.timeout) {
-          timer = await setTimeout(() => {
+          timer = setTimeout(() => {
             clearTimeout(timer)
             reject(new Error('TIMEOUT_ON_WRITING_MESSAGE'))
           }, connect ? 2000 : this.timeout)
