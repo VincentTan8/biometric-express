@@ -177,6 +177,10 @@ button:active {
     color: #000;
 }
 
+.fp-list {
+    white-space: pre;
+}
+
 /* Slide-down Animation */
 @keyframes slide-down {
     from {
