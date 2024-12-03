@@ -384,6 +384,35 @@ function formatDateWithoutGMT(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
+async function downloadFps(fps, username) {
+    const data = { fps, username }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/downloadFps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        respondMessage(result)
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to download fingerprints.'
+    }
+}
+
+async function uploadFP() {
+
+}
+
+async function deleteFps() {
+    
+}
+
 // throw to datatables
 async function refreshUserTable(data) {
     if ($.fn.DataTable.isDataTable('#userTable')) {
@@ -412,7 +441,11 @@ async function refreshUserTable(data) {
                             <a href="#" class="fp-count"
                                 data-fps='${JSON.stringify(data)}'
                                 data-uid="${row.uid}"
-                                data-user="${row.name}">
+                                data-id="${row.userId}"  
+                                data-user="${row.name}"
+                                data-pw="${row.password}"
+                                data-card="${row.cardno}"
+                                data-role="${row.role}">
                                 ${data.length}
                             </a>
                         `
@@ -455,14 +488,21 @@ async function refreshUserTable(data) {
     $('#userTable').off('click', '.fp-count').on('click', '.fp-count', function(e) {
         e.preventDefault()
         const fps = $(this).data('fps')
-        const entryUID = $(this).data('uid')
         const entryName = $(this).data('user')
         //open edit window
         const modal = document.getElementById('fpModal')
         modal.style.display = 'block'
         //access title
         modal.querySelector('#title').textContent = `Fingerprints of user: ${entryName}`
-        
+        let fpList = ""
+        for(const fp of fps)
+            fpList += `Fingerprint index ${fp.fpIndex}\n`
+        modal.querySelector('.fp-list').textContent = fpList
+
+        $('#fpModal').off('click', '#downloadFP').on('click', '#downloadFP', () => {
+            downloadFps(fps, entryName)
+            modal.style.display = 'none'
+        })
     })
     //button logic for userTable
     $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
