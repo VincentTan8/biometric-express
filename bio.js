@@ -82,7 +82,8 @@ class Bio {
         return users
     }
 
-    async addUser(users, uid, userID, username, password, role, cardnum) {
+    async addUser(uid, userID, username, password, role, cardnum) {
+        //removed users from parameters
         //generate uid (valid uids are from 1 to 3000)
         // let i = 0
         // let notValid = true
