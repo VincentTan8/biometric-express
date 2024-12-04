@@ -406,7 +406,24 @@ async function downloadFps(fps, username) {
 }
 
 async function uploadFP() {
+    const data = { templateEntry }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/uploadFp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
 
+        // Handle the response
+        const result = await response.json()
+        respondMessage(result)
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to upload fingerprint.'
+    }
 }
 
 async function deleteFps() {
@@ -496,13 +513,47 @@ async function refreshUserTable(data) {
         modal.querySelector('#title').textContent = `Fingerprints of user: ${entryName}`
         let fpList = ""
         for(const fp of fps)
-            fpList += `Fingerprint index ${fp.fpIndex}\n`
+            fpList += `Fingerprint index: ${fp.fpIndex}\n`
         modal.querySelector('.fp-list').textContent = fpList
 
         $('#fpModal').off('click', '#downloadFP').on('click', '#downloadFP', () => {
             downloadFps(fps, entryName)
             modal.style.display = 'none'
         })
+
+        const fpInput = document.getElementById('fpInput')
+        $('#fpModal').off('click', '#uploadFP').on('click', '#uploadFP', () => {
+            fpInput.click()
+        })
+
+        // define change event listener for file selection
+        const handleOnChange = () => {
+            const file = fpInput.files[0]
+            if (file) {
+                // Check if JSON file
+                if (file.type === "application/json" || file.name.endsWith('.json')) {
+                    const reader = new FileReader()
+                    // When the file is successfully read
+                    reader.onload = (e) => {
+                        try {
+                            const fpData = JSON.parse(e.target.result)
+                            for(const fp of fpData)
+                                console.log(fp)
+
+                            modal.style.display = 'none'
+                        } catch (error) {
+                            console.error(error)
+                        }
+                    }
+                    //trigger reading the file
+                    reader.readAsText(file)
+                } else 
+                    console.log('Error: Not a json file')
+            } else 
+                console.log('No file selected')
+        }
+        fpInput.removeEventListener('change', handleOnChange)
+        fpInput.addEventListener('change', handleOnChange)
     })
     //button logic for userTable
     $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
@@ -572,14 +623,24 @@ async function refreshLogsTable(data) {
             }
         }
     })
-    $('div.dt-search input[type="search"]').on('keyup', function() {
+
+    // Debounce function to limit how often search is happening
+    function debounce(func, wait) {
+        let timeout
+        return function (...args) {
+            clearTimeout(timeout)
+            timeout = setTimeout(() => func.apply(this, args), wait)
+        }
+    }
+    $('div.dt-search input[type="search"]').off('input keyup')
+    $('div.dt-search input[type="search"]').on('keyup', debounce(function() {
         const searchValue = this.value
         // Convert space-separated terms to a regex pattern for OR search
         // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
         // \b<name>\b to avoid matching names like paul with johnpaul or paula
         const regexPattern = searchValue.split(' ').join('|')
         logsTable.search(regexPattern, true, false).draw()
-    })
+    }, 500))
 }
 
 function respondMessage(msg) {
