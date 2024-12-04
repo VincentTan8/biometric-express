@@ -54,7 +54,6 @@ window.onload = () => {
 
     const socket = io()  // Connect to the Socket.IO server
     socket.on('connect', () => {
-        console.log('WebSocket connected in deviceSelect')
         changeIP(defaultWord.id)
     })
 
