@@ -408,9 +408,30 @@ app.post('/api/downloadFps', async (req, res) => {
 
 app.post('/api/uploadFp', async (req, res) => {
     try {
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        if(info) {
+            io.emit('status-update', { status: 'Connected!' })
+            io.emit('status-update', { status: 'Fingerprint Count: ' + info.fpCounts})
 
+            const { templateEntry, uid } = req.body
+            io.emit('status-update', { status: "Adding fingerprint..." })
+
+            await biometric.setFingerprint(uid, 
+                templateEntry.fpIndex, 
+                templateEntry.fpFlag, 
+                templateEntry.fpTemplate, 
+                templateEntry.entrySize - 6
+            )
+            io.emit('status-update', { status: "Added fingerprint!" })
+            await biometric.disconnect()
+            res.json({ result: 'Disconnected!' })
+        } else {
+            io.emit('status-update', { status: 'Failed to add fingerprint' })
+        }
     } catch (err) {
-        
+        console.error('Error adding fingerprint:', err)
+        res.status(500).json({ result: 'Error adding fingerprint\n' + err.err?.stack})
     }
 })
 
