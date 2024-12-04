@@ -505,8 +505,13 @@ async function refreshUserTable(data) {
     $('#userTable').off('click', '.fp-count').on('click', '.fp-count', function(e) {
         e.preventDefault()
         const fps = $(this).data('fps')
+        const entryUID = $(this).data('uid')
+        const entryId = $(this).data('id')
         const entryName = $(this).data('user')
-        //open edit window
+        const entryPassword = $(this).data('pw')
+        const entryCard = $(this).data('card')
+        const entryRole = $(this).data('role')
+        //open fingerprint window
         const modal = document.getElementById('fpModal')
         modal.style.display = 'block'
         //access title
@@ -527,7 +532,7 @@ async function refreshUserTable(data) {
         })
 
         // define change event listener for file selection
-        const handleOnChange = () => {
+        const handleOnChange = (event) => {
             const file = fpInput.files[0]
             if (file) {
                 // Check if JSON file
@@ -551,9 +556,11 @@ async function refreshUserTable(data) {
                     console.log('Error: Not a json file')
             } else 
                 console.log('No file selected')
+            // reset input value to allow re-selection of same file
+            event.target.value = ''
         }
-        fpInput.removeEventListener('change', handleOnChange)
-        fpInput.addEventListener('change', handleOnChange)
+        $('#fpInput').off()  //removes all listeners
+        $('#fpInput').on('change', handleOnChange)
     })
     //button logic for userTable
     $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
