@@ -405,8 +405,8 @@ async function downloadFps(fps, username) {
     }
 }
 
-async function uploadFP() {
-    const data = { templateEntry }
+async function uploadFP(templateEntry, uid) {
+    const data = { templateEntry, uid }
     try {
         // Send POST request using fetch
         const response = await fetch('/api/uploadFp', {
@@ -520,18 +520,19 @@ async function refreshUserTable(data) {
         for(const fp of fps)
             fpList += `Fingerprint index: ${fp.fpIndex}\n`
         modal.querySelector('.fp-list').textContent = fpList
-
+        
+        //download fp button
         $('#fpModal').off('click', '#downloadFP').on('click', '#downloadFP', () => {
             downloadFps(fps, entryName)
             modal.style.display = 'none'
         })
-
+        //upload fp button
         const fpInput = document.getElementById('fpInput')
         $('#fpModal').off('click', '#uploadFP').on('click', '#uploadFP', () => {
             fpInput.click()
         })
 
-        // define change event listener for file selection
+        // define change event listener for file selection (upload button)
         const handleOnChange = (event) => {
             const file = fpInput.files[0]
             if (file) {
@@ -539,12 +540,11 @@ async function refreshUserTable(data) {
                 if (file.type === "application/json" || file.name.endsWith('.json')) {
                     const reader = new FileReader()
                     // When the file is successfully read
-                    reader.onload = (e) => {
+                    reader.onload = async (e) => {
                         try {
                             const fpData = JSON.parse(e.target.result)
                             for(const fp of fpData)
-                                console.log(fp)
-
+                                await uploadFP(fp, entryUID)
                             modal.style.display = 'none'
                         } catch (error) {
                             console.error(error)
