@@ -99,7 +99,7 @@ app.get('/api/users', async (req, res) => {
             }
             await biometric.disconnect()
 
-            biometric.toJSON(users.data, usersFileName)
+            biometric.toJSON(users?.data, usersFileName)
 
             res.json({ result: 'Users fetched!' })
         } else {
@@ -107,7 +107,7 @@ app.get('/api/users', async (req, res) => {
         }
     } catch (err) {
         console.error('Error getting users:', err)
-        res.status(500).json({ result: 'Error getting users\n' + err.err.stack})
+        res.status(500).json({ result: 'Error getting users\n' + err.err?.stack})
     }
 })
 
@@ -128,7 +128,7 @@ app.get('/api/transactions', async (req, res) => {
             }
             await biometric.disconnect()
 
-            biometric.toJSON(logs.data, logsFileName)
+            biometric.toJSON(logs?.data, logsFileName)
 
             res.json({ result: 'Transactions fetched!' })
         } else {
@@ -136,7 +136,7 @@ app.get('/api/transactions', async (req, res) => {
         }
     } catch (err) {
         console.error('Error getting transactions:', err)
-        res.status(500).json({ result: 'Error getting transactions\n' + err.err.stack})
+        res.status(500).json({ result: 'Error getting transactions\n' + err.err?.stack})
     }
 })
 
@@ -157,7 +157,7 @@ app.get('/api/fingerprints', async (req, res) => {
             }
             await biometric.disconnect()
 
-            biometric.toJSON(fps.data, fingerprintsFileName)
+            biometric.toJSON(fps?.data, fingerprintsFileName)
 
             res.json({ result: 'Fingerprints fetched!' })
         } else {
@@ -165,7 +165,7 @@ app.get('/api/fingerprints', async (req, res) => {
         }
     } catch (err) {
          console.error('Error getting fingerprints:', err)
-        res.status(500).json({ result: 'Error getting fingerprints\n' + err.err.stack})
+        res.status(500).json({ result: 'Error getting fingerprints\n' + err.err?.stack})
     }
 })
 
@@ -189,7 +189,7 @@ app.post('/api/addUser', async (req, res) => {
         }
     } catch (err) {
         console.error('Error adding user:', err)
-        res.status(500).json({ result: 'Error adding user\n' + err.err.stack})
+        res.status(500).json({ result: 'Error adding user\n' + err.err?.stack})
     }
 })
 
@@ -213,7 +213,7 @@ app.post('/api/deleteUser', async (req, res) => {
         }
     } catch (err) {
         console.error('Error deleting user:', err)
-        res.status(500).json({ result: 'Error deleting user\n' + err.err.stack})
+        res.status(500).json({ result: 'Error deleting user\n' + err.err?.stack})
     }
 })
 
@@ -248,7 +248,7 @@ app.post('/api/editUser', async (req, res) => {
         }
     } catch (err) {
         console.error('Error editing user:', err)
-        res.status(500).json({ result: 'Error editing user\n' + err.err.stack})
+        res.status(500).json({ result: 'Error editing user\n' + err.err?.stack})
     }
 })
 
@@ -261,22 +261,22 @@ app.post('/api/updateUserbase', async (req, res) => {
         io.emit('userbase-status', { status: "Updating using " + filename + "..."})
         // const newFile = await fs.promises.readFile(filename, 'utf-8')
         try {
-            const response = await fetch(filename);
+            const response = await fetch(filename)
             if (!response.ok) {
                 io.emit('userbase-status', { status: "Fetch failed!" })
                 throw new Error(`HTTP error! status: ${response.status}`);
             } else {
                 io.emit('userbase-status', { status: "Fetch success!" })
             }
-            // const newFile = await response.text(); // For raw text (e.g., JSON string)
-            const newFile = await response.json(); // if response is JSON
+            // const newFile = await response.text() // For raw text (e.g., JSON string)
+            const newFile = await response.json() // if response is JSON
 
             // newFileJson = JSON.parse(newFile)
             newFileJson = newFile
             
         } catch (err) {
-            console.error('Error fetching file:', err);
-            throw err;
+            console.error('Error fetching file:', err)
+            throw err
         }
 
         //get all operations from file
@@ -337,7 +337,7 @@ app.post('/api/updateUserbase', async (req, res) => {
         }
     } catch (err) {
         console.error('Error updating userbase:', err)
-        res.status(500).json({ result: 'Error updating userbase\n' + err.err.stack})
+        res.status(500).json({ result: 'Error updating userbase\n' + err.err?.stack})
     }
 })
 
@@ -394,7 +394,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
         }
     } catch (err) {
         console.error('Error replacing userbase:', err)
-        res.status(500).json({ result: 'Error replacing userbase\n' + err.err.stack})
+        res.status(500).json({ result: 'Error replacing userbase\n' + err.err?.stack})
     }
 })
 
