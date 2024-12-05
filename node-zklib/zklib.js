@@ -222,12 +222,6 @@ class ZKLib {
         )
     }
 
-    async deleteFingerprints(user) {
-        return await this.functionWrapper(
-            () => this.zklibTcp.deleteFingerprints(user)
-        )
-    }
-
     async getSocketStatus(){
         return await this.functionWrapper(
             ()=>this.zklibTcp.getSocketStatus(),

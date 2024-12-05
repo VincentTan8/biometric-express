@@ -168,11 +168,6 @@ class Bio {
         console.log("Total Fingerprints: " + fingerprints.data.length)
         return fingerprints
     }
-
-    async deleteFingerprints(user) {
-        await this.zkInstance.deleteFingerprints(user)
-        console.log('Deleted fingerprints of user: ' + user.name)
-    }
     
     async setTime(time) {
         // const setTime = await this.zkInstance.setTime(new Date("2024-01-01T07:41:32"))
