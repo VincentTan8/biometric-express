@@ -426,8 +426,25 @@ async function uploadFP(templateEntry, uid) {
     }
 }
 
-async function deleteFps() {
-    
+async function deleteFps(uid, userId, name, cardno, password, role) {
+    const data = { uid, userId, name, cardno, password, role }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/deleteFps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        respondMessage(result)
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to delete fingerprints.'
+    }
 }
 
 // throw to datatables
@@ -526,12 +543,12 @@ async function refreshUserTable(data) {
             downloadFps(fps, entryName)
             modal.style.display = 'none'
         })
+
         //upload fp button
         const fpInput = document.getElementById('fpInput')
         $('#fpModal').off('click', '#uploadFP').on('click', '#uploadFP', () => {
             fpInput.click()
         })
-
         // define change event listener for file selection (upload button)
         const handleOnChange = (event) => {
             const file = fpInput.files[0]
@@ -561,6 +578,12 @@ async function refreshUserTable(data) {
         }
         $('#fpInput').off()  //removes all listeners
         $('#fpInput').on('change', handleOnChange)
+
+        //delete fp button
+        $('#fpModal').off('click', '#deleteFP').on('click', '#deleteFP', () => {
+            deleteFps(entryUID, entryId, entryName, entryCard, entryPassword, entryRole)
+            modal.style.display = 'none'
+        })
     })
     //button logic for userTable
     $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
