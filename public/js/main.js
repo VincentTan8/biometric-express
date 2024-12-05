@@ -41,9 +41,6 @@ async function getUsers() {
         const data = await response.json()        // Parse JSON response   
         respondMessage(data)
 
-        //get fingerprints as well
-        await getFingerprints()
-
         await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -62,17 +59,7 @@ async function getTransactions() {
         console.error('Error:', error)
     }
 }
-//get fingerprints from biometric device
-async function getFingerprints() {
-    try {
-        const response = await fetch('/api/fingerprints') 
-        const data = await response.json() 
-        respondMessage(data)     
-    } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data'
-        console.error('Error:', error)
-    }
-}
+
 //add user to the biometric device
 async function addUser() {
     // Get input values

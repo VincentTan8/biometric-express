@@ -89,6 +89,7 @@ app.get('/api/users', async (req, res) => {
         if(info) {
             io.emit('status-update', { status: 'Connected!' })
             io.emit('status-update', { status: 'User Count: ' + info.userCounts})
+            io.emit('status-update', { status: 'Fingerprint Count: ' + info.fpCounts})
             
             let users = { data: [] }
             if(info.userCounts > 0) {
@@ -97,9 +98,17 @@ app.get('/api/users', async (req, res) => {
                     io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
                 })
             }
+            let fps = { data: [] }
+            if(info.fpCounts > 0) {
+                io.emit('status-update', { status: 'Getting Fingerprints...'})
+                fps = await biometric.getFingerprints().catch(err => {
+                    io.emit('status-update', { status:'Unhandled error in getFingerprints: ' + err})
+                })
+            }
             await biometric.disconnect()
 
             biometric.toJSON(users?.data, usersFileName)
+            biometric.toJSON(fps?.data, fingerprintsFileName)
 
             res.json({ result: 'Users fetched!' })
         } else {
@@ -137,35 +146,6 @@ app.get('/api/transactions', async (req, res) => {
     } catch (err) {
         console.error('Error getting transactions:', err)
         res.status(500).json({ result: 'Error getting transactions\n' + err.err?.stack})
-    }
-})
-
-app.get('/api/fingerprints', async (req, res) => {
-    try {
-        io.emit('status-update', { status: 'Connecting...' })
-        const info = await biometric.connect()
-        if(info) {
-            io.emit('status-update', { status: 'Connected!' })
-            io.emit('status-update', { status: 'Fingerprint Count: ' + info.fpCounts})
-            
-            let fps = { data: [] }
-            if(info.fpCounts > 0) {
-                io.emit('status-update', { status: 'Getting Fingerprints...'})
-                fps = await biometric.getFingerprints().catch(err => {
-                    io.emit('status-update', { status:'Unhandled error in getFingerprints: ' + err})
-                })
-            }
-            await biometric.disconnect()
-
-            biometric.toJSON(fps?.data, fingerprintsFileName)
-
-            res.json({ result: 'Fingerprints fetched!' })
-        } else {
-            io.emit('status-update', { status: 'Failed to get fingerprints' })
-        }
-    } catch (err) {
-         console.error('Error getting fingerprints:', err)
-        res.status(500).json({ result: 'Error getting fingerprints\n' + err.err?.stack})
     }
 })
 
