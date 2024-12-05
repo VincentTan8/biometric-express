@@ -558,11 +558,11 @@ class ZKLibTCP {
           // Fill the buffer with user data
           commandBuffer.writeUInt16LE(parseInt(uid), 0);
           commandBuffer.writeUInt16LE(role, 2);
-          commandBuffer.write(password.padEnd(8, '\0'), 3, 8); // Ensure password is 8 bytes
-          commandBuffer.write(name.padEnd(24, '\0'), 11, 24); // Ensure name is 24 bytes
+          commandBuffer.write(password.toString().padEnd(8, '\0'), 3, 8); // Ensure password is 8 bytes
+          commandBuffer.write(name.toString().padEnd(24, '\0'), 11, 24); // Ensure name is 24 bytes
           commandBuffer.writeUInt32LE(parseInt(cardno), 35);
           commandBuffer.writeUInt32LE(0, 40); // Placeholder or reserved field
-          commandBuffer.write(userid.padEnd(9, '\0'), 48, 9); // Ensure userid is 9 bytes
+          commandBuffer.write(userid.toString().padEnd(9, '\0'), 48, 9); // Ensure userid is 9 bytes
 
           // Send the command and return the result
           return await this.executeCmd(COMMANDS.CMD_USER_WRQ, commandBuffer);
@@ -704,21 +704,6 @@ class ZKLibTCP {
 
       // Re-throw error for upstream handling
       throw err
-    }
-  }
-   
-  async deleteFingerprints(user) {
-    try {
-      //delete user
-
-      //add user back
-      
-    } catch (err) {
-        // Log error details for debugging
-        console.error('Error deleting fingerprint:', err);
-
-        // Re-throw error for upstream handling
-        throw err
     }
   }
 
