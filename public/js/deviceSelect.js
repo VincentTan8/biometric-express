@@ -40,7 +40,7 @@ async function changeIP(company) {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+        document.getElementById('status').appendChild(document.createTextNode(`Status: ${result.result}\n`))
         document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
     } catch (error) {
         console.error('Error:', error)
