@@ -437,9 +437,27 @@ app.post('/api/uploadFp', async (req, res) => {
 
 app.post('/api/deleteFps', async (req, res) => {
     try {
+        io.emit('status-update', { status: 'Connecting...' })
+        const info = await biometric.connect()
+        if(info) {
+            io.emit('status-update', { status: 'Connected!' })
+            io.emit('status-update', { status: 'Fingerprint Count: ' + info.fpCounts})
 
+            const { uid, userId, name, cardno, password, role } = req.body
+            io.emit('status-update', { status: "Deleting fingerprints..." })
+
+            await biometric.deleteUser(uid)
+            await biometric.addUser(uid, userId, name, password, role, cardno)
+
+            io.emit('status-update', { status: "Fingerprints deleted!" })
+            await biometric.disconnect()
+            res.json({ result: 'Disconnected!' })
+        } else {
+            io.emit('status-update', { status: 'Failed to delete fingerprints' })
+        }
     } catch (err) {
-        
+         console.error('Error deleting fingerprints:', err)
+        res.status(500).json({ result: 'Error deleting fingerprints\n' + err.err?.stack})
     }
 })
 // Start the server
