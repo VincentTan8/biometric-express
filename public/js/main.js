@@ -283,6 +283,8 @@ async function exportLogs() {
     const end = document.getElementById('endDate').value
     if (start.length != 0) 
         startDate = new Date(start + "T00:00:00")
+    else
+        startDate = new Date().setHours(0, 0, 0, 0)
     if(end.length != 0) 
         endDate = new Date(end + "T23:59:59")
 
@@ -633,6 +635,13 @@ async function refreshLogsTable(data) {
             { data: 'deviceUserId', defaultContent: 'none set'},
             { data: 'userName', title: "Username", defaultContent: 'none set'},
             { data: 'timeStamp', defaultContent: 'none set'}
+        ],
+        columnDefs: [
+            {
+                targets: '_all',
+                className: 'dt-right', //align the text to the right
+                width: '33%',
+            },
         ],
         paging: false,
         searching: true,
