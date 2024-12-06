@@ -254,6 +254,8 @@ async function viewTransactions() {
 
 //convert logs into readable format and filter if needed
 async function exportLogs() {
+    respondMessage({ result: 'Exporting logs...'})
+
     const users = await readUsers()
     const logs = await readTransactions()
     const userJson = JSON.parse(users.result)
@@ -567,8 +569,9 @@ async function refreshUserTable(data) {
         $('#fpInput').on('change', handleOnChange)
 
         //delete fp button
-        $('#fpModal').off('click', '#deleteFP').on('click', '#deleteFP', () => {
-            deleteFps(entryUID, entryId, entryName, entryCard, entryPassword, entryRole)
+        $('#fpModal').off('click', '#deleteFP').on('click', '#deleteFP', async () => {
+            if(confirm("Are you sure you want to delete all fingerprints for this user?"))
+                await deleteFps(entryUID, entryId, entryName, entryCard, entryPassword, entryRole)
             modal.style.display = 'none'
         })
     })
