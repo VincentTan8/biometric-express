@@ -110,7 +110,7 @@ app.get('/api/users', async (req, res) => {
             biometric.toJSON(users?.data, usersFileName)
             biometric.toJSON(fps?.data, fingerprintsFileName)
 
-            res.json({ result: 'Users fetched!' })
+            res.json({ result: 'Users and fingerprints fetched!' })
         } else {
             io.emit('status-update', { status: 'Failed to get users' })
         }
