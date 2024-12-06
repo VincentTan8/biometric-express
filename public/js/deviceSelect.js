@@ -53,13 +53,13 @@ window.onload = () => {
     const defaultWord = document.querySelector('.word.selected')
 
     const socket = io()  // Connect to the Socket.IO server
-    socket.on('connect', () => {
+    socket.once('connect', () => {
+        console.log("websocket connected in deviceselect")
         changeIP(defaultWord.id)
+        if (defaultWord) {
+            movePill(defaultWord)
+        }
     })
-
-    if (defaultWord) {
-        movePill(defaultWord)
-    }
 }
 
 // Add click event listeners to words
