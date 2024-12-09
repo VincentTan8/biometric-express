@@ -40,7 +40,7 @@ async function changeIP(company) {
 
         // Handle the response
         const result = await response.json()
-        document.getElementById('status').appendChild(document.createTextNode(result.result+`\n`))
+        document.getElementById('status').appendChild(document.createTextNode(`Status: ${result.result}\n`))
         document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight
     } catch (error) {
         console.error('Error:', error)
@@ -53,14 +53,13 @@ window.onload = () => {
     const defaultWord = document.querySelector('.word.selected')
 
     const socket = io()  // Connect to the Socket.IO server
-    socket.on('connect', () => {
-        console.log('WebSocket connected in deviceSelect')
+    socket.once('connect', () => {
+        console.log("websocket connected in deviceselect")
         changeIP(defaultWord.id)
+        if (defaultWord) {
+            movePill(defaultWord)
+        }
     })
-
-    if (defaultWord) {
-        movePill(defaultWord)
-    }
 }
 
 // Add click event listeners to words

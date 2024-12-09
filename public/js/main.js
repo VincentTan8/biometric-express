@@ -22,12 +22,25 @@ async function readTransactions() {
         console.error('Error:', error)
     }
 }
+//read fingerprints json file
+async function readFingerprints() {
+    try {
+        const response = await fetch('/api/readFingerprints')
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        document.getElementById('status').textContent = 'Error loading data'
+        console.error('Error:', error)
+    }
+}
 //get users from biometric device
 async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
         const data = await response.json()        // Parse JSON response   
         respondMessage(data)
+
         await viewUsers()
     } catch (error) {
         document.getElementById('status').textContent = 'Error loading data'
@@ -46,6 +59,7 @@ async function getTransactions() {
         console.error('Error:', error)
     }
 }
+
 //add user to the biometric device
 async function addUser() {
     // Get input values
@@ -200,7 +214,24 @@ async function replaceUserbase() {
 
 async function viewUsers() {
     const users = await readUsers()
-    await refreshUserTable(JSON.parse(users.result))
+    const fingerprints = await readFingerprints()
+    const userJSON = JSON.parse(users.result)
+    const fpJSON = JSON.parse(fingerprints.result)
+
+    //group fingerprints for each user
+    let groupedFP = fpJSON.reduce((acc, item) => {
+        acc[item.uid] = acc[item.uid] || []
+        acc[item.uid].push(item)
+        return acc
+    }, {})
+
+    //merge with user json
+    const mergedData = userJSON.map(item => {
+        let matchingItems = groupedFP[item.uid] || []
+        return { ...item, fingerprints: matchingItems }
+    }) 
+
+    await refreshUserTable(mergedData)
 }
 
 async function viewTransactions() {
@@ -223,6 +254,8 @@ async function viewTransactions() {
 
 //convert logs into readable format and filter if needed
 async function exportLogs() {
+    respondMessage({ result: 'Exporting logs...'})
+
     const users = await readUsers()
     const logs = await readTransactions()
     const userJson = JSON.parse(users.result)
@@ -250,6 +283,8 @@ async function exportLogs() {
     const end = document.getElementById('endDate').value
     if (start.length != 0) 
         startDate = new Date(start + "T00:00:00")
+    else
+        startDate = new Date().setHours(0, 0, 0, 0)
     if(end.length != 0) 
         endDate = new Date(end + "T23:59:59")
 
@@ -340,6 +375,69 @@ function formatDateWithoutGMT(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
+async function downloadFps(fps, username) {
+    const data = { fps, username }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/downloadFps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        respondMessage(result)
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to download fingerprints.'
+    }
+}
+
+async function uploadFP(templateEntry, uid) {
+    const data = { templateEntry, uid }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/uploadFp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        respondMessage(result)
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to upload fingerprint.'
+    }
+}
+
+async function deleteFps(uid, userId, name, cardno, password, role) {
+    const data = { uid, userId, name, cardno, password, role }
+    try {
+        // Send POST request using fetch
+        const response = await fetch('/api/deleteFps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        // Handle the response
+        const result = await response.json()
+        respondMessage(result)
+    } catch (error) {
+        console.error('Error:', error)
+        document.getElementById('status').textContent = 'Failed to delete fingerprints.'
+    }
+}
+
 // throw to datatables
 async function refreshUserTable(data) {
     if ($.fn.DataTable.isDataTable('#userTable')) {
@@ -360,6 +458,25 @@ async function refreshUserTable(data) {
             { data: 'userId', defaultContent: 'none set'},
             { data: 'name', defaultContent: 'none set'},
             { data: 'cardno', defaultContent: 'none set'},
+            { 
+                data: 'fingerprints',
+                render: function(data, type, row) {
+                    if(data) {
+                        return `
+                            <a href="#" class="fp-count"
+                                data-fps='${JSON.stringify(data)}'
+                                data-uid="${row.uid}"
+                                data-id="${row.userId}"  
+                                data-user="${row.name}"
+                                data-pw="${row.password}"
+                                data-card="${row.cardno}"
+                                data-role="${row.role}">
+                                ${data.length}
+                            </a>
+                        `
+                    }
+                }
+            },
             { data: null, defaultContent: 'none set'},
         ],
         columnDefs: [
@@ -393,6 +510,73 @@ async function refreshUserTable(data) {
         ordering: true
     })
 
+    $('#userTable').off('click', '.fp-count').on('click', '.fp-count', function(e) {
+        e.preventDefault()
+        const fps = $(this).data('fps')
+        const entryUID = $(this).data('uid')
+        const entryId = $(this).data('id')
+        const entryName = $(this).data('user')
+        const entryPassword = $(this).data('pw')
+        const entryCard = $(this).data('card')
+        const entryRole = $(this).data('role')
+        //open fingerprint window
+        const modal = document.getElementById('fpModal')
+        modal.style.display = 'block'
+        //access title
+        modal.querySelector('#title').textContent = `Fingerprints of user: ${entryName}`
+        let fpList = ""
+        for(const fp of fps)
+            fpList += `Fingerprint index: ${fp.fpIndex}\n`
+        modal.querySelector('.fp-list').textContent = fpList
+        
+        //download fp button
+        $('#fpModal').off('click', '#downloadFP').on('click', '#downloadFP', () => {
+            downloadFps(fps, entryName)
+            modal.style.display = 'none'
+        })
+
+        //upload fp button
+        const fpInput = document.getElementById('fpInput')
+        $('#fpModal').off('click', '#uploadFP').on('click', '#uploadFP', () => {
+            fpInput.click()
+        })
+        // define change event listener for file selection (upload button)
+        const handleOnChange = (event) => {
+            const file = fpInput.files[0]
+            if (file) {
+                // Check if JSON file
+                if (file.type === "application/json" || file.name.endsWith('.json')) {
+                    const reader = new FileReader()
+                    // When the file is successfully read
+                    reader.onload = async (e) => {
+                        try {
+                            const fpData = JSON.parse(e.target.result)
+                            for(const fp of fpData)
+                                await uploadFP(fp, entryUID)
+                            modal.style.display = 'none'
+                        } catch (error) {
+                            console.error(error)
+                        }
+                    }
+                    //trigger reading the file
+                    reader.readAsText(file)
+                } else 
+                    console.log('Error: Not a json file')
+            } else 
+                console.log('No file selected')
+            // reset input value to allow re-selection of same file
+            event.target.value = ''
+        }
+        $('#fpInput').off()  //removes all listeners
+        $('#fpInput').on('change', handleOnChange)
+
+        //delete fp button
+        $('#fpModal').off('click', '#deleteFP').on('click', '#deleteFP', async () => {
+            if(confirm("Are you sure you want to delete all fingerprints for this user?"))
+                await deleteFps(entryUID, entryId, entryName, entryCard, entryPassword, entryRole)
+            modal.style.display = 'none'
+        })
+    })
     //button logic for userTable
     $('#userTable').off('click', '.btn-edit').on('click', '.btn-edit', function () {
         const entryUID = $(this).data('uid')
@@ -452,6 +636,13 @@ async function refreshLogsTable(data) {
             { data: 'userName', title: "Username", defaultContent: 'none set'},
             { data: 'timeStamp', defaultContent: 'none set'}
         ],
+        columnDefs: [
+            {
+                targets: '_all',
+                className: 'dt-right', //align the text to the right
+                width: '33%',
+            },
+        ],
         paging: false,
         searching: true,
         ordering: true,
@@ -461,14 +652,24 @@ async function refreshLogsTable(data) {
             }
         }
     })
-    $('div.dt-search input[type="search"]').on('keyup', function() {
+
+    // Debounce function to limit how often search is happening
+    function debounce(func, wait) {
+        let timeout
+        return function (...args) {
+            clearTimeout(timeout)
+            timeout = setTimeout(() => func.apply(this, args), wait)
+        }
+    }
+    $('div.dt-search input[type="search"]').off('input keyup')
+    $('div.dt-search input[type="search"]').on('keyup', debounce(function() {
         const searchValue = this.value
         // Convert space-separated terms to a regex pattern for OR search
         // (^|\s)2024(\s|$) for ensuring the date with 2024 will not get selected
         // \b<name>\b to avoid matching names like paul with johnpaul or paula
         const regexPattern = searchValue.split(' ').join('|')
         logsTable.search(regexPattern, true, false).draw()
-    })
+    }, 500))
 }
 
 function respondMessage(msg) {
@@ -491,7 +692,6 @@ socket.on('userbase-status', (data) => {
     status.scrollTop = status.scrollHeight
 })
 socket.on('connect', () => {
-    console.log('WebSocket connected in main')
     if(document.getElementById('updateFile'))
         updateUserbase()
-});
+})

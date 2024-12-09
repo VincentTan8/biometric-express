@@ -88,6 +88,7 @@ class ZKLibTCP {
       const timer = setTimeout(() => {
         resolve(true)
       }, 2000)
+      this.socket = null
     })
   }
 
@@ -104,7 +105,7 @@ class ZKLibTCP {
         if (err) {
           reject(err)
         } else if (this.timeout) {
-          timer = await setTimeout(() => {
+          timer = setTimeout(() => {
             clearTimeout(timer)
             reject(new Error('TIMEOUT_ON_WRITING_MESSAGE'))
           }, connect ? 2000 : this.timeout)
@@ -520,6 +521,7 @@ class ZKLibTCP {
           userCounts: data.readUIntLE(24, 4),
           logCounts: data.readUIntLE(40, 4),
           logCapacity: data.readUIntLE(72, 4),
+          fpCounts: data.readUIntLE(32, 4)
         };
       } catch (err) {
         console.error('Error in getInfo:', err);
@@ -556,11 +558,11 @@ class ZKLibTCP {
           // Fill the buffer with user data
           commandBuffer.writeUInt16LE(parseInt(uid), 0);
           commandBuffer.writeUInt16LE(role, 2);
-          commandBuffer.write(password.padEnd(8, '\0'), 3, 8); // Ensure password is 8 bytes
-          commandBuffer.write(name.padEnd(24, '\0'), 11, 24); // Ensure name is 24 bytes
+          commandBuffer.write(password.toString().padEnd(8, '\0'), 3, 8); // Ensure password is 8 bytes
+          commandBuffer.write(name.toString().padEnd(24, '\0'), 11, 24); // Ensure name is 24 bytes
           commandBuffer.writeUInt32LE(parseInt(cardno), 35);
           commandBuffer.writeUInt32LE(0, 40); // Placeholder or reserved field
-          commandBuffer.write(userid.padEnd(9, '\0'), 48, 9); // Ensure userid is 9 bytes
+          commandBuffer.write(userid.toString().padEnd(9, '\0'), 48, 9); // Ensure userid is 9 bytes
 
           // Send the command and return the result
           return await this.executeCmd(COMMANDS.CMD_USER_WRQ, commandBuffer);
@@ -701,7 +703,7 @@ class ZKLibTCP {
       console.error('Error setting fingerprint:', err);
 
       // Re-throw error for upstream handling
-      throw err;
+      throw err
     }
   }
 

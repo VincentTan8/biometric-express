@@ -12,7 +12,10 @@ class Bio {
         console.log("Initializing...")
         try {
             // Create socket to machine 
-            await this.zkInstance.createSocket()
+            let success = null
+            do {
+                success = await this.zkInstance.createSocket()
+            } while (!success)
 
             // Get general info like logCapacity, user counts, logs count
             // It's really useful to check the status of device 
@@ -79,7 +82,8 @@ class Bio {
         return users
     }
 
-    async addUser(users, uid, userID, username, password, role, cardnum) {
+    async addUser(uid, userID, username, password, role, cardnum) {
+        //removed users from parameters
         //generate uid (valid uids are from 1 to 3000)
         // let i = 0
         // let notValid = true
@@ -147,7 +151,20 @@ class Bio {
     }
 
     async getFingerprints() {
-        const fingerprints = await this.zkInstance.getFingerprints()
+        let fingerprints = await this.zkInstance.getFingerprints()
+        //update info
+        this.info = await this.zkInstance.getInfo()
+
+        while(fingerprints.data.length != this.info.fpCounts){
+            console.log("Fingerprint count mismatch: " + fingerprints.data.length)
+            console.log("Retrying...")
+            this.io.emit('status-update', { status: 'Fingerprint count mismatch: ' + fingerprints.data.length })
+            this.io.emit('status-update', { status: 'Retrying...' })
+            this.io.emit('userbase-status', { status: 'Fingerprint count mismatch: ' + fingerprints.data.length })
+            this.io.emit('userbase-status', { status: 'Retrying...' })
+            fingerprints = await this.zkInstance.getFingerprints()
+        }
+
         console.log("Total Fingerprints: " + fingerprints.data.length)
         return fingerprints
     }

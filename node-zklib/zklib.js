@@ -69,26 +69,29 @@ class ZKLib {
         try{
             if(!this.zklibTcp.socket){
                 try{
-                    console.log('Trying TCP...')
-                    await this.zklibTcp.createSocket(cbErr,cbClose)   
+                    await this.zklibTcp.createSocket(cbErr,cbClose)  
                 }catch(err){
                     throw err
                 }
               
                 try{
+                    console.log('Trying TCP...')
                     await this.zklibTcp.connect();
                     console.log('TCP Connected!')
                 }catch(err){
                     throw err
                 }
-            }      
-
-            this.connectionType = 'tcp'
+                this.connectionType = 'tcp'
+                return true
+            } else {
+                await this.zklibTcp.closeSocket()
+                return false
+            }            
 
         }catch(err){
             try{
-                console.log('TCP failed, disconnecting...')
-                await this.zklibTcp.disconnect()
+                console.log('TCP failed')
+                await this.zklibTcp.closeSocket()
             }catch(err){}
 
             if(err.code !== ERROR_TYPES.ECONNREFUSED){

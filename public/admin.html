@@ -61,12 +61,12 @@
             </div>
         </div>
         <div id="status" class="text"></div>
-        <!-- <div class="flex" style="justify-content: flex-start;">
+        <div class="flex" style="justify-content: flex-start;">
             <div>
                 <button onclick="viewUsers()">View All Users</button>
                 <button onclick="viewTransactions()">View All Transactions</button>
             </div>
-        </div> -->
+        </div>
         <div id="result"></div>   
 
         <table id="userTable" class="display hidden-table">
@@ -76,7 +76,7 @@
                 <th>Employee ID</th>
                 <th>Username</th>
                 <th>Card Number</th>
-                <th>Modify</th>
+                <th>Fingerprints</th>
             </tr>
             </thead>
             <tbody>
@@ -197,6 +197,24 @@
                 <h4 id="title"></h4>
                 <div class="flex" style="padding-top: 1rem; justify-content: center;">
                     <button id="deleteConfirm" style="max-width: 200px;">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fpModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="window">
+                <h4 id="title"></h4>
+                <div class="row" style="padding-top: 1rem;">
+                    <span class="fp-list"></span>
+                </div>
+                <div class="flex" style="padding-top: 1rem; justify-content: center; gap: 0.5rem;">
+                    <button id="downloadFP" style="max-width: 200px;">Download Fingerprints</button>
+                    <button id="uploadFP" style="max-width: 200px;">Upload Fingerprint</button>
+                    <input type="file" id="fpInput" accept=".json" style="display: none;" />
+                    <button id="deleteFP" style="max-width: 200px;">Delete Fingerprints</button>
                 </div>
             </div>
         </div>
