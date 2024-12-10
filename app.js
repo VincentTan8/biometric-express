@@ -343,7 +343,17 @@ app.post('/api/replaceUserbase', async (req, res) => {
                     io.emit('status-update', { status: 'Unhandled error in getUsers: ' + err})
                 })
             }
+            let fps = { data: [] }
+            if(info.fpCounts > 0) {
+                io.emit('status-update', { status: 'Getting Fingerprints...'})
+                fps = await biometric.getFingerprints().catch(err => {
+                    io.emit('status-update', { status:'Unhandled error in getFingerprints: ' + err})
+                })
+            }
+
             biometric.toJSON(users.data, "userBackup " + new Date() + ".json")
+            biometric.toJSON(fps?.data, "fpBackup " + new Date() + ".json")
+
             io.emit('status-update', { status: 'Backup finished' })
 
             //delete everything on device (3000 is the user limit)
