@@ -253,7 +253,7 @@ async function viewTransactions() {
 }
 
 //convert logs into readable format and filter if needed
-async function exportLogs() {
+async function exportLogs(FAL) {
     respondMessage({ result: 'Exporting logs...'})
 
     const users = await readUsers()
@@ -288,14 +288,18 @@ async function exportLogs() {
     if(end.length != 0) 
         endDate = new Date(end + "T23:59:59")
 
-    allIDs.forEach(id => {
-        const userLogs = allLogs.filter(log => log.deviceUserId === id)
-        const firstAndLast = getFirstAndLastLogPerDay(userLogs, startDate, endDate)
-        allFAL.push(...firstAndLast)
-    })
+    if(FAL) {
+        allIDs.forEach(id => {
+            const userLogs = allLogs.filter(log => log.deviceUserId === id)
+            const firstAndLast = getFirstAndLastLogPerDay(userLogs, startDate, endDate)
+            allFAL.push(...firstAndLast)
+        })
 
-    //logging only first and last log of the day during specified dates
-    await refreshLogsTable(allFAL)
+        //logging only first and last log of the day during specified dates
+        await refreshLogsTable(allFAL)
+    } else {
+        await refreshLogsTable(filterLogs(allLogs, startDate, endDate))
+    }
     respondMessage({ result: 'Logs ready for export'})
 }
 
@@ -317,6 +321,21 @@ function makeReadable(data, userData) {
         delete log.recordTime
     })
     return data
+}
+
+function filterLogs(data, startDate, endDate) {
+    const filteredLogs = []
+    data.forEach(log => {
+        const date = new Date(log.timeStamp)
+        //+1 on month since month is 0 index
+        const dateText = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate()
+        //if date is after the start date and before the end date
+        if((date >= startDate) && (date <= endDate)) {
+            filteredLogs.push(log)
+        }
+    })
+
+    return filteredLogs
 }
 
 function getFirstAndLastLogPerDay(data, startDate, endDate) {

@@ -57,7 +57,8 @@
                 <input type="date" id="startDate" name="startDate" placeholder="MM-DD-YYYY">
                 <label for="endDate">Enter End Date:</label>
                 <input type="date" id="endDate" name="endDate" placeholder="MM-DD-YYYY">
-                <button onclick="exportLogs()">Export Logs</button>
+                <button onclick="exportLogs(true)">Export Logs</button>
+                <button onclick="exportLogs(false)">Filter Logs</button>
             </div>
         </div>
         <div id="status" class="text"></div>
