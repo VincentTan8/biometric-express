@@ -30,5 +30,10 @@ svc.on('install', () => {
   svc.start()
 })
 
+if(svc.exists) {
+  console.log('Service is already installed');
+  svc.start(); // Start the service if already installed
+}
+
 // Install the service
 svc.install()
