@@ -6,5 +6,4 @@ set NODE_DIR=%~dp0node-v22.11.0-win-x64\node.exe
 :: Register and run the service
 %NODE_DIR% registerService.js
 
-echo Installation completed!
 pause
