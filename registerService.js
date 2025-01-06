@@ -16,17 +16,6 @@ const svc = new Service({
 // Listen for the "install" event, which indicates the service was successfully installed
 svc.on('install', () => {
   console.log('Service installed successfully')
-
-  // Enable automatic restart on failure
-  svc.setRecovery({
-    reset: 1, 
-    actions: [
-      { action: 'restart', delay: 5000 }, // Restart after 5 seconds
-      { action: 'restart', delay: 5000 }, // Restart after 5 seconds (2nd failure)
-      { action: 'restart', delay: 5000 }, // Restart after 5 seconds (subsequent failures)
-    ]
-  })
-
   svc.start()
 })
 
