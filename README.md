@@ -1,8 +1,12 @@
 Node binaries and node_modules have been included, to run just execute
-* start.bat
+* install-on-windows.bat
+or
+* install-on-mac.sh
 
 To uninstall the service, just execute
-* uninstall.bat
+* uninstall-on-windows.bat
+or
+* uninstall-on-mac.sh
 
 Make sure that the biometric device and the machine running the program are connected to the same network. Connection will fail if they are not connected to the same network.
 
