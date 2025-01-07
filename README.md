@@ -1,7 +1,10 @@
 Node binaries and node_modules have been included, to run just execute
 * start.bat
 
-Make sure that the biometric device and the machine running the program are connected to the same network. Do not close the terminal that opens when you run start.bat or else the program will not be able to connect to the biometric device
+To uninstall the service, just execute
+* uninstall.bat
+
+Make sure that the biometric device and the machine running the program are connected to the same network. Connection will fail if they are not connected to the same network.
 
 Note: 
 * main.js is what index.html uses but is NOT the js file to run
