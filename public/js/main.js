@@ -184,6 +184,9 @@ async function updateUserbase() {
         //show modal for exit options
         const modal = document.getElementById('updateModal')
         modal.style.display = 'block'
+
+        updateMessage = document.getElementById('updateMessage')
+        updateMessage.textContent = result.result
     } catch (error) {
         console.error('Error:', error)
     }
