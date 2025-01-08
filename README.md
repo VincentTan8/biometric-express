@@ -1,4 +1,4 @@
-Node binaries and node_modules have been included, to run the app as a service just execute
+Node binaries and node_modules have been included, to run the app as a service just execute:
 
 `install-on-windows.bat`
 
@@ -21,7 +21,7 @@ Note:
 * bio.js is a class used to communicated with the node-zklib library
 * app.js is the main file needed to run the project
 * node-zklib has been edited for the project's needs, part of it's commit history is somewhere else
-* index.html will look for update.json immediately, press cancel afterwards to enter update file manually
+* index.html will look for the preset update url immediately, press cancel afterwards to enter a different update url manually
 
 If you are not depending on the included node binaries and node_modules and do not wish to install the app as a service then:
 
@@ -31,4 +31,4 @@ Navigate to the project directory then run:
 * npm install
 * node app.js
 
-Then open localhost:3000 on your preferred browser
+Then open localhost:3000 on your preferred browser (this can be changed in app.js)
