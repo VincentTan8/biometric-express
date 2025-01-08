@@ -1,7 +1,20 @@
-Node binaries and node_modules have been included, to run just execute:
-* start.bat
+Node binaries and node_modules have been included, to run the app as a service just execute:
 
-Make sure that the biometric device and the machine running the program are connected to the same network. Do not close the terminal that opens when you run start.bat or else the program will not be able to connect to the biometric device
+`install-on-windows.bat`
+
+or
+
+`./install-on-mac.sh`
+
+To uninstall the service, just execute
+
+`uninstall-on-windows.bat`
+
+or
+
+`./uninstall-on-mac.sh`
+
+Make sure that the biometric device and the machine running the program are connected to the same network. Connection will fail if they are not connected to the same network.
 
 Note: 
 * main.js is what index.html uses but is NOT the js file to run
@@ -10,9 +23,9 @@ Note:
 * node-zklib has been edited for the project's needs, part of it's commit history is somewhere else
 * index.html will look for the preset update url immediately, press cancel afterwards to enter a different update url manually
 
-If you are not depending on the included node binaries and node_modules then:
+If you are not depending on the included node binaries and node_modules and do not wish to install the app as a service then:
 
-- Install Node.js
+- Install Node.js for your platform
 
 Navigate to the project directory then run: 
 * npm install
