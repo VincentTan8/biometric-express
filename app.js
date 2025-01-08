@@ -116,7 +116,7 @@ app.get('/api/users', async (req, res) => {
         }
     } catch (err) {
         console.error('Error getting users:', err)
-        res.status(500).json({ result: 'Error getting users\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error getting users\n' + err})
     }
 })
 
@@ -145,7 +145,7 @@ app.get('/api/transactions', async (req, res) => {
         }
     } catch (err) {
         console.error('Error getting transactions:', err)
-        res.status(500).json({ result: 'Error getting transactions\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error getting transactions\n' + err})
     }
 })
 
@@ -169,7 +169,7 @@ app.post('/api/addUser', async (req, res) => {
         }
     } catch (err) {
         console.error('Error adding user:', err)
-        res.status(500).json({ result: 'Error adding user\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error adding user\n' + err})
     }
 })
 
@@ -193,7 +193,7 @@ app.post('/api/deleteUser', async (req, res) => {
         }
     } catch (err) {
         console.error('Error deleting user:', err)
-        res.status(500).json({ result: 'Error deleting user\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error deleting user\n' + err})
     }
 })
 
@@ -228,7 +228,7 @@ app.post('/api/editUser', async (req, res) => {
         }
     } catch (err) {
         console.error('Error editing user:', err)
-        res.status(500).json({ result: 'Error editing user\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error editing user\n' + err})
     }
 })
 
@@ -317,7 +317,7 @@ app.post('/api/updateUserbase', async (req, res) => {
         }
     } catch (err) {
         console.error('Error updating userbase:', err)
-        res.status(500).json({ result: 'Error updating userbase\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error updating userbase\n' + err})
     }
 })
 
@@ -384,7 +384,7 @@ app.post('/api/replaceUserbase', async (req, res) => {
         }
     } catch (err) {
         console.error('Error replacing userbase:', err)
-        res.status(500).json({ result: 'Error replacing userbase\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error replacing userbase\n' + err})
     }
 })
 
@@ -421,7 +421,7 @@ app.post('/api/uploadFp', async (req, res) => {
         }
     } catch (err) {
         console.error('Error adding fingerprint:', err)
-        res.status(500).json({ result: 'Error adding fingerprint\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error adding fingerprint\n' + err})
     }
 })
 
@@ -447,7 +447,7 @@ app.post('/api/deleteFps', async (req, res) => {
         }
     } catch (err) {
          console.error('Error deleting fingerprints:', err)
-        res.status(500).json({ result: 'Error deleting fingerprints\n' + err.err?.stack})
+        res.status(500).json({ result: 'Error deleting fingerprints\n' + err})
     }
 })
 // Start the server

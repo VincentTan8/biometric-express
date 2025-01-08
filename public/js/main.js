@@ -6,7 +6,7 @@ async function readUsers() {
 
         return data
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data'
+        respondMessage({ result: 'Error reading users' })
         console.error('Error:', error)
     }
 }
@@ -18,7 +18,7 @@ async function readTransactions() {
 
         return data
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data'
+        respondMessage({ result: 'Error reading transactions' })
         console.error('Error:', error)
     }
 }
@@ -30,7 +30,7 @@ async function readFingerprints() {
 
         return data
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data'
+        respondMessage({ result: 'Error reading fingerprints' })
         console.error('Error:', error)
     }
 }
@@ -43,7 +43,7 @@ async function getUsers() {
 
         await viewUsers()
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data'
+        respondMessage({ result: 'Error fetching users' })
         console.error('Error:', error)
     }
 }
@@ -55,7 +55,7 @@ async function getTransactions() {
         respondMessage(data)        
         await viewTransactions()
     } catch (error) {
-        document.getElementById('status').textContent = 'Error loading data'
+        respondMessage({ result: 'Error fetching transactions' })
         console.error('Error:', error)
     }
 }
@@ -89,7 +89,7 @@ async function addUser() {
             respondMessage(result)
         } catch (error) {
             console.error('Error:', error)
-            document.getElementById('status').textContent = 'Failed to add user.'
+            document.getElementById('status').textContent = 'Failed to add user.\n'
         }
     } else 
         respondMessage({ result: `UID/ID field empty or password mismatch\n`})
@@ -114,7 +114,7 @@ async function deleteUser(deviceID) {
             respondMessage(result)
         } catch (error) {
             console.error('Error:', error)
-            document.getElementById('status').textContent = 'Failed to delete user.'
+            document.getElementById('status').textContent = 'Failed to delete user.\n'
         }
     } else
         respondMessage({ result: `Device ID empty\n`})
@@ -152,7 +152,7 @@ async function editUser() {
             modal.style.display = 'none'
         } catch (error) {
             console.error('Error:', error)
-            document.getElementById('status').textContent = 'Failed to edit user.'
+            document.getElementById('status').textContent = 'Failed to edit user.\n'
         }
     } else 
         respondMessage({ result: `Password mismatch\n`})
@@ -184,6 +184,9 @@ async function updateUserbase() {
         //show modal for exit options
         const modal = document.getElementById('updateModal')
         modal.style.display = 'block'
+
+        updateMessage = document.getElementById('updateMessage')
+        updateMessage.textContent = result.result
     } catch (error) {
         console.error('Error:', error)
     }
@@ -432,7 +435,7 @@ async function uploadFP(templateEntry, uid) {
         respondMessage(result)
     } catch (error) {
         console.error('Error:', error)
-        document.getElementById('status').textContent = 'Failed to upload fingerprint.'
+        document.getElementById('status').textContent = 'Failed to upload fingerprint.\n'
     }
 }
 
@@ -453,7 +456,7 @@ async function deleteFps(uid, userId, name, cardno, password, role) {
         respondMessage(result)
     } catch (error) {
         console.error('Error:', error)
-        document.getElementById('status').textContent = 'Failed to delete fingerprints.'
+        document.getElementById('status').textContent = 'Failed to delete fingerprints.\n'
     }
 }
 
