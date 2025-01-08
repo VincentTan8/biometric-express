@@ -1,0 +1,738 @@
+[
+  {
+    "uid": 1,
+    "role": 14,
+    "password": "",
+    "name": "JOHN",
+    "cardno": 2704803940,
+    "userId": "1009"
+  },
+  {
+    "uid": 2,
+    "role": 14,
+    "password": "",
+    "name": "1007",
+    "cardno": 1014964017,
+    "userId": "1007"
+  },
+  {
+    "uid": 3,
+    "role": 14,
+    "password": "",
+    "name": "CESS",
+    "cardno": 615728033,
+    "userId": "1008"
+  },
+  {
+    "uid": 4,
+    "role": 14,
+    "password": "",
+    "name": "DEL",
+    "cardno": 2591908128,
+    "userId": "1011"
+  },
+  {
+    "uid": 5,
+    "role": 0,
+    "password": "",
+    "name": "EIAN",
+    "cardno": 0,
+    "userId": "906"
+  },
+  {
+    "uid": 6,
+    "role": 0,
+    "password": "",
+    "name": "2003",
+    "cardno": 3204161715,
+    "userId": "2003"
+  },
+  {
+    "uid": 7,
+    "role": 0,
+    "password": "",
+    "name": "2037",
+    "cardno": 3204926099,
+    "userId": "2037"
+  },
+  {
+    "uid": 8,
+    "role": 0,
+    "password": "",
+    "name": "2041",
+    "cardno": 3220860835,
+    "userId": "2041"
+  },
+  {
+    "uid": 9,
+    "role": 0,
+    "password": "",
+    "name": "2049",
+    "cardno": 985234417,
+    "userId": "2049"
+  },
+  {
+    "uid": 10,
+    "role": 0,
+    "password": "",
+    "name": "MOUNTAIN",
+    "cardno": 0,
+    "userId": "905"
+  },
+  {
+    "uid": 11,
+    "role": 0,
+    "password": "",
+    "name": "2",
+    "cardno": 1099027986,
+    "userId": "2"
+  },
+  {
+    "uid": 12,
+    "role": 0,
+    "password": "",
+    "name": "ANDY",
+    "cardno": 0,
+    "userId": "902"
+  },
+  {
+    "uid": 13,
+    "role": 14,
+    "password": "",
+    "name": "11",
+    "cardno": 3204127139,
+    "userId": "11"
+  },
+  {
+    "uid": 14,
+    "role": 0,
+    "password": "",
+    "name": "3009",
+    "cardno": 984338193,
+    "userId": "3009"
+  },
+  {
+    "uid": 15,
+    "role": 0,
+    "password": "",
+    "name": "2044",
+    "cardno": 3204383507,
+    "userId": "2044"
+  },
+  {
+    "uid": 16,
+    "role": 0,
+    "password": "",
+    "name": "CRISTINE",
+    "cardno": 0,
+    "userId": "5001"
+  },
+  {
+    "uid": 17,
+    "role": 0,
+    "password": "",
+    "name": "4",
+    "cardno": 985154129,
+    "userId": "4"
+  },
+  {
+    "uid": 18,
+    "role": 0,
+    "password": "",
+    "name": "5",
+    "cardno": 984139297,
+    "userId": "5"
+  },
+  {
+    "uid": 19,
+    "role": 0,
+    "password": "",
+    "name": "6",
+    "cardno": 4141738211,
+    "userId": "6"
+  },
+  {
+    "uid": 20,
+    "role": 0,
+    "password": "",
+    "name": "10004",
+    "cardno": 3221718467,
+    "userId": "10004"
+  },
+  {
+    "uid": 21,
+    "role": 0,
+    "password": "",
+    "name": "Kat",
+    "cardno": 3449589134,
+    "userId": "2004"
+  },
+  {
+    "uid": 22,
+    "role": 0,
+    "password": "",
+    "name": "Jaser",
+    "cardno": 3448819038,
+    "userId": "2021"
+  },
+  {
+    "uid": 23,
+    "role": 0,
+    "password": "",
+    "name": "Rachelle",
+    "cardno": 3205106067,
+    "userId": "2009"
+  },
+  {
+    "uid": 25,
+    "role": 0,
+    "password": "",
+    "name": "LEO",
+    "cardno": 0,
+    "userId": "908"
+  },
+  {
+    "uid": 26,
+    "role": 0,
+    "password": "",
+    "name": "4006",
+    "cardno": 4142318499,
+    "userId": "4006"
+  },
+  {
+    "uid": 27,
+    "role": 0,
+    "password": "",
+    "name": "1017",
+    "cardno": 3205197715,
+    "userId": "1017"
+  },
+  {
+    "uid": 28,
+    "role": 0,
+    "password": "",
+    "name": "FRANCIS",
+    "cardno": 0,
+    "userId": "5003"
+  },
+  {
+    "uid": 29,
+    "role": 0,
+    "password": "",
+    "name": "600",
+    "cardno": 3445456606,
+    "userId": "600"
+  },
+  {
+    "uid": 30,
+    "role": 0,
+    "password": "",
+    "name": "ERIKA",
+    "cardno": 0,
+    "userId": "5005"
+  },
+  {
+    "uid": 31,
+    "role": 0,
+    "password": "",
+    "name": "601",
+    "cardno": 2039531593,
+    "userId": "601"
+  },
+  {
+    "uid": 32,
+    "role": 0,
+    "password": "",
+    "name": "602",
+    "cardno": 2082394841,
+    "userId": "602"
+  },
+  {
+    "uid": 33,
+    "role": 0,
+    "password": "",
+    "name": "603",
+    "cardno": 2701907540,
+    "userId": "603"
+  },
+  {
+    "uid": 34,
+    "role": 0,
+    "password": "",
+    "name": "604",
+    "cardno": 2030092393,
+    "userId": "604"
+  },
+  {
+    "uid": 35,
+    "role": 0,
+    "password": "",
+    "name": "605",
+    "cardno": 2703172260,
+    "userId": "605"
+  },
+  {
+    "uid": 36,
+    "role": 0,
+    "password": "",
+    "name": "606",
+    "cardno": 3445243582,
+    "userId": "606"
+  },
+  {
+    "uid": 37,
+    "role": 0,
+    "password": "",
+    "name": "607",
+    "cardno": 3449901726,
+    "userId": "607"
+  },
+  {
+    "uid": 38,
+    "role": 0,
+    "password": "",
+    "name": "608",
+    "cardno": 3448839534,
+    "userId": "608"
+  },
+  {
+    "uid": 39,
+    "role": 0,
+    "password": "",
+    "name": "609",
+    "cardno": 3204264563,
+    "userId": "609"
+  },
+  {
+    "uid": 40,
+    "role": 0,
+    "password": "",
+    "name": "808",
+    "cardno": 0,
+    "userId": "808"
+  },
+  {
+    "uid": 41,
+    "role": 0,
+    "password": "",
+    "name": "DENNY",
+    "cardno": 0,
+    "userId": "5006"
+  },
+  {
+    "uid": 42,
+    "role": 0,
+    "password": "",
+    "name": "PAUL",
+    "cardno": 0,
+    "userId": "5007"
+  },
+  {
+    "uid": 43,
+    "role": 0,
+    "password": "",
+    "name": "ANDY RUSSEL",
+    "cardno": 0,
+    "userId": "4011"
+  },
+  {
+    "uid": 44,
+    "role": 0,
+    "password": "",
+    "name": "MAECHELLE",
+    "cardno": 0,
+    "userId": "4008"
+  },
+  {
+    "uid": 45,
+    "role": 0,
+    "password": "",
+    "name": "HUBERT LOPEZ",
+    "cardno": 0,
+    "userId": "4009"
+  },
+  {
+    "uid": 46,
+    "role": 0,
+    "password": "",
+    "name": "ROXAN",
+    "cardno": 0,
+    "userId": "1010"
+  },
+  {
+    "uid": 47,
+    "role": 0,
+    "password": "",
+    "name": "AFRYL JOY",
+    "cardno": 3247173555,
+    "userId": "1002"
+  },
+  {
+    "uid": 48,
+    "role": 0,
+    "password": "",
+    "name": "Manuelito",
+    "cardno": 3256607699,
+    "userId": "1005"
+  },
+  {
+    "uid": 49,
+    "role": 0,
+    "password": "",
+    "name": "BONIFACIO",
+    "cardno": 3257533075,
+    "userId": "1016"
+  },
+  {
+    "uid": 50,
+    "role": 0,
+    "password": "",
+    "name": "Florante",
+    "cardno": 3248082835,
+    "userId": "1018"
+  },
+  {
+    "uid": 51,
+    "role": 0,
+    "password": "",
+    "name": "DENNIS",
+    "cardno": 3247597763,
+    "userId": "1019"
+  },
+  {
+    "uid": 52,
+    "role": 0,
+    "password": "",
+    "name": "PAULA",
+    "cardno": 3247606867,
+    "userId": "2055"
+  },
+  {
+    "uid": 53,
+    "role": 0,
+    "password": "",
+    "name": "Eric",
+    "cardno": 3257220947,
+    "userId": "2024"
+  },
+  {
+    "uid": 54,
+    "role": 0,
+    "password": "",
+    "name": "Annie",
+    "cardno": 3257214787,
+    "userId": "2032"
+  },
+  {
+    "uid": 55,
+    "role": 0,
+    "password": "",
+    "name": "Jenny",
+    "cardno": 3247097187,
+    "userId": "2057"
+  },
+  {
+    "uid": 56,
+    "role": 0,
+    "password": "",
+    "name": "HANNAH",
+    "cardno": 3221718467,
+    "userId": "1004"
+  },
+  {
+    "uid": 57,
+    "role": 0,
+    "password": "",
+    "name": "ERWYN",
+    "cardno": 3246900611,
+    "userId": "1021"
+  },
+  {
+    "uid": 58,
+    "role": 0,
+    "password": "",
+    "name": "1",
+    "cardno": 983828865,
+    "userId": "1"
+  },
+  {
+    "uid": 59,
+    "role": 0,
+    "password": "",
+    "name": "HAYDEE",
+    "cardno": 0,
+    "userId": "1001"
+  },
+  {
+    "uid": 60,
+    "role": 0,
+    "password": "",
+    "name": "Glydelle",
+    "cardno": 3247234067,
+    "userId": "2056"
+  },
+  {
+    "uid": 61,
+    "role": 0,
+    "password": "",
+    "name": "ANGELICA",
+    "cardno": 0,
+    "userId": "1028"
+  },
+  {
+    "uid": 62,
+    "role": 0,
+    "password": "",
+    "name": "1022",
+    "cardno": 3246833427,
+    "userId": "1022"
+  },
+  {
+    "uid": 63,
+    "role": 0,
+    "password": "",
+    "name": "12",
+    "cardno": 0,
+    "userId": "12"
+  },
+  {
+    "uid": 64,
+    "role": 0,
+    "password": "",
+    "name": "Xyla",
+    "cardno": 3247100723,
+    "userId": "2060"
+  },
+  {
+    "uid": 65,
+    "role": 0,
+    "password": "",
+    "name": "Crishenn",
+    "cardno": 3247670227,
+    "userId": "2054"
+  },
+  {
+    "uid": 66,
+    "role": 0,
+    "password": "",
+    "name": "JUDY",
+    "cardno": 2703426452,
+    "userId": "2061"
+  },
+  {
+    "uid": 67,
+    "role": 0,
+    "password": "",
+    "name": "Johnpaul",
+    "cardno": 2717270708,
+    "userId": "1026"
+  },
+  {
+    "uid": 68,
+    "role": 0,
+    "password": "",
+    "name": "Jane",
+    "cardno": 2704148628,
+    "userId": "1024"
+  },
+  {
+    "uid": 69,
+    "role": 0,
+    "password": "",
+    "name": "Lordemil",
+    "cardno": 2713223076,
+    "userId": "1027"
+  },
+  {
+    "uid": 70,
+    "role": 0,
+    "password": "",
+    "name": "Lyndon",
+    "cardno": 2712503716,
+    "userId": "1025"
+  },
+  {
+    "uid": 71,
+    "role": 14,
+    "password": "",
+    "name": "RODEL",
+    "cardno": 0,
+    "userId": "5004"
+  },
+  {
+    "uid": 72,
+    "role": 0,
+    "password": "",
+    "name": "LOUIE",
+    "cardno": 0,
+    "userId": "5014"
+  },
+  {
+    "uid": 73,
+    "role": 0,
+    "password": "",
+    "name": "7",
+    "cardno": 3221648291,
+    "userId": "7"
+  },
+  {
+    "uid": 74,
+    "role": 0,
+    "password": "",
+    "name": "9",
+    "cardno": 2693339076,
+    "userId": "9"
+  },
+  {
+    "uid": 75,
+    "role": 0,
+    "password": "",
+    "name": "10",
+    "cardno": 3247748915,
+    "userId": "10"
+  },
+  {
+    "uid": 76,
+    "role": 0,
+    "password": "",
+    "name": "Olayza",
+    "cardno": 2702122164,
+    "userId": "2063"
+  },
+  {
+    "uid": 78,
+    "role": 14,
+    "password": "",
+    "name": "VINCENT",
+    "cardno": 2714852516,
+    "userId": "5011"
+  },
+  {
+    "uid": 79,
+    "role": 0,
+    "password": "",
+    "name": "HARRY",
+    "cardno": 2716431284,
+    "userId": "5012"
+  },
+  {
+    "uid": 80,
+    "role": 0,
+    "password": "",
+    "name": "MILES",
+    "cardno": 0,
+    "userId": "5008"
+  },
+  {
+    "uid": 81,
+    "role": 0,
+    "password": "",
+    "name": "Vip9",
+    "cardno": 3204264563,
+    "userId": "100"
+  },
+  {
+    "uid": 82,
+    "role": 0,
+    "password": "",
+    "name": "101",
+    "cardno": 2037362537,
+    "userId": "101"
+  },
+  {
+    "uid": 83,
+    "role": 0,
+    "password": "",
+    "name": "102",
+    "cardno": 2708220596,
+    "userId": "102"
+  },
+  {
+    "uid": 84,
+    "role": 0,
+    "password": "",
+    "name": "103",
+    "cardno": 2691396052,
+    "userId": "103"
+  },
+  {
+    "uid": 85,
+    "role": 0,
+    "password": "",
+    "name": "104",
+    "cardno": 2045701945,
+    "userId": "104"
+  },
+  {
+    "uid": 86,
+    "role": 0,
+    "password": "",
+    "name": "610",
+    "cardno": 2033781113,
+    "userId": "610"
+  },
+  {
+    "uid": 87,
+    "role": 0,
+    "password": "",
+    "name": "611",
+    "cardno": 2033839929,
+    "userId": "611"
+  },
+  {
+    "uid": 88,
+    "role": 0,
+    "password": "",
+    "name": "EUNICE",
+    "cardno": 4140785363,
+    "userId": "4003"
+  },
+  {
+    "uid": 89,
+    "role": 0,
+    "password": "",
+    "name": "8",
+    "cardno": 2095717273,
+    "userId": "8"
+  },
+  {
+    "uid": 90,
+    "role": 0,
+    "password": "",
+    "name": "IT Test",
+    "cardno": 2714852516,
+    "userId": "9999"
+  },
+  {
+    "uid": 91,
+    "role": 0,
+    "password": "",
+    "name": "KRIZIA",
+    "cardno": 2089800569,
+    "userId": "2064"
+  },
+  {
+    "uid": 92,
+    "role": 0,
+    "password": "",
+    "name": "JOLIFE",
+    "cardno": 0,
+    "userId": "2062"
+  },
+  {
+    "uid": 93,
+    "role": 0,
+    "password": "",
+    "name": "RONI",
+    "cardno": 0,
+    "userId": "2065"
+  },
+  {
+    "uid": 94,
+    "role": 0,
+    "password": "",
+    "name": "",
+    "cardno": 983818321,
+    "userId": "105"
+  }
+]
