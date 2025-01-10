@@ -11,7 +11,7 @@ const PORT = 3000
 const Bio = require('./bio')
 const fs = require('fs')
 
-let biometric = new Bio('192.168.68.153', 4370, 10000, 4000, io) //earthhouse
+let biometric = new Bio('192.168.68.153', 4370, 10000, 4000, io) //test IP
 let logsFileName = 'testLogs.json'
 let usersFileName = 'testUsers.json'
 let fingerprintsFileName = 'testFingerprints.json'
@@ -37,13 +37,13 @@ app.post('/api/changeIP', async (req, res) => {
             fingerprintsFileName = 'testFingerprints.json'
             break;
         case "phihope":
-            biometric = new Bio('192.168.68.115', 4370, 10000, 4000, io)
+            biometric = new Bio('192.168.68.100', 4370, 10000, 4000, io)
             logsFileName = 'phihopeLogs.json'
             usersFileName = 'phihopeUsers.json'
             fingerprintsFileName = 'phihopeFingerprints.json'
             break;
         case "wetalk":
-            biometric = new Bio('192.168.68.104', 4370, 10000, 4000, io)
+            biometric = new Bio('192.168.68.101', 4370, 10000, 4000, io)
             logsFileName = 'wetalkLogs.json'
             usersFileName = 'wetalkUsers.json'
             fingerprintsFileName = 'wetalkFingerprints.json'
