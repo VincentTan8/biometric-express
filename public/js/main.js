@@ -161,7 +161,7 @@ async function editUser() {
 async function updateUserbase() {
     let filename = document.getElementById('updateFile').value
     if(!filename) {
-        filename = "http://phihope.systems/update.json"
+        filename = "update.json"
     }
 
     // Prepare data to send
@@ -529,7 +529,12 @@ async function refreshUserTable(data) {
         ],
         paging: true,
         searching: true,
-        ordering: true
+        ordering: true,
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'print']
+            }
+        }
     })
 
     $('#userTable').off('click', '.fp-count').on('click', '.fp-count', function(e) {
@@ -656,13 +661,32 @@ async function refreshLogsTable(data) {
         columns: [
             { data: 'deviceUserId', defaultContent: 'none set'},
             { data: 'userName', title: "Username", defaultContent: 'none set'},
-            { data: 'timeStamp', defaultContent: 'none set'}
+            { 
+                data: 'timeStamp',
+                title: 'Date',
+                render: function(data, type, row) {
+                    if(data) {
+                        const [date, time] = data.split(" ")
+                        return `${date}`
+                    }
+                }
+            },
+            { 
+                data: 'timeStamp',
+                title: 'Time',
+                render: function(data, type, row) {
+                    if(data) {
+                        const [date, time] = data.split(" ")
+                        return `${time}`
+                    }
+                }
+            },
         ],
         columnDefs: [
             {
                 targets: '_all',
                 className: 'dt-right', //align the text to the right
-                width: '33%',
+                width: '30%',
             },
         ],
         paging: false,
