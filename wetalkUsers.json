@@ -4,7 +4,7 @@
     "role": 14,
     "password": "",
     "name": "JOHN BERNARD L. PRADO",
-    "cardno": 2704803940,
+    "cardno": 2036024425,
     "userId": "OSEA07"
   },
   {
@@ -28,16 +28,8 @@
     "role": 14,
     "password": "",
     "name": "RENDEL I. MORIMONTE",
-    "cardno": 2591908128,
+    "cardno": 2090008537,
     "userId": "OSEA09"
-  },
-  {
-    "uid": 5,
-    "role": 0,
-    "password": "",
-    "name": "EIAN",
-    "cardno": 0,
-    "userId": "906"
   },
   {
     "uid": 6,
@@ -70,14 +62,6 @@
     "name": "2049",
     "cardno": 985234417,
     "userId": "2049"
-  },
-  {
-    "uid": 10,
-    "role": 0,
-    "password": "",
-    "name": "MOUNTAIN",
-    "cardno": 0,
-    "userId": "905"
   },
   {
     "uid": 11,
@@ -118,14 +102,6 @@
     "name": "2044",
     "cardno": 3204383507,
     "userId": "2044"
-  },
-  {
-    "uid": 16,
-    "role": 0,
-    "password": "",
-    "name": "CRISTINA D. SIMBAJON",
-    "cardno": 0,
-    "userId": "OSEA01"
   },
   {
     "uid": 17,
@@ -288,14 +264,6 @@
     "userId": "808"
   },
   {
-    "uid": 45,
-    "role": 0,
-    "password": "",
-    "name": "HUBERT CHRISTIAN LOPEZ",
-    "cardno": 0,
-    "userId": "L009"
-  },
-  {
     "uid": 48,
     "role": 0,
     "password": "",
@@ -328,14 +296,6 @@
     "userId": "PHI0019"
   },
   {
-    "uid": 52,
-    "role": 0,
-    "password": "",
-    "name": "PAULA JANE PATRICIO",
-    "cardno": 3247606867,
-    "userId": "WTPH055"
-  },
-  {
     "uid": 53,
     "role": 0,
     "password": "",
@@ -360,14 +320,6 @@
     "userId": "WTPH057"
   },
   {
-    "uid": 56,
-    "role": 0,
-    "password": "",
-    "name": "JOHANNA KRYSTEL FLORES",
-    "cardno": 3221718467,
-    "userId": "PHI0004"
-  },
-  {
     "uid": 57,
     "role": 0,
     "password": "",
@@ -384,18 +336,10 @@
     "userId": "1"
   },
   {
-    "uid": 59,
-    "role": 0,
-    "password": "",
-    "name": "HAYDEE UY",
-    "cardno": 0,
-    "userId": "PHI0001"
-  },
-  {
     "uid": 60,
     "role": 0,
     "password": "",
-    "name": "GLAIDYLLE MONTENEGRO",
+    "name": "MA GLAIDYLLE MONTENEGRO",
     "cardno": 3247234067,
     "userId": "WTPH056"
   },
@@ -424,22 +368,6 @@
     "userId": "WTPH061"
   },
   {
-    "uid": 67,
-    "role": 0,
-    "password": "",
-    "name": "JOHN PAUL SUDARIO",
-    "cardno": 2717270708,
-    "userId": "PHI0026"
-  },
-  {
-    "uid": 68,
-    "role": 0,
-    "password": "",
-    "name": "JANE GARCIA",
-    "cardno": 2704148628,
-    "userId": "PHI0024"
-  },
-  {
     "uid": 69,
     "role": 0,
     "password": "",
@@ -460,16 +388,8 @@
     "role": 14,
     "password": "",
     "name": "RODEL R. DE LOS SANTOS",
-    "cardno": 0,
+    "cardno": 2030711897,
     "userId": "OSEA03"
-  },
-  {
-    "uid": 72,
-    "role": 0,
-    "password": "",
-    "name": "JEFF LOUIE C. UY",
-    "cardno": 0,
-    "userId": "OSEA11"
   },
   {
     "uid": 73,
@@ -494,30 +414,6 @@
     "name": "10",
     "cardno": 3247748915,
     "userId": "10"
-  },
-  {
-    "uid": 78,
-    "role": 14,
-    "password": "",
-    "name": "VINCENT D. TAN",
-    "cardno": 2714852516,
-    "userId": "OSEA05"
-  },
-  {
-    "uid": 79,
-    "role": 0,
-    "password": "",
-    "name": "HARRY BILL M. MACARAIG",
-    "cardno": 2716431284,
-    "userId": "OSEA06"
-  },
-  {
-    "uid": 80,
-    "role": 0,
-    "password": "",
-    "name": "GENINAH MILES P. MENDEZ",
-    "cardno": 2695693012,
-    "userId": "OSEA02"
   },
   {
     "uid": 81,
@@ -622,5 +518,21 @@
     "name": "Vanessa",
     "cardno": 0,
     "userId": "3"
+  },
+  {
+    "uid": 96,
+    "role": 0,
+    "password": "",
+    "name": "LEEANNE SEBASTIAN",
+    "cardno": 0,
+    "userId": "WTPH066"
+  },
+  {
+    "uid": 97,
+    "role": 0,
+    "password": "",
+    "name": "MIA LYN CORDEZ",
+    "cardno": 0,
+    "userId": "WTPH067"
   }
 ]
