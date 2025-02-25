@@ -110,7 +110,7 @@ app.get('/api/users', async (req, res) => {
             biometric.toJSON(users?.data, usersFileName)
             biometric.toJSON(fps?.data, fingerprintsFileName)
 
-            res.json({ result: 'Users and fingerprints fetched!' })
+            res.json({ result: users.data.length + ' users and fingerprints fetched!' })
         } else {
             io.emit('status-update', { status: 'Failed to get users' })
         }
@@ -139,7 +139,7 @@ app.get('/api/transactions', async (req, res) => {
 
             biometric.toJSON(logs?.data, logsFileName)
 
-            res.json({ result: 'Transactions fetched!' })
+            res.json({ result: logs.data.length + ' transactions fetched!' })
         } else {
             io.emit('status-update', { status: 'Failed to get transactions' })
         }
