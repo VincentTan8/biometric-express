@@ -39,9 +39,8 @@ async function getUsers() {
     try {
         const response = await fetch('/api/users') // Send request to the server
         const data = await response.json()        // Parse JSON response   
-        respondMessage(data)
-
         await viewUsers()
+        respondMessage(data)
     } catch (error) {
         respondMessage({ result: 'Error fetching users' })
         console.error('Error:', error)
@@ -52,8 +51,8 @@ async function getTransactions() {
     try {
         const response = await fetch('/api/transactions') 
         const data = await response.json() 
-        respondMessage(data)        
         await viewTransactions()
+        respondMessage(data)        
     } catch (error) {
         respondMessage({ result: 'Error fetching transactions' })
         console.error('Error:', error)
